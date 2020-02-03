@@ -1,0 +1,698 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper,showframe]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\title{Continuation semantics i\thanks{24.979: Topics in
+    semantics\\\noindent\textit{Getting high:}\\\noindent\textit{scope, projection, and evaluation order}}}
+
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott \& Martin Hackl}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\section{Roadmap}
+
+\section{Some notation conventions}
+
+Generally speaking, I'll be assuming \cite{heimKratzer1998} as background, but I'll depart from their notation slightly.
+
+Expressions in the meta-language will be typeset in \textsf{sans serif}.
+
+    $$\eval{[\textsubscript{DP} John]} ≔ \underbrace{\ml{John}}_{\text{individual}}$$
+
+    Seeing as its primitive, we'll treat white-space as function
+    application, e.g.:
+
+    \ex
+    $(λ x . \ml{left} x) \ml{paul} = \ml{left} \ml{paul}$
+    \xe
+
+  Function application associates to the \textit{left}:
+
+    \ex
+    $(λx . λ y . y \ml{likes} x) \ml{paul} \ml{sophie} ≡ ((λx . λ y . y \ml{likes} x) \ml{paul}) \ml{sophie}$
+    \xe
+
+  We'll write \textit{types} in a \texttt{fixed width font}. We have our
+    familiar primitive types...
+
+    \ex
+    $\mathtt{type} ≔ \type{e} | \type{t} | \type{s} | …$
+    \xe
+
+   ...and of course \textit{function types}. Unlike
+    \citet{heimKratzer1998}, who use $⟨.⟩$ as the constructor for a function
+    type, we'll be using the (more standard (outside of linguistics!)) arrow constructor $(→)$:
+
+    \ex
+    $\type{⟨e,t⟩} ≡ \type{e → t}$
+    \xe
+
+   The constructor for function types \textit{associates to the right}:
+
+    \ex
+    $\type{e → e → t} ≡ \type{e → (e → t)}$
+    \xe
+
+\end{itemize}
+
+\section{The Partee triangle}
+
+\ex
+$\ml{LIFT} x ≔ λk  . k x$\hfill$\type{\ml{LIFT} : e → (e → t) → t}$
+\xe
+
+\ex~
+$\ml{IDENT} x ≔ λ y . y = x$\hfill$\ml{IDENT} : \type{e → e → t}$
+\xe
+
+\ex~
+$\ml{BE} Q ≔ λx . Q (λ y . y = x)$\hfill$\ml{BE} : \type{((e → t) → t) → e → t}$
+\xe
+
+\begin{tcolorbox}
+\textbf{Commutative diagrams}
+\tcblower
+The \textit{Partee triangle} is a \textit{commutative diagram}. We say that a diagram \textit{commutes} if, when there are multiple paths
+between two points, those paths are equivalent. The equivalence in (\ref{tri1})
+is therefore expressed by the triangle.
+\end{tcolorbox}
+
+
+\ex The Partee triangle\sidenote{\cite{partee1986}}\\
+\begin{tikzcd}
+  \type{e} \arrow[rr, "\ml{LIFT}"] \arrow[dr, "\ml{IDENT}"] & & \type{(e → t) → t}
+  \arrow[dl, "\ml{BE}"]\\
+  & \type{e → t} &
+\end{tikzcd}\label{def:ptri}
+\xe
+
+\ex
+$\ml{ident} ≡ \ml{BE} ∘ (↑)$\label{tri1}
+\xe
+
+\textsc{Observation:} expressions quantificational and non-quantificational DPs
+can be coordinated:
+
+\ex
+{}[Howie and a woman] entered the club\label{ex:conj1}
+\xe
+
+\ml{LIFT} allows something that, by virtue of its quantificational nature, is an
+\textit{inherent} scope-taker, to combine with something that
+\textit{isn't}:\sidenote{If you're familiar with \cite{parteeRooth} you'll notice
+  that the \textit{and} that coordinates quantificational DPs (written here as
+  \textit{and}$_{Q}$), is just the result of applying their \textit{generalized
+    conjunction} rule. We'll return to generalized conjunction, and the
+  connection to coninuations in \S\ref{sec:conj}.}
+
+\ex
+\begin{forest}
+  [{$λ k . ∃x[\ml{woman} x ∧ k x] ∧ k \ml{Howie}$}
+  [{$λk . k \ml{Howie}$} [{\ml{LIFT}} [{\ml{Howie}}]]]
+  [{$λ Q' . λ k . ∃x[\ml{woman} x ∧ k x] ∧ Q' k$}
+    [{$λQ . λ Q' . λ k . Q k ∧ Q' k$\\and$_{Q}$}]
+    [{$λ k . ∃x[\ml{woman} x ∧ k x]$} [{a woman},roof]]
+  ]
+  ]
+\end{forest}
+\xe
+
+\subsection{Generalizing the triangle}
+
+Based on the way in which \ml{LIFT} and friends are defined, in theory
+we could replace $\type{e}$ with \textit{any} type. Let's give a more general
+statement of \ml{LIFT} and friends as polymorphic functions:
+
+\ex
+$\ml{LIFT} x ≔ λk  . k x$\hfill$\type{\ml{LIFT} : a → (a → t) → t}$
+\xe
+
+\ex~
+$\ml{IDENT} x ≔ λ y . y = x$\hfill$\ml{IDENT} : \type{a → a → t}$
+\xe
+
+\ex~
+$\ml{BE} Q ≔ λx . Q (λ y . y = x)$\hfill$\ml{BE} : \type{((a → t) → t) → a → t}$
+\xe
+
+The diagram, of course, still commutes:
+
+\ex The (generalized) Partee triangle\\
+\begin{tikzcd}
+  \type{a} \arrow[rr, "\ml{LIFT}"] \arrow[dr, "\ml{IDENT}"] & & \type{(a → t) → t}
+  \arrow[dl, "\ml{BE}"]\\
+  & \type{a → t} &
+\end{tikzcd}\label{def:ptri}
+\xe
+
+Why might a polymorphic \ml{LIFT} be useful? Recall that we used a typed
+instantiation of \ml{LIFT} in order to allow a quantificational thing to combine
+with a non-quantificational thing. Polymorphic \ml{LIFT} allows us to type-lift,
+e.g., a function that takes multiple arguments:
+
+\ex
+\(\ml{LIFT} (λ xy . y \ml{hug} x) = \overbrace{λ k . k (λ
+  xy . y \ml{hug} x)}^{\type{((e → e → t) → t) → t}}\)
+\xe
+
+One tantalizing possibility is that this allow us to combine a non-quantificational transitive verb with a
+quantificational DP.
+
+\ex
+\begin{forest}
+  [{\xmark}
+    [{$\type{((e → e → t) → t) → t}$\\$λ k . k (λ xy . y \ml{hug} x)$} [{\ml{LIFT}} [{$λ xy . y \ml{hug} x$}]]]
+    [{$\type{(e → t) → t}$\\$λ k . ∃x[\ml{woman} x ∧ k x]$}]
+  ]
+  \end{forest}
+\xe
+
+Unfortunately, assuming the usual inventory of composition rules (i.e.,
+\textit{function application}, \textit{predicate modification}, and
+\textit{predicate abstraction}), we're stuck.\sidenote{Other, more exotic
+  composition rules such as \textit{restrict} won't help either. Take my word
+  for this!} So, \textbf{let's invent a new one}.
+
+Here's the intuition we're going to pursue. Let's look again at the types. One
+way of thinking about what \ml{LIFT} as follows: it takes an \type{a}-type thing
+and adds a \enquote{wrapper}. Quantificational DPs, on the other hand come
+\enquote{pre-wrapped}.
+
+\begin{itemize}
+
+    \item $\ml{LIFT} \eval{hug}: \type{(\fbox{(e → e → t)} → t) → t}$
+
+    \item $\eval{a woman} : \type{(\fbox{e} → t) → t}$
+
+\end{itemize}
+
+If we look at the wrapped-up types, we see a \textit{function} from individuals,
+and an individual -- namely, two things that can combine via function application.
+
+What we need to accomplish is the following:
+
+\begin{itemize}
+
+  \item Unwrap lifted \textit{hug}.
+
+  \item Unwrap the \textit{a woman}.
+
+  \item Use function application to combine the unwrapped values.
+
+  \item Finally, wrap the result back up! Think of the quantificational meaning as being
+    like a taco -- it isn't really a taco without the wrapper, therefore we
+    don't want to throw the wrapper away.
+
+\end{itemize}
+
+    In order to accomplish this, we'll define a new composition rule:
+    \acf{sfa}. We're going to define \ac{sfa} in terms of \acf{fa}; we haven't been
+      explicit about how \ac{fa} is defined yet, so let's do that now. We'll
+      write \ac{fa} as the infix operator
+      \ml{A}.\sidenote{\todo[inline]{different ways of making function
+          application bidirectional}}
+
+      \pex \acf{fa} (def.)
+      \a $f \ml{A} x ≔ f x$\hfill$\ml{A}:\type{(a → b) → a → b}$
+      \a $x \ml{A} f ≔ f x$\hfill$\ml{A}:\type{a → (a → b) → b}$
+      \xe
+
+      Here, function application is made bidirectional by \textit{overloading}
+      -- we've defined forwards and backwards application, and given them the
+      same function name.
+
+      \begin{tcolorbox}
+
+       \textbf{\acf{sfa}}
+
+       \tcblower
+
+       We'll write \ac{sfa} as the infix operator \ml{S}. Note that, since
+       \ml{A} is overloaded already, and \ml{S} is defined in terms of \ml{A},
+       \ml{S} gets overloaded too.
+
+       \ex
+       \acf{sfa} (def.)\\
+       $m \ml{S} n ≔ λ k . m (λ a . n (λ b . k (a \ml{A} b)))$\\
+       \phantom{,}\hfill$\ml{S}: \type{(((a → b) → t) → t) → ((a → t) → t) → (b
+         → t) → t}$\\
+       \phantom{,}\hfill$\ml{S}: \type{((a → t) → t) → (((a → b) → t) → t) → (b
+         → t) → t}$
+       \xe
+
+       Now, let's illustrate how \ac{sfa} plus generalized \ml{LIFT} allows to
+       compose a quantificational thing with non-quantificational things, using
+       a simple example sentence:
+
+       \ex
+       Howie hugged some woman.
+       \xe
+
+      \end{tcolorbox}
+
+
+       \ex Step 1: compose \textit{some woman} with \ml{LIFT}-ed \textit{hug}.\\
+       \begin{forest}
+         [{$\type{((e → t) → t) → t}$\\\fbox{$λ k . ∃x[\ml{woman} x ∧ k (λ y . y \ml{hug} x)]$}}
+         [{$\ml{S}$}
+           [{$\type{((e → e → t) → t) → t}$\\$λ k . k (λ xy . y \ml{hug} x)$} [{\ml{LIFT}} [{hug}]]]
+           [{$\type{(e → t) → t}$\\$λ k . ∃x[\ml{woman} x ∧ k x]$} [{some woman},roof]]
+         ]]
+       \end{forest}
+       \xe
+
+       \ex~ Step 2: compose the resulting VP-denotation with \ml{LIFT}-ed \textit{Howie}\\
+       \begin{forest}
+         [{$\type{(t → t) → t}$\\\fbox{$λ k . k (∃x[\ml{woman} x ∧ \ml{Howie} \ml{hug} x])$}}
+         [{$\ml{S}$}
+           [{$\type{(e → t) → t}$\\$λ k . k \ml{Howie}$} [{$\ml{LIFT}$} [{Howie}]]]
+           [{$\type{((e → t) → t) → t}$\\$λ k . ∃x[\ml{woman} x ∧ k (λ y . y \ml{hug} x)]$} [{hug some woman},roof]]
+         ]]
+       \end{forest}\label{ex:step2}
+       \xe
+
+       We're now tantalizingly close to deriving the right kind of object for
+       the sentential meaning (namely, something of type $\type{t}$). Only, what
+       we have is something of type $\type{(\fbox{t} → t) → t}$, i.e., a truth
+       value in a \enquote{wrapper}. How do we get back the wrapped up value? We
+       saturate the $k$ argument with the identity function. We'll call this
+       operation $\ml{LOWER}$.\sidenote{Here we've given
+           \ml{LOWER} the maximally polymorphic type compatible with the
+           function definition; in fact, all we need is
+           $(\ml{LOWER} : \type{((t → t) → t) → t})$.}
+
+       \ex
+       $\ml{LOWER}$ (def.)\\
+       $\ml{LOWER} m ≔ m id$\hfill$\ml{LOWER}: \type{((a → a) → a) → a}$
+       \xe
+
+       Applying \ml{LOWER} to the final value in (\ref{ex:step2}) gives us a
+       type \type{t} sentential meaning.
+
+       \ex
+       $\begin{aligned}[t]
+         &\ml{LOWER} (λ k . k (∃x[\ml{Howie} \ml{hug} x]))\\
+         &= (λ k . k (∃x[\ml{Howie} \ml{hug} x])) id\\
+         &= id (∃x[\ml{Howie} \ml{hug} x])\\
+         &= ∃x[\ml{Howie} \ml{hug} x]
+         \end{aligned}$
+       \xe
+
+       Let's zoom back out and see how all the pieces fit together by looking at
+       the \textit{graph of the derivation}.
+
+       \ex
+       \begin{forest}
+         [{$\type{t}$}
+         [{$\ml{LOWER}$}
+         [{$\type{(t → t) → t}$\\$\ml{S}$}
+           [{$\type{(e → t) → t}$} [{$\ml{LIFT}$} [{Howie}]]]
+           [{$\type{((e → t) → t) → t}$\\$\ml{S}$}
+             [{$\type{((e → e → t) → t) → t}$} [{$\ml{LIFT}$} [{hug}]]]
+             [{$\type{(e → t) → t}$} [{some woman},roof]]
+           ]
+         ]
+         ]
+         ]
+       \end{forest}
+       \xe
+
+       So far, we've provided an account of how quantificational things compose
+       with non-quantificational things, by making use of...
+
+       \begin{itemize}
+
+           \item ...an independently
+           motivated type-shifting rule (\ml{LIFT})...
+
+           \item ...a way to apply \ml{LIFT}-ed
+           values (\ml{S})...
+
+          \item ...and a way to get an ordinary value back from a
+       \ml{LIFT}-ed value (\ml{LOWER}).
+
+           \end{itemize}
+
+           This seems pretty nice, but as I'm sure you've noticed, things are
+           quickly going to get pretty cumbersome with more complicated
+           sentences, especially with multiple quantifiers. Before we go any
+           further, let's introduce some notational conveniences.
+
+\section{Towers}
+
+We've been using the metaphor of a \textit{wrapper} for thinking about what
+$\ml{LIFT}$ does to an ordinary semantic value. Let's make this a bit more
+transparent by introducing a new \textit{type constructor} for \ml{LIFT}-ed
+values.\sidenote{A \textit{type constructor} is just a
+   function from a type to a new type -- here, it's a rule for taking any type
+   $\ml{a}$ and returning the type of the corresponding \ml{LIFT}-ed value.}
+
+\ex
+\type{K_{t} a ≔ (a → t) → t}
+\xe
+
+
+\begin{itemize}
+
+\item Quantificational DPs are therefore of type $\type{{K}_{t} e}$ (inherently).
+
+\item \ml{LIFT} takes something of type \type{a}, and lifts it into
+    something of type $\type{K_{t} a}$.
+
+\end{itemize}
+
+Rather than dealing with \textit{flat} expressions of the simply-typed lambda
+calculus, which will become increasingly difficult to reason about, we'll follow
+\cite{barkerShan2015} in using \textit{tower notation}.\sidenote{To my mind, one
+of \citeauthor{barkerShan2015}'s central achievements is simply the introduction
+of an accessible notational convention for reasoning about the kinds of lifted
+meanings we're using here.}
+
+Let's look again at the meaning of a quantificational DP. The $k$ argument which
+acts as the \textit{wrapper} is called the \textit{continuation argument}.
+
+\ex
+$\eval{some woman} ≔ λ k . ∃x[\ml{woman} x ∧ k x]$
+\xe
+
+\ex
+$\eval{some woman} ≔ \semtower{∃x[\ml{woman} x ∧ []]}{x}$
+\xe
+
+\ex
+$\ml{LIFT} (\eval{hug}) = \semtower{[]}{λ xy . y \ml{hug} x}$
+\xe
+
+In general:
+
+\ex
+$\semtower{f []}{x} ≔ λ k . f (k x)$
+\xe
+
+We can use tower notation for types too:
+
+\ex
+$\semtower{\type{b}}{\type{a}} ≔ \type{(a → b) → b}$
+\xe
+
+We can now redefine our type constructor $\type{K_{t}}$, and our type-shifting
+operations using our new, much more concise, tower notation. These will be our
+canonical definitions from now on. We'll also start abbreviating a \ml{LIFT}-ed
+value $a$ as
+$a^{↑}$ and a \ml{LOWER}-ed value $b$ as $b^{↓}$.
+
+\ex The continuation type constructor \type{K_t} (def.)\\
+$\type{K_{t} a} ≔ \type{\semtower{t}{a}}$
+\xe
+
+\ex~
+\ml{LIFT} (def.)\sidenote{Thinking in terms of towers, \ml{LIFT} takes a value
+  $a$ and returns a \enquote{trivial} tower, i.e., a tower with an empty top-story.}\\
+$a^{↑} ≔ \semtower{[]}{a}$\hfill$(↑):\type{a → K_{t} a}$
+\xe
+
+\ex~
+\acf{sfa} (def.)\sidenote{\ac{sfa} takes two scopal values -- one with a
+  function on the bottom floor, and the other with an argument on the bottom
+  floor -- and combines them by (i) doing function application on the bottom
+  floor, and (ii) \textit{sequencing} the scope-takers.}\\
+$\semtower{f []}{x} \ml{S} \semtower{g []}{y} ≔
+\semtower{f (g [])}{x \ml{A} y}$\hfill$\ml{S}:\type{K_{t} (a → b) → K_{t} a →
+  K_{t} b}$
+\xe
+
+\ex~
+\ml{LOWER} (def.)\footnote{\ml{LOWER} \textit{collapses the tower}, applying
+  whatever is on the top story to whatever is on the bottom story.}\\
+$\left(\semtower{f []}{p}\right)^{↓}$\hfill$(↓) : \type{K_{t} t → t}$
+\xe
+
+In order to see the tower notation in action, let's go through an example
+involving multiple quantifiers, and show how continuation semantics derives the
+surface scope reading:
+
+\ex
+Some knight chased every thief.
+\xe
+
+\begin{fullwidth}
+  \begin{multicols}{2}
+
+First, we combine \textit{every thief} with lifted \textit{chase} via \ac{sfa}:
+
+\ex
+\begin{forest}
+  [{\fbox{$\semtower{∀ x[\ml{thief} x → []]}{λ y . y \ml{chase} x$}}\\\ml{S}}
+    [{$\semtower{[]}{λ xy. y \ml{chase} x}$}]
+    [{$\semtower{∀x[\ml{thief} x → []]}{x}$}]
+  ]
+\end{forest}
+\xe
+
+\columnbreak
+
+Next, the (boxed) VP value combines with \textit{some knight} via \ac{sfa}:
+
+\ex
+\begin{forest}
+  [{\fbox{$\semtower{∃y[\ml{knight} y ∧ ∀ x[\ml{thief} x → []]]}{y \ml{chase} x}$}\\\ml{S}}
+    [{$\semtower{∃y[\ml{knight} y ∧ []]}{y}$}]
+    [{$\semtower{∀ x[\ml{thief} x → []]}{λ y . y \ml{chase} x$}} [{chase every thief},roof]]
+  ]
+\end{forest}
+\xe
+
+\end{multicols}
+\end{fullwidth}
+
+Finally, the resulting tower is collapsed via \textit{lower}:
+
+\ex
+\begin{forest}
+[{\fbox{$∃y[\ml{knight} y ∧ ∀ x[\ml{thief} x → y \ml{chase} x]]$}} [{$\left(\semtower{∃y[\ml{knight} y ∧ ∀ x[\ml{thief} x → []]]}{y \ml{chase} x}\right)^{↓}$}]]
+\end{forest}
+\xe
+
+Let's zoom out and look at the \textit{graph of the syntactic derivation}
+alongside the \textit{graph of the semantic derivation}.
+
+\begin{multicols}{2}
+
+  \begin{forest}
+    [{\textsc{merge}}
+      [{DP} [{some knight},roof]]
+      [{\textsc{merge}}
+        [{V\\chase}]
+        [{DP} [{every thief},roof]]
+      ]
+    ]
+  \end{forest}
+
+  \columnbreak
+
+  \begin{forest}
+    [{\type{t}}
+    [{\ml{LOWER}}
+    [{\typetower{t}{t}\\\ml{S}}
+      [{\typetower{t}{e}\\some knight}]
+      [{\typetower{t}{e → t}\\\ml{S}}
+        [{\typetower{t}{e → e → t}} [{\ml{LIFT}} [{chase}]]]
+        [{\typetower{t}{e}\\every thief}]
+      ]
+    ]
+    ]]
+  \end{forest}
+
+  \columnbreak
+
+\end{multicols}
+
+\section{Continuations beyond DPs}
+
+\subsection{Generalized (con/dis)junction}\label{sec:conj}
+
+\todo[inline]{generalized conjunction as continuised conjunction.}
+
+
+\printbibliography
+
+\begin{appendices}
+
+  \section{Continuations from a categorical perspective}
+
+  The triple $(\type{K_{t}},↑,\ml{S})$ is an \textit{applicative functor}, a
+  highly influential notion in the literature on functional programming
+  (\citealt{mcbridePaterson2008}); for applications in linguistic semantics see
+  \cite{kiselyov2017}, \cite{charlow2018}.
+  \todo[inline]{Cite my applicatives paper here}
+
+  Technically speaking, an applicative functor is a type constructor (here $\type{K_{t}}$),
+  together with two functions $(↑): \type{a → K_{t} a})$ and $(\ml{S}: \type{K_{t} (a → b) →
+    K_{t} a → K_{t} b})$ obeying the following laws:
+
+  \todo[inline]{Check the applicative laws}
+
+  \begin{multicols}{2}
+
+    \ex
+    \textbf{Homomorphism}\\
+    $f^{↑} \ml{S} x^{↑} ≡ (f x)^{↑}$
+    \xe
+
+    \ex~
+    \textbf{Interchange}\\
+    $(λ k . k x)^{↑} \ml{S} m ≣ m \ml{S} x^{↑}$
+    \xe
+
+    \columnbreak
+
+    \ex
+    \textbf{Identity}\\
+    $id^{↑} \ml{S} m ≡ m$
+    \xe
+
+    \ex~
+    \textbf{Composition}\\
+    $(∘)^{↑} \ml{S} u \ml{S} v \ml{S} w ≡ u \ml{S} (v \ml{S} w)$
+    \xe
+
+    \end{multicols}
+
+        You can verify for yourselves that the triple $(\type{K_{t}},↑,\ml{S})$
+    obeys the applicative laws -- we'll call it the \textit{continuation applicative}.
+
+    A related, more powerful abstraction from the functional programming
+    literature is \textit{monads}. There is a growing body of literature in
+    linguistic semantics that explicitly makes use of monads
+    (\citealt{Charlowc}, \todo{cite others}). A monad, like an applicative
+    functor, is defined as a triple consisting of a type constructor and two
+    functions. Monads are strictly speaking more powerful than applicative
+    functors; that is to say, if you have a monad you are guaranteed to have an
+    applicative functor, but not vice versa.
+
+    In, e.g., \citet{barkerShan2015}, and much of the existing literature in
+    linguistic semantics making use of continuations, they are presented in
+    their applicative guise; in the functional programming literature however
+    (and especially in \texttt{haskell}) continuations are more widely used in
+    their monadic guise. A monad is a triple $(\type{K_{t}},(↑),μ)$ --
+    the crucial addition here is \textit{join} ($μ$).
+
+    \pex
+    \textit{join} (def.)\\
+    \a \(μ : \type{K_{t} (K_{t} a) → K_{t} a}\)
+    \a \(μ m = λ k . m (λ K . K k)\)
+    \xe
+
+    \ex
+    $μ (λ k . ∃x[k (λ l . ∀ y[l (x \ml{likes} y)])]) = λ j . ∃x[∀ y[j (x \ml{likes} y)])]$
+    \xe
+
+
+    % \section{Shift and reset}
+
+    % \pex
+    % \ml{SHIFT} (def.)
+    % \a $\ml{SHIFT}: \type{((a → t) → K_{t} t) → K_{t} a}$
+    % \a $\ml{SHIFT} m = λ k . (m k)^{↓}$
+    % \xe
+
+    % \pex
+    % \(\ml{RESET}\) (def.)\\
+    % \a \((⇵) : \type{K_{t} t → K_{t} a}\)
+    % \a \(a^{⇵} = (a^{↓})^{↑}\)
+    % \xe
+
+
+  \section{{\LaTeX} dojo}
+
+  Here is the macro I use to typeset towers in \LaTeX. Declare this in your
+  preamble. You'll need the \texttt{booktabs} and \texttt{xparse} packages too.
+
+  \begin{lstlisting}[language=TeX]
+    \NewDocumentCommand\semtower{mm}{
+      \begin{tabular}[c]{@{\,}c@{\,}}
+        \(#1\)
+        \\
+        \midrule
+        \(#2\)
+        \\
+      \end{tabular}
+    }
+  \end{lstlisting}
+
+  A simple two-level tower can now be typeset as follows:
+
+    \begin{lstlisting}[language=TeX]
+      $$\semtower{f []}{x}$$
+  \end{lstlisting}
+
+  Resulting in:
+
+  $$\semtower{f []}{x}$$
+
+  \end{appendices}
+
+\end{document}
