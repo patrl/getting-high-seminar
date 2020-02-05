@@ -1,4 +1,4 @@
-\documentclass[nols,twoside,nofonts,nobib,nohyper,showframe]{tufte-handout}
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
 
 \usepackage{fixltx2e}
 \usepackage{tikz-cd}
@@ -37,9 +37,9 @@
 \setcounter{secnumdepth}{3}
 
 \title{Continuation semantics i\thanks{24.979: Topics in
-    semantics\\\noindent\textit{Getting high:}\\\noindent\textit{scope, projection, and evaluation order}}}
+    semantics\\\noindent\textit{Getting high: Scope, projection, and evaluation order}}}
 
-\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott \& Martin Hackl}
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott\sidenote{\texttt{pdell@mit.edu}} \& Martin Hackl\sidenote{\texttt{hackl@mit.edu}}}
 
 \addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
 
@@ -74,20 +74,38 @@
 
 \maketitle% this prints the handout title, author, and date
 
+\todo[inline]{Add more exercises/questions}
+
 \section{Roadmap}
 
-\subsection{Goals for the first block}
+\subsection{Goals for the immediate future}
 
 \begin{itemize}
 
     \item To be able to understand \citeauthor{barkerShan2015}'s tower notation,
     and how to translate from towers to flat representations, and vice versa.
 
+    \item To get a handle on continuation semantics' linear bias, encoded in the
+    composition rules themselves.\sidenote{This will be necessary preparation for our
+    discussion of \citeauthor{shanBarker2006}'s (\citeyear{shanBarker2006})
+    theory of crossover.}
+
+    \item The beginnings of a story for scope islands in terms of obligatory evaluation.
+
+\end{itemize}
+
+\subsection{The road we'll travel}
+
+\begin{itemize}
+
+    \item \S\ref{sec:notation}: some preliminaries on notational conventions.
+
+
 \end{itemize}
 
 \todo[inline]{Add more goals}
 
-\section{Some notation conventions}
+\section{Some notation conventions}\label{sec:notation}
 
 Generally speaking, I'll be assuming \cite{heimKratzer1998} as background, but I'll depart from their notation slightly.
 
@@ -130,6 +148,10 @@ Expressions in the meta-language will be typeset in \textsf{sans serif}.
     \xe
 
 \end{itemize}
+
+\section{Why bother with continuations?}
+
+\todo[inline]{Fill in this section}
 
 \section{The Partee triangle}
 
@@ -500,8 +522,10 @@ $\semtower{f []}{x} \ml{S} \semtower{g []}{y} ≔
 \ex~
 \ml{LOWER} (def.)\footnote{\ml{LOWER} \textit{collapses the tower}, applying
   whatever is on the top story to whatever is on the bottom story.}\\
-$\left(\semtower{f []}{p}\right)^{↓}$\hfill$(↓) : \type{K_{t} t → t}$
+$\left(\semtower{f []}{p}\right)^{↓} = f p$\hfill$(↓) : \type{K_{t} t → t}$
 \xe
+
+\todo[inline]{show how lower works in terms of flat lambdas}
 
 In order to see the tower notation in action, let's go through an example
 involving multiple quantifiers, and show how continuation semantics derives the
@@ -745,6 +769,22 @@ to the bottom floor. Intuitively, this reflects the fact that, ultimately,
 \(\left(\semtower{∀x[]}{x}\right) = \semtower{[]}{\semtower{∀x[]}{x}}\)
 \xe
 
+\begin{tcolorbox}
+\textbf{Question}
+\tcblower
+Which (if any) of the following bracketings make sense for a three-story tower:
+
+\begin{multicols}{2}
+\ex
+$\semtower{\left(\semtower{f []}{g []}\right)}{x}$
+\xe
+\columnbreak
+\ex
+$\semtower{f []}{\left(\semtower{g []}{x}\right)}$
+\xe
+\end{multicols}
+\end{tcolorbox}
+
 The extra ingredient we're going to need, is the ability to sandwhich an empty
 story into the \textit{middle} of our tower, pushing the quantificational part
 of the meaning to the very top. This is \textit{internal lift} ($⇈$).\sidenote{I
@@ -792,18 +832,304 @@ take wide scope. That's it!
 A boy danced with every girl.\hfill $∀ > ∃$\label{ex:classic1}
 \xe
 
-\ex Step 1: internally lift \textit{every girl}.\\
+Before we proceed, we need to generalize \ml{LIFT} and \ac{sfa} to three-story
+towers.\sidenote{
+Before you get worries about expanding our set of primitive operations, notice
+that \textit{3-story lift} is just ordinary lift applied twice. \textit{3-story}
+\ac{sfa} is just \ac{sfa}, but where the bottom story combines via \ml{S} not
+\ml{A}. In fact, we can generalize these operations to $n-$story towers.
+}
+
+\begin{multicols}{2}
+\ex
+$x^{↑_{2}} ≔ \semtower{[]}{\semtower{[]}{x}}$
+\xe
+
+\columnbreak
+
+\ex
+$\semtower{f []}{m} \ml{S}_{2} \semtower{g []}{n} ≔ \semtower{f (g [])}{m \ml{S} n}$
+\xe
+
+\end{multicols}
+
+
+\begin{fullwidth}
+  \begin{multicols}{2}
+\ex Step 1: internally lift \textit{every girl} \\
 \begin{forest}
-  [{...}
-    [{dance-with$^{↑}$}]
-    [{...} [{...} [{every girl}]]]
+  [{$\ml{S}_{2}$}
+    [{$\semtower{[]}{\semtower{[]}{\ml{danceWith}}}$} [{dance-with$^{↑_{2}}$}]]
+    [{$\semtower{∀x[]}{\semtower{[]}{x}}$} [{$⇈$} [{every girl},roof]]]
   ]
 \end{forest}
 \xe
 
+\columnbreak
+
+\ex
+Step 2: \textit{ex}ternally lift \textit{a boy}\\
+\begin{forest}
+  [{$\ml{S}_{2}$}
+    [{$\semtower{[]}{\semtower{∃y[\ml{boy} y ∧ []]}{y}}$} [{a boy$^{↑}$}]]
+    [{$\semtower{∀x[\ml{girl} x → []]}{\semtower{[]}{λ y . y \ml{danceWith} x}}$} [{dance with every girl},roof]]
+  ]
+\end{forest}
+\xe
+\end{multicols}
+\end{fullwidth}
+
+What we're left with now is a 3-story tower with the universal on the top story
+and the existential on the middle story. We can collapse the tower by first
+collapsing the bottom two stories, and then collapsing the result. In order to
+do this, we'll first define \textit{internal lower}.\sidenote{Let's again
+  address the issue of expanding our set of primitive operations (in what is
+  becoming something of a theme). Internal lower is just lifted lower, applying
+  via \ml{S}. In other words:
+
+  \ex
+  $m^{⇊} ≡ (↓)^{↑} \ml{S} m$
+  \xe
+
+}
+
+\ex
+\textit{Internal lower} (def.)
+$\left(\semtower{f []}{\semtower{g []}{p}}\right)^{⇊} ≔ \semtower{f []}{\left(\semtower{g []}{x}\right)^{↓}}$
+\xe
+
+Now we can collapse the tower by doing \textit{internal lower}, followed by
+\textit{lower}:
+
+\ex
+\begin{forest}
+  [{\fbox{$∀x[\ml{girl} x → (∃y[\ml{boy} y ∧ y \ml{danceWith} x])]$}}
+  [{$↓$}
+    [{$\semtower{∀x[\ml{girl} x → []]}{∃ x[\ml{boy} x ∧ y \ml{danceWith} x]}$}
+      [{$⇊$}
+        [{$\semtower{∀x[\ml{girl} x → []]}{\semtower{∃y[\ml{boy} y ∧ []]}{y \ml{danceWith} x}}$} [{a boy danced with every girl},roof]]
+  ]]]]
+\end{forest}
+\xe
+
+Great! We've shown how to achieve quantifier scope ambiguities using our new
+framework. Let's look at the derivations again side-by-side.
+
+\begin{fullwidth}
+\begin{multicols}{2}
+
+  \ex
+  Surface scope (schematic derivation)\\
+  \begin{forest}
+    [{$↓$}
+    [{$\ml{S}$}
+      [{$Q_{1}$}]
+      [{$\ml{S}$}
+        [{$R^{↑}$}]
+        [{$Q_{2}$}]
+      ]
+    ]]
+  \end{forest}
+  \xe
+
+  \columnbreak
+
+  \ex
+  Inverse scope (schematic derivation)\\
+  \begin{forest}
+    [{$↓$}
+    [{$⇊$}
+  [{$\ml{S}_{2}$}
+    [{$Q_{1}^{↑}$}]
+    [{$\ml{S}_{2}$}
+      [{$R^{↑_{2}}$}]
+      [{$Q_{2}^{⇈}$}]
+    ]
+  ]]]
+  \end{forest}
+  \xe
+
+\end{multicols}
+\end{fullwidth}
+
+There's a couple of interesting things to note here:
+
+\begin{itemize}
+
+    \item The inverse scope derivation involves more applications of our
+    type-shifting operations -- this becomes especially clear if we decompose
+    the complex operations
+    $\ml{S}_{2}$, $↑_{2}$, $⇈$, and $⇊$.
+
+    \item In order to derive an inverse scope reading, what was \textit{crucial}
+    was the availability of \textit{internal lift}; the remaining operations,
+    $\ml{S}_{2}, ↑_{2}, ⇊$ only functioned to massage composition for
+    three-story towers.
+
+\end{itemize}
+
+On the latter point, it's tempting to conjecture that in, e.g., German, Japanese
+and other languages which \enquote{wear their LF on their sleeve}, the semantic
+correlate of \textit{scrambling} is \textit{internal lift}, whereas in
+scope-flexible languages such as English, internal lift is a freely available
+operation.\sidenote{To make sense of this, we would of course need to say
+  something more concrete about the relationship between syntax and semantics.
+  For an attempt at marrying continuations to a standard, minimalist syntactic
+component, see my manuscript \textit{Movement as higher-order structure building}.}
+
+\todo[inline]{Something something about processing, inverse scope, and
+  derivational complexity}
+
+It's worth mentioning, incidentally, that although we collapsed the resulting
+three-story tower via internal lower followed by lower, we can also define an
+operation that collapses a three-story tower two an ordinary tower in a
+different way. Let's call it \textit{join}:\sidenote{Join for three-story towers
+corresponds directly to the \textit{join} function associated with the
+continuation monad. For more on continuations from a categorical perspective,
+see the first appendix.}
+
+\ex \textit{join} (def.)\\
+$m^{μ} ≔ λ k . m (λ c . c k)$\hfill$μ: \type{K_{t} (K_{t} a) → K_{t} a}$
+\xe
+
+In tower terms, join takes a three-story tower and sequences quantifiers from
+top to bottom:
+
+ \ex
+  $
+  \left(\semtower{f []}{\semtower{g []}{x}}\right)^{μ} = \semtower{f (g [])}{x}
+  $
+  \xe
+
+Doing internal lower on a three-story tower followed by lower is equivalent to doing
+join on a three-story tower followed by lower (as an exercise, convince yourself
+of this). However, there's may be a good empirical reason for having internal lower as a
+distinct operation (and since it's just lifted lower, it \enquote{comes for
+  free} in a certain sense).
+
+\ex
+Daniele wants a boy to dance with every girl.\hfill $∀ > \ml{want} > ∃$\label{ex:dani1}
+\xe
+
+Arguably, (\ref{ex:dani1}) can be true if for every girl $x$, Daniele has the following
+desire: \textit{a boy dances with $y$}. This is the reading on which
+\textit{every boy} scopes over the intensional verb, and \textit{a boy} scopes
+below it.
+
+If we have \textit{internal lower}, getting this is easy. We \textit{internally
+  lift} \textit{every girl} and \textit{externally lift} \textit{a boy}. Before
+we reach the intensional verb, we fix the scope of \textit{a boy} by doing
+internal lower. Now we have an ordinary tower, and we can defer fixing the scope
+of \textit{every girl} via \textit{lower} until after the intensional verb.
+
+If we only have \textit{join} then the scope of \textit{a boy} and \textit{every
+girl} may vary amongst themselves, but they should either both scope below
+\textit{want} or both scope above \textit{want}.
 
 
-\section{Scope islands and \ml{RESET}}
+
+\section{Scope islands and obligatory evaluation}
+
+Inspired by research on \textit{delimited control} in computer
+science\sidenote{See, e.g., \cite{danvyFilinski1992} and \cite{wadler1994}.},
+\citet{Charlowc} develops an interesting take on scope islands couched in terms
+of continuations.
+
+He proposes the following definition:
+
+\ex
+\textit{Scope islands} (def.)\\
+A \textit{scope island} is a constituent that is subject to \textit{obligatory
+  evaluation}.\\
+\phantom{,}\hfill\citep[p. 90]{Charlowc}
+\xe
+
+By \textit{obligatory evaluation}, we mean that every continuation argument
+\textit{must} be saturated before semantic computation can proceed. In other
+words, a scope island is a constituent where, if we have something of type
+$\type{K_{t} a}$, we cannot proceed.
+
+One way of thinking about this, is that the presence of an unsaturated
+continuation argument means that there is some computation that is being
+deferred until later. Scope islands are constituents at which evaluation is
+\textit{forced}. As noted by \citeauthor{Charlowc}, this idea bears an
+intriguing similarity to \citeauthor{chomskyPhase}'s notion of a
+\textit{phase}.\sidenote{Exploring this parallel in greater depth could make for
+an interesting term paper topic.}
+
+How does this work in practice? A great deal of ink has been spilled arguing
+that, e.g., a finite clause is a scope island.
+
+\ex
+A boy said $\overbrace{\text{\fbox{that Susan greeted every
+      linguist}}}^{\text{scope island}}$.\hfill$∃>∀; \text{\xmark} ∀ > ∃$
+\xe
+
+The derivation of the embedded clause proceeds as usual via lift and \ac{sfa}.
+
+\newpage
+
+\begin{fullwidth}
+\begin{multicols}{2}
+\ex
+Scope island with an unevaluated type\\
+\begin{forest}
+  [{...}
+    [{...} [{a boy},roof]]
+    [{...}
+      [{said}]
+      [{\xmark $\semtower{∀x[\ml{linguist} x → []]}{\ml{Susan greeted }x}$} [{Susan greeted every linguist},roof]]
+    ]
+  ]
+\end{forest}
+\xe
+\columnbreak
+\ex
+Scope island with an evaluated type\\
+\begin{forest}
+  [{...}
+    [{...} [{a boy},roof]]
+    [{...}
+      [{said}]
+      [{\cmark $∀x[\ml{linguist} x→ \ml{Susan greeted }x]$}
+      [{$↓$} [{$\semtower{∀x[\ml{linguist} x → []]}{\ml{Susan greeted }x}$} [{Susan greeted every linguist},roof]]]]
+    ]
+  ]
+\end{forest}
+\xe
+\end{multicols}
+\end{fullwidth}
+
+This story leaves a lot of questions unanswered of course:
+
+\begin{itemize}
+
+    \item Is this just a recapitulation of a representational constraint on
+    quantifier raising?\sidenote{The answer to this question may ultimate be
+    \textit{yes}, in my view.}
+
+    \item Can we give a principled story about islands for overt movement using
+    similar mechanisms? What explains the difference between overt movement and
+    scope taking with respect to locality?\footnote{If we want to give a more
+    general account of phases using this mechanism, we need to give an account
+    of overt movement in terms of continuations, too. See my unpublished ms.
+    \textit{Movement as higher-order structure building} for progress in this direction.}
+
+\end{itemize}
+
+One interesting property of this theory of scope islands is that it goes
+some way towards explaining why certain expressions, such as indefinites, are able to take
+\textit{exceptional} scope, given certain assumptions about their semantics.
+
+\citet{Charlowc} shows that, if we conceive of indefinites as inducing
+alternatives, scope islands may be obviated by, in a certain sense, pied-piping
+the scope islands. This strategy won't work for ordinary quantifiers
+however.\sidenote{See \citet{demirok2019} for a parallel story couched in more
+  familiar \citeauthor{heimKratzer1998}-esque machinery.}
+
+Time permitting, we'll discuss how \citeauthor{Charlowc} accounts for the
+exceptional scope-taking properties of indefinites using continuations, either
+next week, or in our discussion of crossover phenomena.
 
 \section{Continuations beyond DPs}
 
@@ -834,68 +1160,135 @@ We can consider a more general version of this type (see
 
   \section{Continuations from a categorical perspective}
 
-  The triple $(\type{K_{t}},↑,\ml{S})$ is an \textit{applicative functor}, a
+  The way we've presented continuation semantics here makes crucial use of three
+  building blocks:
+
+  \begin{itemize}
+
+      \item A type
+  constructor \type{K_t} -- a way of getting from any type \type{a} to an
+      enriched type-space characterizing \textit{continuized} values.
+
+      \item A function $\ml{LIFT} (↑)$, i.e., a way of lifting a value $a$ into a
+      \textit{trivial} inhabitant of our enriched type-space.
+
+      \item A composition rule \acf{sfa}, i.e., an
+  instruction for how to do function application in our enriched type-space.
+
+      \end{itemize}
+
+  There's a rich literature in category theory and (derivatively) functional
+  programming on how to characterize this kind of construct, together with
+  law-like properties its components should satisfy in order to qualify as
+  \enquote{natural}. In fact, as discussed in, e.g.,
+  \cite{charlow2018,elliott2019applicatives}, exactly this kind of general
+  construct is \textit{implicit} in a great deal of semantic theory, including
+  for example theories of pronouns and binding, and theories of focus.
+
+  Formally, the triple $(\type{K_{t}},↑,\ml{S})$ is a special case of an \textit{applicative functor}, a
   highly influential notion in the literature on functional programming
   (\citealt{mcbridePaterson2008}); for applications in linguistic semantics see
-  \cite{kiselyov2017}, \cite{charlow2018}.
-  \todo[inline]{Cite my applicatives paper here}
+  \cite{kiselyov2017}, \cite{charlow2018}, and \cite{elliott2019applicatives}.
 
-  Technically speaking, an applicative functor is a type constructor (here $\type{K_{t}}$),
-  together with two functions $(↑): \type{a → K_{t} a})$ and $(\ml{S}: \type{K_{t} (a → b) →
-    K_{t} a → K_{t} b})$ obeying the following laws:
+  An applicative functor consists of three components: a \textit{type
+    constructor} \type{F}, a way of lifting an inhabitant of $\type{a}$ into an
+  inhabitant of $\type{F a}$, called $η$, and a way of doing \textit{function
+    application} in the enriched type-space $\type{F a}$, called
+  $⊛$.\footnote{If you want pronounceable names for these things, $η$ is called
+    \textit{pure} in haskell, and $⊛$ is called \textit{ap} (short for
+    \textit{application}).} The components of the applicative functor are
+  additionally subject to a number of laws. I give the full definition below:
 
-  \todo[inline]{Check the applicative laws}
+  \pex \textit{Applicative functor} (def.)\\
+  An \textit{applicative} functor consists of the following three components
+  subject to \textbf{homomorphism} \textbf{identity}, \textbf{interchange}, and
+  \textbf{composition} laws:
+  \a  $F: \type{type → type}$
+  \a $η:\type{a → F a}$
+  \a $⊛: \type{F (a → b) → F a → F b}$
+  \xe
 
   \begin{multicols}{2}
 
     \ex
     \textbf{Homomorphism}\\
-    $f^{↑} \ml{S} x^{↑} ≡ (f x)^{↑}$
+    $f^{η} ⊛ x^{η} ≡ (f x)^{η}$
     \xe
 
     \ex~
     \textbf{Interchange}\\
-    $(λ k . k x)^{↑} \ml{S} m ≣ m \ml{S} x^{↑}$
+    $(λ k . k x)^{η} ⊛ m ≣ m ⊛ x^{η}$
     \xe
 
     \columnbreak
 
     \ex
     \textbf{Identity}\\
-    $id^{↑} \ml{S} m ≡ m$
+    $id^{η} ⊛ m ≡ m$
     \xe
 
     \ex~
     \textbf{Composition}\\
-    $(∘)^{↑} \ml{S} u \ml{S} v \ml{S} w ≡ u \ml{S} (v \ml{S} w)$
+    $(∘)^{η} ⊛ u ⊛ v ⊛ w ≡ u ⊛ (v ⊛ w)$
     \xe
 
     \end{multicols}
 
         You can verify for yourselves that the triple $(\type{K_{t}},↑,\ml{S})$
-    obeys the applicative laws -- we'll call it the \textit{continuation applicative}.
+    obeys the applicative laws -- we can call it the \textit{continuation applicative}.
 
     A related, more powerful abstraction from the functional programming
     literature is \textit{monads}. There is a growing body of literature in
     linguistic semantics that explicitly makes use of monads
-    (\citealt{Charlowc}, \todo{cite others}). A monad, like an applicative
+    (see, e.g., \citealt{shan2002monads,Charlowc,grove2019}, and others). A monad, like an applicative
     functor, is defined as a triple consisting of a type constructor and two
     functions. Monads are strictly speaking more powerful than applicative
     functors; that is to say, if you have a monad you are guaranteed to have an
     applicative functor, but not vice versa.
 
-    In, e.g., \citet{barkerShan2015}, and much of the existing literature in
-    linguistic semantics making use of continuations, they are presented in
-    their applicative guise; in the functional programming literature however
-    (and especially in \texttt{haskell}) continuations are more widely used in
-    their monadic guise. A monad is a triple $(\type{K_{t}},(↑),μ)$ --
-    the crucial addition here is \textit{join} ($μ$).
-
     \pex
+    \textit{Monad} (def.)\\
+    A \textit{monad} consists of the following three components, subject to
+    \textbf{associativity} and \textbf{identity}.\sidenote{I've defined the monad laws here in terms of
+      \ml{map}, which we haven't discussed. In haskell, this corresponds to
+      \texttt{fmap}. In category theory, given a functor $F:C → D$, this corresponds
+      to the mapping from morphisms in $C$ to morphisms in $D$ supplied by the
+      definition of $F$. Here, we'll define $\ml{map}$ as follows: a pair
+      $(\type{F},\ml{map})$ is a \textit{functor}:
+
+
+      P.s. don't worry if you don't know what any of this means! This is only
+      here as a tidbit for interested parties.}
+    \a $\type{F : \type{type} → \type{type}}$
+    \a $η : \type{a → F a}$
+    \a $μ: \type{F (F a)
+          → F a}$
+        \xe
+
+    \begin{multicols}{2}
+
+      \ex
+      \textbf{Associativity}\\
+      \(μ ∘ (\ml{map} μ) ≡ μ ∘ μ\)
+      \xe
+
+      \columnbreak
+
+      \ex~
+      \textbf{Identity}\\
+      \(μ . (\ml{map} η) ≡ \ml{join} ∘ η ≡ id\)
+      \xe
+
+     \end{multicols}
+
+     We can define join for the continuation monad as follows:
+
+     \pex
     \textit{join} (def.)\\
     \a \(μ : \type{K_{t} (K_{t} a) → K_{t} a}\)
     \a \(m^{μ} ≔ λ k . m (λ c . c k)\)
     \xe
+
 
     In tower terms, \textit{join} takes a two-level tower and sequences effects
     from the top story down:
@@ -907,16 +1300,15 @@ We can consider a more general version of this type (see
     \xe
 
     Interestingly, it looks like we can define join just in terms of operations
-    from the applicative instance:
+    from the applicative instance; in other words, the continuations in their
+    monadic guide are no more expressive than continuations in their applicative
+    guise:\sidenote{Thanks to Julian Grove for discussing this point with me.}
 
     \ex
     $m^{μ} = m ∘ (↑)$
     \xe
 
     I leave a demonstration of this fact as an exercise.
-
-
-
 
     % \section{Shift and reset}
 
