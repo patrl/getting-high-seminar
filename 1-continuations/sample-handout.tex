@@ -34,6 +34,8 @@
 }
 \makeatother
 
+\setcounter{secnumdepth}{3}
+
 \title{Continuation semantics i\thanks{24.979: Topics in
     semantics\\\noindent\textit{Getting high:}\\\noindent\textit{scope, projection, and evaluation order}}}
 
@@ -73,6 +75,17 @@
 \maketitle% this prints the handout title, author, and date
 
 \section{Roadmap}
+
+\subsection{Goals for the first block}
+
+\begin{itemize}
+
+    \item To be able to understand \citeauthor{barkerShan2015}'s tower notation,
+    and how to translate from towers to flat representations, and vice versa.
+
+\end{itemize}
+
+\todo[inline]{Add more goals}
 
 \section{Some notation conventions}
 
@@ -570,9 +583,247 @@ alongside the \textit{graph of the semantic derivation}.
 
 \end{multicols}
 
+\section{Scopal ambiguities}
+
+\subsection{Interaction between scope-takers and other operators}
+
+Right now, we have a theory which is very good at deriving the surface scope
+reading of a sentence with multiple quantifiers. It can also derive some
+ambiguities that arise due to interactions of quantifiers and scopally \textit{immobile}
+expressions, such as intensional predicates. Consider, e.g., the interaction
+between a universal quantifier and the desire verb \textit{want}.
+
+\ex
+Daniele wants to join every group chat.\label{ex:dani}\hfill $\ml{want} > ∀;∀ > \ml{want}$
+\xe
+
+(\ref{ex:dani}) is ambiguous: (i) if \textit{every} takes scope below
+\textit{want}, it is true if Dani has a desire about joining every group chat,
+(ii) if \textit{every} takes scope over \textit{want}, it is true if every group
+chat is s.t. Dani has a desire to join in.
+
+We actually already have everything we need in order to account for this. In a
+nutshell, the two readings correspond to an application of \ml{LOWER} either
+below or above the intensional predicate.\sidenote{For a fully-fledged treatment
+of the examples below, we would of course need to systematically replace
+$\type{t}$ in our fragment to some intensional type.}
+
+\ex Daniele wants to join every group chat.\hfill$\ml{want} > ∀$
+\begin{forest}
+  [{...}
+    [{Daniele}]
+    [{$λ y . y \ml{wants} (∀x[\ml{groupChat} x→ (\ml{pro join }x)])$}
+      [{wants}]
+      [{$∀x[\ml{groupChat} x→ (\ml{pro join }x)]$}
+      [{$\ml{LOWER}$}
+      [{$\semtower{∀x[\ml{groupChat} x → []]}{\ml{pro} \ml{join} x}$\\\ml{S}}
+        [{PRO$^{↑}$}]
+        [{$\semtower{∀x[\ml{groupChat} x → []]}{λ y . y \ml{join} x}$\\\ml{S}}
+          [{join$^{↑}$}]
+          [{$\semtower{∀x[\ml{groupChat} x → []]}{x}$} [{every group chat},roof]]
+        ]
+      ]
+      ]
+      ]
+    ]
+  ]
+\end{forest}
+\xe
+
+\ex~
+Daniele wants to join every group chat.\hfill $∀ > \ml{want}$
+\begin{forest}
+  [{$∀x[\ml{groupChat} x → \ml{Dani wants}(\ml{pro join }x)]$}
+  [{\ml{LOWER}}
+    [{$\semtower{∀x[\ml{groupChat}  \rightarrow []]}{\ml{Dani wants} (\ml{pro} \ml{join} x)}$}
+      [{Daniele}]
+      [{...}
+        [{wants}]
+        [{...} [{PRO to join every group chat},roof]]
+    ]
+  ]
+  ]]
+\end{forest}
+\xe
+
+We can schematize what's going on here by boxing the point of the derivation at
+which \ml{LOWER} applies:
+
+\begin{itemize}
+
+    \item $\ml{Daniele} (\ml{wants} \fbox{\ml{pro}^{↑} \ml{S} (\ml{join}^{↑} \ml{S} \ml{everyGroupChat})}^{↓})$
+
+    \item $\fbox{\ml{Daniele}^↑ \ml{S} (\ml{wants}^↑ \ml{S} (\ml{pro}^↑ \ml{S} (\ml{join}^↑ \ml{S} \ml{everyGroupChat})))}^{↓}$
+
+\end{itemize}
+
+If you're more familiar with a treatment of scope-taking in terms of quantifier
+raising, then you can think of \ml{LOWER} as being the correlate of the landing
+site of QR; semantic composition proceeds via \ml{S} up until we encounter the
+landing site, at which point we switch back to \enquote{vanilla} semantic
+composition via \ml{A}.
+
+\subsection{Scope rigidity}
+
+As we've seen however, when we're dealing with multiple scopally \textit{mobile}
+expressions (such as quantifiers), continuation semantics derives surface scope
+readings by default. It is, therefore, well-suited
+to languages such as German and Japanese, which have been argued to display
+\textit{scope-rigidity} (modulo semantic reconstruction amongst other potential exceptions).
+
+The following example is from Kuroda (1970).\todo{add ref}
+
+\pex
+\a\begingl
+\gla Dareka-ga subete-no hon-o yonda.//
+\glb someone-{\sc nom} all-{\sc gen} book-{\sc acc} read.//
+\glft \enquote{Someone read all the books.}\hfill $∃ > ∀; \text{\xmark} ∀ > ∃$//
+\endgl
+\a\begingl
+\gla Subete-no hon-o dareka-ga yonda.//
+\glb all-{\sc gen} book-{\sc acc} someone-{\sc nom} read.//
+\glft \enquote{Someone read all the books}\hfill $∀ > ∃; ∃ > ∀$//
+\endgl
+\xe
+
+There are also, of course, famous environments in English where we observe
+apparent scope-rigidity, such as the double-object construction (scope rigidity
+in the double-object construction is usually described as \textit{scope freezing}).
+
+\pex
+\a Daniele sent a syntactician every sticker.\hfill $∃ > ∀; \text{\xmark} ∀ > ∃$
+\a Daniele sent a sticker to every syntactician.\hfill $∃ > ∀; ∀ > ∃$
+\xe
+
+\citet{bobaljikWurmbrand2012} posit a (violable) economy condition in order to
+express the preference for surface scope observed in many languages.
+\citeauthor{bobaljikWurmbrand2012} make architectural assumptions that we aren't
+necessarily committed to here, but the spirit of \ac{ScoT} is very much in line
+with a continuation semantics for quantifiers, where surface scope is the
+default, and inverse scope will only be achievable via additional application of
+the type-shifting rules posited.
+
+\ex
+\acf{ScoT}\\
+If the order of two elements at LF is $A>B$, then the order at PF is $A>B$.
+\xe
+
+\subsection{Deriving inverse scope}
+
+Recall that \(\ml{LIFT}\) is a \textit{polymorphic function} -- it lifts a value
+into a trivial tower:
+
+\ex
+$a^{↑} ≔ \semtower{[]}{a}$
+\xe
+
+Since \ml{LIFT} is polymorphic, in principle it can apply to any kind of value
+-- even a tower! Let's flip back to lambda notation to see what happens.
+
+\ex
+$\eval{everyone} ≔ λ k . ∀x[k x]$
+\xe
+
+\ex~
+$\eval{everyone}^{↑} = λ l . l (λ k . ∀x[k x])$
+\xe
+
+Going back to tower notation, lifting a tower adds a trivial third
+story:\sidenote{In fact, via successive application of \ml{LIFT}, we can
+  generate an $n-$story tower.} Following \citet{Charlowc}, when we apply
+\ml{LIFT} to a tower, we'll describe the operation as \textit{external lift}
+(although, it's worth bearing in mind that this is really just our original
+\ml{LIFT} function).
+
+
+One important thing to note is that, when we externally lift a tower, the
+quantificational part of the meaning always remains on the same story relative
+to the bottom floor. Intuitively, this reflects the fact that, ultimately,
+\ml{LIFT} alone isn't going to be enough to derive quantifier scope ambiguities.
+
+\ex
+\(\left(\semtower{∀x[]}{x}\right) = \semtower{[]}{\semtower{∀x[]}{x}}\)
+\xe
+
+The extra ingredient we're going to need, is the ability to sandwhich an empty
+story into the \textit{middle} of our tower, pushing the quantificational part
+of the meaning to the very top. This is \textit{internal lift} ($⇈$).\sidenote{I
+can tell what you're thinking: \enquote{seriously? Another \textit{darn}
+  type-shifter? How many of these bad boys are we going to need?!}.
+Don't worry, I got you. Even thought we've defined internal lift here as a
+primitive operation, it actually just follows from our existing machinery.
+Concretely, \textit{internal lift} is really just \textit{lifted} \ml{LIFT} (so
+many lifts!). Lifted \ml{LIFT} applies to its argument via \ml{S}.
+
+\ex
+$(\ml{LIFT}^{↑}) \ml{S} \semtower{f []}{x} = \semtower{f []}{\semtower{[]}{x}}$
+\xe
+
+}
+
+\pex
+\textit{Internal lift} (def.)\\
+\a \((⇈) : \type{K_{t} a → K_{t} (K_{t} a)}\)
+\a \(m^{⇈} ≔ λ k . m (λ x . k x^{↑})\)
+\xe
+
+It's much easier to see what internal lift is doing by using the tower notation.
+We can also handily compare its effects to those of \textit{external} lift.
+
+\begin{multicols}{2}
+\ex \textit{Internal lift} (tower ver.)\\
+\(\left(\semtower{f []}{x}}\right)^{⇈} ≔ \semtower{f []}{\semtower{[]}{x}}\)
+\xe
+\columnbreak
+\ex \textit{External lift} (tower ver.)\\
+\(\left({\semtower{f []}{x}}\right)^{↑} ≔ \semtower{[]}{\semtower{f []}{x}}\)
+\xe
+
+\end{multicols}
+
+Armed with \textit{internal} and \textit{external} lifting operations, we now
+have everything we need to derive inverse scope. We'll start with a simple
+example (\ref{ex:classic1}).
+
+The trick is: we \textit{internally} lift the quantifier that is destined to
+take wide scope. That's it!
+
+\ex
+A boy danced with every girl.\hfill $∀ > ∃$\label{ex:classic1}
+\xe
+
+\ex Step 1: internally lift \textit{every girl}.\\
+\begin{forest}
+  [{...}
+    [{dance-with$^{↑}$}]
+    [{...} [{...} [{every girl}]]]
+  ]
+\end{forest}
+\xe
+
+
+
+\section{Scope islands and \ml{RESET}}
+
 \section{Continuations beyond DPs}
 
 \subsection{Generalized (con/dis)junction}\label{sec:conj}
+
+\section{Indexed continuations}
+
+Let's look again at the \enquote{shape} of a continuation type:
+
+\ex
+\(\type{K_{r} ≔ (a → r) → r}\)
+\xe
+
+We can consider a more general version of this type (see
+\citealt{wadler1994}).\sidenote{I'm using the variable names $i$ and $r$ as
+  mnemonics for \textit{intermediate type} and \textit{return type} respectively.}
+
+\ex
+\(\type{K_{r}^{i} ≔ (a)}\)
+\xe
 
 \todo[inline]{generalized conjunction as continuised conjunction.}
 
@@ -643,12 +894,28 @@ alongside the \textit{graph of the semantic derivation}.
     \pex
     \textit{join} (def.)\\
     \a \(μ : \type{K_{t} (K_{t} a) → K_{t} a}\)
-    \a \(μ m = λ k . m (λ K . K k)\)
+    \a \(m^{μ} ≔ λ k . m (λ c . c k)\)
     \xe
 
+    In tower terms, \textit{join} takes a two-level tower and sequences effects
+    from the top story down:
+
     \ex
-    $μ (λ k . ∃x[k (λ l . ∀ y[l (x \ml{likes} y)])]) = λ j . ∃x[∀ y[j (x \ml{likes} y)])]$
+    $
+    \left\semtower{f []}{\semtower{g []}{x}}\right^{μ} = \semtower{f (g [])}{x}
+    $
     \xe
+
+    Interestingly, it looks like we can define join just in terms of operations
+    from the applicative instance:
+
+    \ex
+    $m^{μ} = m ∘ (↑)$
+    \xe
+
+    I leave a demonstration of this fact as an exercise.
+
+
 
 
     % \section{Shift and reset}
@@ -683,7 +950,7 @@ alongside the \textit{graph of the semantic derivation}.
     }
   \end{lstlisting}
 
-  A simple two-level tower can now be typeset as follows:
+ A simple two-level tower can now be typeset as follows:
 
     \begin{lstlisting}[language=TeX]
       $$\semtower{f []}{x}$$
