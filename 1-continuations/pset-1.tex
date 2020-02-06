@@ -1,0 +1,138 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\setcounter{secnumdepth}{3}
+
+\title{p-set 1}
+
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott\sidenote{\texttt{pdell@mit.edu}} \& Martin Hackl\sidenote{\texttt{hackl@mit.edu}}}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\textbf{Deadline: }02.13 (i.e., before next class)
+
+\section{Warming up}
+
+\ex
+A philosopher has criticized most linguists.\hfill $\ml{most} > ∃$\label{ex:1}
+\xe
+
+\ex
+Most linguists have read a paper by every German semanticist.\\
+\phantom{,}\hfill
+$∀ > ∃ > \ml{most}$
+\xe
+
+
+Give a derivation of the indicated readings of the examples above using:
+
+\begin{itemize}
+
+    \item Quantifier raising and predicate abstraction.\sidenote{I.e., in-line
+    with \citet{heimKratzer1998} -- you should have covered this in semantics
+    101. Don't worry about trace conversion, just treat traces of movement as variables.}
+
+    \item Continuation semantics with \textit{flat lambda
+    expressions}.\sidenote{No towers allowed! Make sure to be explicit about
+    types, as well as any $β$-reductions and $α$-conversions necessary.}
+
+   \item Continuation semantics with \textit{towers}.
+
+\end{itemize}
+
+\begin{tcolorbox}
+  Bonus round
+  \tcblower
+  Can you come up with a general \textit{translation procedure} for going from
+  a derivation using continuations to a derivation which makes use of quantifier
+  raising? It might help to think about the role of \ml{LOWER} in continuation semantics.
+\end{tcolorbox}
+
+\section{Split scope}
+
+Non upward-monotonic quantifiers give rise to so-called \textit{split scope}
+readings across intensional verbs (Heim 2001).
+
+\ex
+The company need fire no employees.\\
+\textit{It is not the case that the company is obligated to fire
+  employees}\hfill (Potts 2000)
+\xe
+
+The split scope reading -- the one we're interested in -- entails a lack of
+obligation for the company. It seems to involve a noun-phrase \textit{no
+  employees} scoping in two different places at once.
+
+\begin{itemize}
+
+    \item Analyze this phenomenon using continuation semantics.\sidenote{Hint:
+    think about towers with $n>2$ stories.}
+
+\end{itemize}
+
+\end{document}
