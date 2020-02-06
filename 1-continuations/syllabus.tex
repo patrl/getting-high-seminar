@@ -1,0 +1,186 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\setcounter{secnumdepth}{3}
+
+\title{Getting high: scope, projection, and evaluation order\thanks{24.979: Topics in
+    semantics}}
+
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott\sidenote{\texttt{pdell@mit.edu}} \& Martin Hackl\sidenote{\texttt{hackl@mit.edu}}}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\begin{abstract}
+\enquote{The seminar will provide a venue for discussing various mechanisms for scope-taking and projection, taking as our starting point continuations -- a perspective on scope-taking developed by Chris Barker and Chung-chieh Shan. We will attempt to develop a solid working knowledge of the relevant mechanics, as well as arrive at a comprehensive empirical assessment of their advantages and drawbacks in selected areas of application. These will include quantifier scope, variable binding, cross-over, and presupposition projection, paying particular attention to linearity effects which continuations are designed to handle in a principled manner.}
+\end{abstract}
+
+\section{Requirements}
+
+\subsection{General}
+
+Students should attend and participate (obviously!). There will also
+be occasional homework assignments, consisting of either (i) a p-set, or (ii)
+submitting questions on an assigned reading. These will usually be due back the
+day before the following class.
+
+\subsection{Student presentations}
+
+For the registered students, we expect two things:
+
+\begin{itemize}
+
+  \item A presentation in class.
+
+  \item Eventually, a term paper.
+
+\end{itemize}
+
+We've blocked out the final two weeks of the seminar for student presentations,
+but this is mutable. The presentation may take one of two forms: (a)
+leading discussion of a paper relevant to the term paper topic, (b)
+presentation of WiP ideas that will eventually take the form of a term paper.
+Just to emphasise, we don't expect the latter kind of presentation to be
+especially polished or complete. Something more exploratory is fine. Given that
+there are four registered students, each presentation should be around one hour long.
+
+
+\section{Tentative schedule}
+
+The first few weeks are fairly stable, but later weeks will probably
+shift.\sidenote{Note, Patrick is down as teaching \textit{crossover i}, but will
+be at a conference that week, so this session will need to be rescheduled. We'll
+be in touch about that soon.}
+
+\begin{table}[!ht]
+\begin{tabular}{@{}lll@{}}
+\toprule
+  date & content  & lecturer  \\ \midrule
+  today & continuations i &  Patrick \\
+  02.13 & continuations ii & Patrick  \\
+  02.20 & the view from QR i & Martin  \\
+  02.27 & the view from QR ii & Martin  \\
+  03.05 & crossover i (\citealt{shanBarker2006}) & Patrick \\
+  03.12 & crossover ii (Chierchia, to appear) &  Martin \\
+  03.19 & presupposition as scope (\citealt{grove2019}) & Patrick \\
+  04.02 & Haddock's puzzle (\citealt{bumford2017}) & Martin \\
+  04.09 & TBA & Patrick  \\
+  04.16 & presupposition and reference resolution & Martin  \\
+  04.23 & TBA & TBA \\
+  04.30 & \textit{student presentations} & N/A  \\
+  05.07 & \textit{student presentations} & N/A \\
+ \bottomrule
+\end{tabular}
+\end{table}
+
+\section{Readings}
+
+The beginnings of a bibliography for this seminar:\sidenote{Note: readings aren't necessary until
+  assigned. If you have any suggestions for papers on related topics we should
+  look at, please let us know! You can shape the future of the seminar!!}
+
+\subsection{Scope}
+
+\begin{itemize}
+
+\item \fullcite{barker2002}
+
+\item \fullcite{barkerShan2015}
+
+\item \fullcite{Charlowc}
+
+\item \fullcite{shan2002}
+
+\end{itemize}
+
+\subsection{Crossover}
+
+\begin{itemize}
+
+    \item \fullcite{shanBarker2006}
+
+  \item \fullcite{barkerShan2008}
+
+  \item Chierchia, Gennaro. to appear. The origins of weak crossover: when dynamic semantics meets event semantics. \textit{Natural Language Semantics}.
+
+\end{itemize}
+
+\subsection{Haddock's puzzle and presupposition}
+
+\begin{itemize}
+
+    \item \fullcite{bumford2017}
+
+    \item Champollion, Lucas and Sauerland, Uli. 2010. Move and accommodate: a solution to Haddock’s puzzle. \textit{Empirical issues in syntax and semantics} 8.
+
+    \item \fullcite{grove2019}
+
+\end{itemize}
+
+% \printbibliography
+
+\end{document}
