@@ -1,0 +1,1625 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\setcounter{secnumdepth}{3}
+
+\title{Continuation semantics i\thanks{24.979: Topics in
+    semantics\\\noindent\textit{Getting high: Scope, projection, and evaluation order}}}
+
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott\sidenote{\texttt{pdell@mit.edu}} \& Martin Hackl\sidenote{\texttt{hackl@mit.edu}}}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+
+\begin{tcolorbox}
+  Homework
+  \tcblower
+Please read \cite{barkerShan2015}, chapters 1 and 4; you can find a pdf on stellar. If you have
+    any questions, feel free to send me them in advance of next
+    week's class, and I'll do my best to address them.
+
+There's also a brief problem set on stellar, due \textbf{next Thursday}. This
+    is intended to get you comfortable working with continuations. Like
+    any subsequent p-sets, it won't be graded.
+\end{tcolorbox}
+
+\section{Why bother with continuations?}
+
+\textit{If you're a certain kind of person, the following answer should be
+  sufficient:}\\
+\textbf{playing with new toys is fun.}
+
+\textit{The longer answer...}
+
+\begin{itemize}
+
+    \item In this seminar, we're going to be investigating mechanisms via which
+    meanings \textit{get high}.
+
+    \item To put this in a different way, expressions of natural language come
+    with conventionalized meaning components. Often, meaning components end up
+    interpreted in places that don't necessarily correspond to the pronounced
+    position of the expression they're associated with.
+
+  \item Special cases of this include, but are almost certainly not limited to:
+
+    \begin{itemize}
+
+        \item Scope-taking (the focus of the first part of this seminar).
+
+        \item Presupposition projection (the focus of the latter part of this seminar).
+
+        \item Other varieties of \enquote{projective} content (e.g.,
+        expressives, appositives, etc.).
+
+     \end{itemize}
+
+    \item We have fairly well-established techniques for dealing with these
+    phenomena, e.g., quantifier raising for scope
+    (\citealt{may,heimKratzer1998}, etc.), trivalence for presupposition
+    projection (Peters 1979, George 2010, etc.), and conventional implicature
+    for expressives and appositives
+    (\citealt{potts2005,mccready2010a,gutzmann2015}, etc.) -- which aren't without their problems, as we'll see.
+
+    \item \textit{Continuations} provide a powerful abstraction for
+    modeling meaning components \enquote{getting high} in a more general,
+    uniform way.\sidenote{This goes beyond just \textit{meaning}, and can be
+    generalized to, e.g., phonological and syntactic features.
+    See \cite{elliott2019movement}.}
+
+    \item This
+    doesn't automatically make them preferable, but if we can get away with
+    reducing our set of theoretical primitives while maintaining the same
+    empirical coverage, we should at least pursue the possibility.
+
+    \item Continuations were originally developed\sidenote{Or rather,
+    \textit{discovered}. See, e.g., \citet{danvyFilinski1992} and
+    \citet{wadler1994} for important foundational work on \textit{delimited
+    continuations} -- the variety we'll be discussing in this course.} by computer scientists in order to account for
+    computations that are, in some sense, \textit{delayed} until later on. As
+    such, they're especially well-suited to modelling meaning components, the
+    evaluation of which is \textit{delayed} until later in the derivation.
+
+    \begin{itemize}
+
+    \item See e.g., \citet{barkerShan2015} and related works for a rich
+    literature devoted to applying continuations to \textit{scope taking}.
+
+    \item \citet{grove2019} develops a theory of presupposition projection as a
+        \textit{scopal} phenomenon, using continuations.
+
+     \item \citet{deGroote2006} uses continuations to develop a
+        \textit{compositional} dynamic semantics (another important reference is \citealt{Charlowc}).
+
+     \item In recent work, I've used continuations to model non-local readings
+        of expressive adjectives (\citealt{elliott-fuck}) and overt movement (\citealt{elliott2019movement})
+
+    \end{itemize}
+
+ \item One of the \textit{design features} of continuation semantics that is of
+    special interest to us is its \textit{built-in} \textit{left-to-right} bias.
+
+     \item One thing we'll be thinking about in some depth is how meaning that
+     \enquote{gets high}, such as scope-takers, interact with anaphoric
+     expressions and other dependees.
+
+     \item As has been observed for quite some time, interaction between scope
+     and anaphora exhibits a \textit{leftness bias}.
+
+     \begin{fullwidth}
+     \begin{multicols}{2}
+
+     \ex
+     Every student$&^i$'s mother adores their$_{i}$ advisor.
+     \xe
+
+     \columnbreak
+
+     \ex~
+     \ljudge{*}Their$_{i}$ advisor adores every student$^{i}$'s mother.
+     \xe
+
+     \end{multicols}
+     \end{fullwidth}
+
+     \item The contrast above is an example of a \textit{weak crossover} violation.
+
+   \item Roughly, weak crossover can be stated as follows:
+
+     \ex \acf{wco}\\
+     Scope may feed binding \textit{unless} the bound expression
+     \textit{precedes} the scope-taker.
+     \xe
+
+    \item We'd like to explore the possibility, tentatively, that weak crossover
+    isn't just about quantificational scope, but parallel effects can be
+    observed with projective meanings more generally.
+
+    \item I'll give you a couple of examples here to whet your appetite,
+    although we won't get back to this until quite a bit later in the course.
+
+    \item First, I'd like to suggest that \textit{presupposition projection can
+    feed anaphora}:
+
+    \ex
+    Daniel doesn't know Paul has a sister$^{x}$, although he has seen her$_{x}$.
+    \xe
+
+    \item Focus on the construal where the indefinite takes scope below the
+    intensional verb. Nevertheless, anaphora is possible. The natural way to
+    think about this is as presupposition projection feeding
+    anaphora:\sidenote{A cautionary note: surprisingly, this doesn't follow from
+    standard dynamic theories (such as
+    \citealt{heim1982,beaver_presupposition_2001}), since presuppositions are
+    themselves static. A natural move is to instead treat presuppositions as
+    themselves dynamic statements; see Elliott \& Sudo (2019) for a theory with
+    this character.}
+
+    \ex
+    \fbox{Paul has a sister} Daniel doesn't know \textcolor{gray}{Paul has a
+    sister},\\
+    although he has seen her.
+    \xe
+
+    \item Having established that presupposition projection can feed anaphora,
+    let's see what happens when the pronoun is made to \textit{precede} the
+    presupposition trigger:
+
+    \ex
+    \ljudge{\#}Her$_{x}$ boss doesn't know that Paul has a sister$^{x}$.
+    \xe
+
+    \item Again, focus on the construal where the indefinite takes scope below
+    the intensional verb. Our example doesn't have the reading indicated. This is surprising
+    given that (a) presuppositions project, (b) presupposition projection can
+    feed anaphora.
+
+    \item Our hunch is that, what is to blame here is a more general form of \ac{wco}
+    -- \textit{projective meaning may feed anaphora unless the anaphor precedes
+    the projector.}
+
+    \item Continuations are sufficiently general, that we can use them to model
+    a wide variety of phenomena. Since they come with a built in linear
+    bias\sidenote{And, indeed, arguably one of the most empirically successful
+    accounts of WCO is couched in terms of continuation semantics -- see
+    \citet{shanBarker2006}. We'll discuss this in several weeks time.}, they
+    seem like a prime candidate for modeling linear biases more generally.
+
+\end{itemize}
+
+\section{Plan}
+
+
+\textit{This week:}
+
+\begin{itemize}
+
+
+    \item We're going to develop an understanding of \citeauthor{barkerShan2015}'s tower notation,
+    and how to translate from towers to flat representations, and vice versa.
+
+    \item We'll get a handle on continuation semantics' linear bias, encoded in the
+    composition rules themselves.\sidenote{This will be necessary preparation for our
+    discussion of \citeauthor{shanBarker2006}'s (\citeyear{shanBarker2006})
+    theory of crossover.}
+
+    \item We'll show how to account for scope ambiguities via a combination of
+    \textit{lowering} and multi-story towers.
+
+    \item Scope islands in terms of obligatory evaluation.
+
+\end{itemize}
+
+\textit{Next week:}
+
+\begin{itemize}
+
+    \item Using continuations to account for generalized con/dis-junction.
+
+    \item Indexed continuations and a compositional semantics for determiners.
+
+    \item Continuations and exceptionally scoping indefinites (\citealt{Charlowc}).
+
+\end{itemize}
+
+\textit{If we have time:}
+
+\begin{itemize}
+        \item Antecedent Contained Deletion.
+        \item Extraposition and scope.
+        \item Expressive adjectives.
+    \end{itemize}
+
+
+\section{Some notation conventions}\label{sec:notation}
+
+Generally speaking, I'll be assuming \cite{heimKratzer1998} as background, but I'll depart from their notation slightly.
+
+Expressions in the meta-language will be typeset in \textsf{sans serif}.
+
+    $$\eval{[\textsubscript{DP} John]} ≔ \underbrace{\ml{John}}_{\text{individual}}$$
+
+    Seeing as its primitive, we'll treat white-space as function
+    application, e.g.:
+
+    \ex
+    $(λ x . \ml{left} x) \ml{paul} = \ml{left} \ml{paul}$
+    \xe
+
+  Function application associates to the \textit{left}:
+
+    \ex
+    $(λx . λ y . y \ml{likes} x) \ml{paul} \ml{sophie} ≡ ((λx . λ y . y \ml{likes} x) \ml{paul}) \ml{sophie}$
+    \xe
+
+    \begin{tcolorbox}
+      Question
+      \tcblower
+      Can the following expression be reduced?
+
+      \ex
+      $(λ k . ∃z[k z]) (λ x . λ y . y  \ml{likes} x) \ml{Sam}$
+      \xe
+
+    \end{tcolorbox}
+
+  We'll write \textit{types} in a \texttt{fixed width font}. We have our
+    familiar primitive types...
+
+    \ex
+    $\mathtt{type} ≔ \type{e} | \type{t} | \type{s} | …$
+    \xe
+
+   ...and of course \textit{function types}. Unlike
+    \citet{heimKratzer1998}, who use $⟨.⟩$ as the constructor for a function
+    type, we'll be using the (more standard (outside of linguistics!)) arrow constructor $(→)$:
+
+    \ex
+    $\type{⟨e,t⟩} ≡ \type{e → t}$
+    \xe
+
+   The constructor for function types \textit{associates to the right}:
+
+    \ex
+    $\type{e → e → t} ≡ \type{e → (e → t)}$
+    \xe
+
+    \begin{tcolorbox}
+      Question
+      \tcblower
+      Which of the following is the correct type for a quantificational
+      determiner?
+
+      \ex
+      $\eval{every}:\type{(e → t) → (e → t) → t}$
+      \xe
+
+      \ex
+      $\eval{every}:\type{e → t → (e → t) → t}$
+      \xe
+
+    \end{tcolorbox}
+
+\end{itemize}
+
+\section{The Partee triangle}
+
+The purpose of this section is to show that continuation semantics is, in a
+certain sense, \textit{already implicit} in the inventory of type-shifters
+standardly assumed in formal semantics.
+
+\ex
+$\ml{LIFT} x ≔ λk  . k x$\hfill$\type{\ml{LIFT} : e → (e → t) → t}$
+\xe
+
+\ex~
+$\ml{IDENT} x ≔ λ y . y = x$\hfill$\ml{IDENT} : \type{e → e → t}$
+\xe
+
+\ex~
+$\ml{BE} Q ≔ λx . Q (λ y . y = x)$\hfill$\ml{BE} : \type{((e → t) → t) → e → t}$
+\xe
+
+Evidence for $\ml{IDENT}$:
+
+\ex
+This man is John.
+\xe
+
+Evidence for $\ml{BE}$:
+
+\ex
+This man is an authority on heavy metal.
+\xe
+
+We'll come back to \ml{LIFT} in a moment.
+
+\begin{tcolorbox}
+\textbf{Commutative diagrams}
+\tcblower
+The \textit{Partee triangle} is a \textit{commutative diagram}. We say that a diagram \textit{commutes} if, when there are multiple paths
+between two points, those paths are equivalent. The equivalence in (\ref{tri1})
+is therefore expressed by the triangle.
+\end{tcolorbox}
+
+
+\ex The Partee triangle\sidenote{\cite{partee1986}}\\
+\begin{tikzcd}
+  \type{e} \arrow[rr, "\ml{LIFT}"] \arrow[dr, "\ml{IDENT}"] & & \type{(e → t) → t}
+  \arrow[dl, "\ml{BE}"]\\
+  & \type{e → t} &
+\end{tikzcd}\label{def:ptri}
+\xe
+
+\ex
+$\ml{ident} ≡ \ml{BE} ∘ (↑)$\label{tri1}
+\xe
+
+\textsc{Observation:} quantificational and non-quantificational DPs
+can be coordinated:
+
+\ex
+{}[Howie and a woman] entered the club\label{ex:conj1}
+\xe
+
+\ml{LIFT} allows something that, by virtue of its quantificational nature, is an
+\textit{inherent} scope-taker, to combine with something that
+\textit{isn't}:\sidenote{If you're familiar with \cite{parteeRooth} you'll notice
+  that the \textit{and} that coordinates quantificational DPs (written here as
+  \textit{and}$_{Q}$), is just the result of applying their \textit{generalized
+    conjunction} rule. We'll return to generalized conjunction, and the
+  connection to continuations next week.}
+
+\ex
+\begin{forest}
+  [{$λ k . ∃x[\ml{woman} x ∧ k x] ∧ k \ml{Howie}$}
+  [{$λk . k \ml{Howie}$} [{\ml{LIFT}} [{\ml{Howie}}]]]
+  [{$λ Q' . λ k . ∃x[\ml{woman} x ∧ k x] ∧ Q' k$}
+    [{$λQ . λ Q' . λ k . Q k ∧ Q' k$\\and$_{Q}$}]
+    [{$λ k . ∃x[\ml{woman} x ∧ k x]$} [{a woman},roof]]
+  ]
+  ]
+\end{forest}
+\xe
+
+\subsection{Generalizing the triangle}
+
+Based on the way in which \ml{LIFT} and friends are defined, in theory
+we could replace $\type{e}$ with \textit{any} type. Let's give a more general
+statement of \ml{LIFT} and friends as polymorphic functions:
+
+\ex
+$\ml{LIFT} x ≔ λk  . k x$\hfill$\type{\ml{LIFT} : a → (a → t) → t}$
+\xe
+
+\ex~
+$\ml{IDENT} x ≔ λ y . y = x$\hfill$\ml{IDENT} : \type{a → a → t}$
+\xe
+
+\ex~
+$\ml{BE} Q ≔ λx . Q (λ y . y = x)$\hfill$\ml{BE} : \type{((a → t) → t) → a → t}$
+\xe
+
+The diagram, of course, still commutes:
+
+\ex The (generalized) Partee triangle\\
+\begin{tikzcd}
+  \type{a} \arrow[rr, "\ml{LIFT}"] \arrow[dr, "\ml{IDENT}"] & & \type{(a → t) → t}
+  \arrow[dl, "\ml{BE}"]\\
+  & \type{a → t} &
+\end{tikzcd}\label{def:ptri}
+\xe
+
+Why might a polymorphic \ml{LIFT} be useful? Recall that we used a typed
+instantiation of \ml{LIFT} in order to allow a quantificational thing to combine
+with a non-quantificational thing. Polymorphic \ml{LIFT} allows us to type-lift,
+e.g., a function that takes multiple arguments:
+
+\ex
+\(\ml{LIFT} (λ xy . y \ml{hug} x) = \overbrace{λ k . k (λ
+  xy . y \ml{hug} x)}^{\type{((e → e → t) → t) → t}}\)
+\xe
+
+One tantalizing possibility is that this allow us to combine a non-quantificational transitive verb with a
+quantificational DP.
+
+\ex
+Howie \fbox{hugged a woman}
+\xe
+
+\ex~
+\begin{forest}
+  [{\xmark}
+    [{$\type{((e → e → t) → t) → t}$\\$λ k . k (λ xy . y \ml{hug} x)$} [{\ml{LIFT}} [{$λ xy . y \ml{hug} x$}]]]
+    [{$\type{(e → t) → t}$\\$λ k . ∃x[\ml{woman} x ∧ k x]$}]
+  ]
+  \end{forest}
+\xe
+
+Unfortunately, assuming the usual inventory of composition rules (i.e.,
+\textit{function application}, \textit{predicate modification}, and
+\textit{predicate abstraction}), we're stuck.\sidenote{Other, more exotic
+  composition rules such as \textit{restrict} won't help either. Take my word
+  for this!} So, \textbf{let's invent a new one}.
+
+Here's the intuition we're going to pursue. Let's look again at the types. One
+way of thinking about what \ml{LIFT} as follows: it takes an \type{a}-type thing
+and adds a \enquote{wrapper}. Quantificational DPs, on the other hand come
+\enquote{pre-wrapped}.
+
+\begin{itemize}
+
+    \item $\ml{LIFT} \eval{hug}: \type{(\fbox{(e → e → t)} → t) → t}$
+
+    \item $\eval{a woman} : \type{(\fbox{e} → t) → t}$
+
+\end{itemize}
+
+If we look at the wrapped-up types, we see a \textit{function} from individuals,
+and an individual -- namely, two things that can combine via function application.
+
+What we need to accomplish is the following:
+
+\begin{itemize}
+
+  \item Unwrap lifted \textit{hug}.
+
+  \item Unwrap \textit{a woman}.
+
+  \item Use function application to combine the unwrapped values.
+
+  \item Finally, wrap the result back up! Think of the quantificational meaning as being
+    like a taco -- it isn't really a taco without the wrapper, therefore we
+    don't want to throw the wrapper away.
+
+\end{itemize}
+
+    In order to accomplish this, we'll define a new composition rule:
+    \acf{sfa}. We're going to define \ac{sfa} in terms of \acf{fa}; we haven't been
+      explicit about how \ac{fa} is defined yet, so let's do that now. We'll
+      write \ac{fa} as the infix operator
+      \ml{A}.\sidenote{Here, function application is made bidirectional by \textit{overloading}
+      -- we've defined forwards and backwards application, and given them the
+      same function name.}
+
+      \pex \acf{fa} (def.)
+      \a $f \ml{A} x ≔ f x$\hfill$\ml{A}:\type{(a → b) → a → b}$
+      \a $x \ml{A} f ≔ f x$\hfill$\ml{A}:\type{a → (a → b) → b}$
+      \xe
+
+      \begin{tcolorbox}
+
+       \textbf{\acf{sfa}}
+
+       \tcblower
+
+       We'll write \ac{sfa} as the infix operator \ml{S}. Note that, since
+       \ml{A} is overloaded already, and \ml{S} is defined in terms of \ml{A},
+       \ml{S} gets overloaded too.
+
+       \ex
+       \acf{sfa} (def.)\\
+       $m \ml{S} n ≔ λ k . m (λ a . n (λ b . k (a \ml{A} b)))$\\
+       \phantom{,}\hfill$\ml{S}: \type{(((a → b) → t) → t) → ((a → t) → t) → (b
+         → t) → t}$\\
+       \phantom{,}\hfill$\ml{S}: \type{((a → t) → t) → (((a → b) → t) → t) → (b
+         → t) → t}$
+       \xe
+
+      \end{tcolorbox}
+
+      Now, let's illustrate how \ac{sfa} plus generalized \ml{LIFT} allows to
+       compose a quantificational thing with non-quantificational things, using
+       a simple example sentence:
+
+              \ex
+       Howie hugged some woman.
+       \xe
+
+
+
+
+       \begin{fullwidth}
+         \begin{multicols}{2}
+       \ex Step 1: compose \textit{some woman} with \ml{LIFT}-ed \textit{hug}.\\
+       \begin{forest}
+         [{$\type{((e → t) → t) → t}$\\\fbox{$λ k . ∃x[\ml{woman} x ∧ k (λ y . y \ml{hug} x)]$}}
+         [{$\ml{S}$}
+           [{$\type{((e → e → t) → t) → t}$\\$λ k . k (λ xy . y \ml{hug} x)$} [{\ml{LIFT}} [{hug}]]]
+           [{$\type{(e → t) → t}$\\$λ k . ∃x[\ml{woman} x ∧ k x]$} [{some woman},roof]]
+         ]]
+       \end{forest}
+       \xe
+       \columnbreak
+       \ex~ Step 2: compose the resulting VP-denotation with \ml{LIFT}-ed \textit{Howie}\\
+       \begin{forest}
+         [{$\type{(t → t) → t}$\\\fbox{$λ k . k (∃x[\ml{woman} x ∧ \ml{Howie} \ml{hug} x])$}}
+         [{$\ml{S}$}
+           [{$\type{(e → t) → t}$\\$λ k . k \ml{Howie}$} [{$\ml{LIFT}$} [{Howie}]]]
+           [{$\type{((e → t) → t) → t}$\\$λ k . ∃x[\ml{woman} x ∧ k (λ y . y \ml{hug} x)]$} [{hug some woman},roof]]
+         ]]
+       \end{forest}\label{ex:step2}
+       \xe
+     \end{multicols}
+     \end{fullwidth}
+
+       At this point, it's worth mentioning that we've \textbf{bootstrapped
+         continuation semantics} from an independently motivated type-lifting
+       operation, plus a natural composition rule \ac{sfa}; continuations aren't scary at all!
+
+       The $λ k$ argument is standardly referred to as the \textit{continuation
+         argument} in the derivations above. \ac{sfa} allows the continuation
+       argument to get \enquote{passed up}.
+
+       We're now tantalizingly close to deriving the right kind of object for
+       the sentential meaning (namely, something of type $\type{t}$). Only, what
+       we have is something of type $\type{(\fbox{t} → t) → t}$, i.e., a truth
+       value in a \enquote{wrapper}. How do we get back the wrapped up value? We
+       saturate the $k$ argument with the identity function. We'll call this
+       operation $\ml{LOWER}$.\sidenote{Here we've given
+           \ml{LOWER} the maximally polymorphic type compatible with the
+           function definition; in fact, all we need is
+           $(\ml{LOWER} : \type{((t → t) → t) → t})$.}
+
+       \ex
+       $\ml{LOWER}$ (def.)\\
+       $\ml{LOWER} m ≔ m id$\hfill$\ml{LOWER}: \type{((a → a) → a) → a}$
+       \xe
+
+       Applying \ml{LOWER} to the final value in (\ref{ex:step2}) gives us a
+       type \type{t} sentential meaning.
+
+       \ex
+       $\begin{aligned}[t]
+         &\ml{LOWER} (λ k . k (∃x[\ml{Howie} \ml{hug} x]))\\
+         &= (λ k . k (∃x[\ml{Howie} \ml{hug} x])) id& \text{by def.}\\
+         &= id (∃x[\ml{Howie} \ml{hug} x]) & \text{reduce}\\
+         &= ∃x[\ml{Howie} \ml{hug} x] & \text{reduce}
+         \end{aligned}$
+       \xe
+
+       Let's zoom back out and see how all the pieces fit together by looking at
+       the \textit{graph of the derivation}.
+
+       \ex
+       \begin{forest}
+         [{$\type{t}$}
+         [{$\ml{LOWER}$}
+         [{$\type{(t → t) → t}$\\$\ml{S}$}
+           [{$\type{(e → t) → t}$} [{$\ml{LIFT}$} [{Howie}]]]
+           [{$\type{((e → t) → t) → t}$\\$\ml{S}$}
+             [{$\type{((e → e → t) → t) → t}$} [{$\ml{LIFT}$} [{hug}]]]
+             [{$\type{(e → t) → t}$} [{some woman},roof]]
+           ]
+         ]
+         ]
+         ]
+       \end{forest}
+       \xe
+
+       So far, we've provided an account of how quantificational things compose
+       with non-quantificational things, by making use of...
+
+       \begin{itemize}
+
+           \item ...an independently
+           motivated type-shifting rule (\ml{LIFT})...
+
+           \item ...a way to apply \ml{LIFT}-ed
+           values (\ml{S})...
+
+          \item ...and a way to get an ordinary value back from a
+       \ml{LIFT}-ed value (\ml{LOWER}).
+
+           \end{itemize}
+
+           This seems pretty nice, but as I'm sure you've noticed, things are
+           quickly going to get pretty cumbersome with more complicated
+           sentences, especially with multiple quantifiers. Before we go any
+           further, let's introduce some notational conveniences.
+
+\section{Towers}
+
+We've been using the metaphor of a \textit{wrapper} for thinking about what
+$\ml{LIFT}$ does to an ordinary semantic value. Let's make this a bit more
+transparent by introducing a new \textit{type constructor} for \ml{LIFT}-ed
+values.\sidenote{A \textit{type constructor} is just a
+   function from a type to a new type -- here, it's a rule for taking any type
+   $\ml{a}$ and returning the type of the corresponding \ml{LIFT}-ed value.}
+
+\ex
+\type{K_{t} a ≔ (a → t) → t}
+\xe
+
+
+\begin{itemize}
+
+\item Quantificational DPs are therefore of type $\type{{K}_{t} e}$ (inherently).
+
+\item \ml{LIFT} takes something of type \type{a}, and lifts it into
+    something of type $\type{K_{t} a}$.
+
+\end{itemize}
+
+Rather than dealing with \textit{flat} expressions of the simply-typed lambda
+calculus, which will become increasingly difficult to reason about, we'll follow
+\cite{barkerShan2015} in using \textit{tower notation}.\sidenote{To my mind, one
+of \citeauthor{barkerShan2015}'s central achievements is simply the introduction
+of an accessible notational convention for reasoning about the kinds of lifted
+meanings we're using here.}\sidenote{It's important to bear in mind that towers
+are just \textit{syntactic sugar} for flat lambda expressions; we should always
+be able to translate back from towers to lambda expressions. Towers have no
+privileged theoretical status, unlike, e.g., Discourse Representation
+Structures, but are merely abbreviations.}
+
+Let's look again at the meaning of a quantificational DP. The $k$ argument which
+acts as the \textit{wrapper} is called the \textit{continuation argument}.
+
+\ex Ordinary quantifier meanings:\\
+$\eval{some woman} ≔ λ k . ∃x[\ml{woman} x ∧ k x]$
+\xe
+
+\ex~ Quantifiers using tower notation:\\
+$\eval{some woman} ≔ \semtower{∃x[\ml{woman} x ∧ []]}{x}$
+\xe
+
+\ex~ Lifted meanings using tower notation:\\
+$\ml{LIFT} (\eval{hug}) = \semtower{[]}{λ xy . y \ml{hug} x}$
+\xe
+
+In general:
+
+\ex Tower notation (def.)\\
+$\semtower{f []}{x} ≔ λ k . f (k x)$
+\xe
+
+We can use tower notation for types too:
+
+\ex Tower types (def.)\\
+$\semtower{\type{b}}{\type{a}} ≔ \type{(a → b) → b}$\hfill$≡ \type{K_{b} a}$
+\xe
+
+We can now redefine our type constructor $\type{K_{t}}$, and our type-shifting
+operations using our new, much more concise, tower notation. These will be our
+canonical definitions from now on. We'll also start abbreviating a \ml{LIFT}-ed
+value $a$ as
+$a^{↑}$ and a \ml{LOWER}-ed value $b$ as $b^{↓}$.
+
+\ex The continuation type constructor \type{K_t} (def.)\\
+$\type{K_{t} a} ≔ \type{\semtower{t}{a}}$
+\xe
+
+\ex~
+\ml{LIFT} (def.)\sidenote{Thinking in terms of towers, \ml{LIFT} takes a value
+  $a$ and returns a \enquote{trivial} tower, i.e., a tower with an empty top-story.}\\
+$a^{↑} ≔ \semtower{[]}{a}$\hfill$(↑):\type{a → K_{t} a}$
+\xe
+
+\ex~
+\acf{sfa} (def.)\sidenote{\ac{sfa} takes two scopal values -- one with a
+  function on the bottom floor, and the other with an argument on the bottom
+  floor -- and combines them by (i) doing function application on the bottom
+  floor, and (ii) \textit{sequencing} the scope-takers.}\\
+$\semtower{f []}{x} \ml{S} \semtower{g []}{y} ≔
+\semtower{f (g [])}{x \ml{A} y}$\hfill$\ml{S}:\type{K_{t} (a → b) → K_{t} a →
+  K_{t} b}$
+\xe
+
+\ex~
+\ml{LOWER} (def.)\footnote{\ml{LOWER} \textit{collapses the tower}, by saturating
+  the continuation argument with the identity function.}\\
+$\left(\semtower{f []}{p}\right)^{↓} = f p$\hfill$(↓) : \type{K_{t} t → t}$
+\xe
+
+In order to see the tower notation in action, let's go through an example
+involving multiple quantifiers, and show how continuation semantics derives the
+surface scope reading:
+
+\ex
+Some knight chased every thief.\hfill$∃ > ∀$
+\xe
+
+\begin{fullwidth}
+  \begin{multicols}{2}
+
+First, we combine \textit{every thief} with lifted \textit{chase} via \ac{sfa}:
+
+\ex
+\begin{forest}
+  [{\fbox{$\semtower{∀ x[\ml{thief} x → []]}{λ y . y \ml{chase} x$}}\\\ml{S}}
+    [{$\semtower{[]}{λ xy. y \ml{chase} x}$}]
+    [{$\semtower{∀x[\ml{thief} x → []]}{x}$}]
+  ]
+\end{forest}
+\xe
+
+\columnbreak
+
+Next, the (boxed) VP value combines with \textit{some knight} via \ac{sfa}:
+
+\ex
+\begin{forest}
+  [{\fbox{$\semtower{∃y[\ml{knight} y ∧ ∀ x[\ml{thief} x → []]]}{y \ml{chase} x}$}\\\ml{S}}
+    [{$\semtower{∃y[\ml{knight} y ∧ []]}{y}$}]
+    [{$\semtower{∀ x[\ml{thief} x → []]}{λ y . y \ml{chase} x$}} [{chase every thief},roof]]
+  ]
+\end{forest}
+\xe
+
+\end{multicols}
+\end{fullwidth}
+
+Finally, the resulting tower is collapsed via \textit{lower}:
+
+\ex
+\begin{forest}
+[{\fbox{$∃y[\ml{knight} y ∧ ∀ x[\ml{thief} x → y \ml{chase} x]]$}} [{$\left(\semtower{∃y[\ml{knight} y ∧ ∀ x[\ml{thief} x → []]]}{y \ml{chase} x}\right)^{↓}$}]]
+\end{forest}
+\xe
+
+Let's zoom out and look at the \textit{graph of the syntactic derivation}
+alongside the \textit{graph of the semantic derivation}.
+
+\begin{multicols}{2}
+
+  \begin{forest}
+    [{\textsc{merge}}
+      [{DP} [{some knight},roof]]
+      [{\textsc{merge}}
+        [{V\\chase}]
+        [{DP} [{every thief},roof]]
+      ]
+    ]
+  \end{forest}
+
+  \columnbreak
+
+  \begin{forest}
+    [{\type{t}}
+    [{\ml{LOWER}}
+    [{\typetower{t}{t}\\\ml{S}}
+      [{\typetower{t}{e}\\some knight}]
+      [{\typetower{t}{e → t}\\\ml{S}}
+        [{\typetower{t}{e → e → t}} [{\ml{LIFT}} [{chase}]]]
+        [{\typetower{t}{e}\\every thief}]
+      ]
+    ]
+    ]]
+  \end{forest}
+
+  \columnbreak
+
+\end{multicols}
+
+Type-shifting operations are interleaved with syntactic operations. In order to
+restrict this system, it seems natural to place an economy constraint on
+$\ml{S}$ and $\ml{LIFT}$.\sidenote{This is very tentative. Working out exactly
+  how the system outlined here should be restricted in terms of economy would
+  make a great student project.}
+
+\ex
+Economy condition on type-shifting\\
+\textsc{Merge} in the syntax is interpreted as \ml{A/S} in the semantics, whichever
+is well-typed. \ml{LIFT} may apply freely to the extent that it is necessary for
+the derivation to proceed.
+\xe
+
+\section{Scopal ambiguities}
+
+\subsection{Interaction between scope-takers and other operators}
+
+Right now, we have a theory which is very good at deriving the surface scope
+reading of a sentence with multiple quantifiers. It can also derive some
+ambiguities that arise due to interactions of quantifiers and scopally \textit{immobile}
+expressions, such as intensional predicates. Consider, e.g., the interaction
+between a universal quantifier and the desire verb \textit{want}.
+
+\ex
+Daniele wants to join every group chat.\label{ex:dani}\hfill $\ml{want} > ∀;∀ > \ml{want}$
+\xe
+
+(\ref{ex:dani}) is ambiguous: (i) if \textit{every} takes scope below
+\textit{want}, it is true if Dani has a desire about joining every group chat,
+(ii) if \textit{every} takes scope over \textit{want}, it is true if every group
+chat is s.t. Dani has a desire to join in.
+
+We actually already have everything we need in order to account for this. In a
+nutshell, the two readings correspond to an application of \ml{LOWER} either
+below or above the intensional predicate.\sidenote{For a fully-fledged treatment
+of the examples below, we would of course need to systematically replace
+$\type{t}$ in our fragment to some intensional type.}
+
+\ex Daniele wants to join every group chat.\hfill$\ml{want} > ∀$
+\begin{forest}
+  [{...}
+    [{Daniele}]
+    [{$λ y . y \ml{wants} (∀x[\ml{groupChat} x→ (\ml{pro join }x)])$}
+      [{wants}]
+      [{$∀x[\ml{groupChat} x→ (\ml{pro join }x)]$}
+      [{$\ml{LOWER}$}
+      [{$\semtower{∀x[\ml{groupChat} x → []]}{\ml{pro} \ml{join} x}$\\\ml{S}}
+        [{PRO$^{↑}$}]
+        [{$\semtower{∀x[\ml{groupChat} x → []]}{λ y . y \ml{join} x}$\\\ml{S}}
+          [{join$^{↑}$}]
+          [{$\semtower{∀x[\ml{groupChat} x → []]}{x}$} [{every group chat},roof]]
+        ]
+      ]
+      ]
+      ]
+    ]
+  ]
+\end{forest}
+\xe
+
+\ex~
+Daniele wants to join every group chat.\hfill $∀ > \ml{want}$
+\begin{forest}
+  [{$∀x[\ml{groupChat} x → \ml{Dani wants}(\ml{pro join }x)]$}
+  [{\ml{LOWER}}
+    [{$\semtower{∀x[\ml{groupChat}  \rightarrow []]}{\ml{Dani wants} (\ml{pro} \ml{join} x)}$}
+      [{Daniele}]
+      [{...}
+        [{wants}]
+        [{...} [{PRO to join every group chat},roof]]
+    ]
+  ]
+  ]]
+\end{forest}
+\xe
+
+We can schematize what's going on here by boxing the point of the derivation at
+which \ml{LOWER} applies:
+
+\begin{itemize}
+
+    \item $\ml{Daniele} (\ml{wants} \fbox{\ml{pro}^{↑} \ml{S} (\ml{join}^{↑} \ml{S} \ml{everyGroupChat})}^{↓})$
+
+    \item $\fbox{\ml{Daniele}^↑ \ml{S} (\ml{wants}^↑ \ml{S} (\ml{pro}^↑ \ml{S} (\ml{join}^↑ \ml{S} \ml{everyGroupChat})))}^{↓}$
+
+\end{itemize}
+
+If you're more familiar with a treatment of scope-taking in terms of quantifier
+raising, then you can think of \ml{LOWER} as being the correlate of the landing
+site of QR; semantic composition proceeds via \ml{S} up until we encounter the
+landing site, at which point we switch back to \enquote{vanilla} semantic
+composition via \ml{A}.
+
+\subsection{Scope rigidity}
+
+As we've seen however, when we're dealing with multiple scopally \textit{mobile}
+expressions (such as quantifiers), continuation semantics derives surface scope
+readings by default. It is, therefore, well-suited
+to languages such as German and Japanese, which have been argued to display
+\textit{scope-rigidity} (modulo semantic reconstruction amongst other potential exceptions).
+
+The following example is from Kuroda (1970).
+
+\pex
+\a\begingl
+\gla Dareka-ga subete-no hon-o yonda.//
+\glb someone-{\sc nom} all-{\sc gen} book-{\sc acc} read.//
+\glft \enquote{Someone read all the books.}\hfill $∃ > ∀; \text{\xmark} ∀ > ∃$//
+\endgl
+\a\begingl
+\gla Subete-no hon-o dareka-ga yonda.//
+\glb all-{\sc gen} book-{\sc acc} someone-{\sc nom} read.//
+\glft \enquote{Someone read all the books}\hfill $∀ > ∃; ∃ > ∀$//
+\endgl
+\xe
+
+There are also, of course, famous environments in English where we observe
+apparent scope-rigidity, such as the double-object construction (scope rigidity
+in the double-object construction is usually described as \textit{scope freezing}).
+
+\pex
+\a Daniele sent a syntactician every picture.\hfill $∃ > ∀; \text{\xmark} ∀ > ∃$
+\a Daniele sent a picture to every syntactician.\hfill $∃ > ∀; ∀ > ∃$
+\xe
+
+\citet{bobaljikWurmbrand2012} posit a (violable) economy condition in order to
+express the preference for surface scope observed in many languages.
+\citeauthor{bobaljikWurmbrand2012} make architectural assumptions that we aren't
+necessarily committed to here, but the spirit of \ac{ScoT} is very much in line
+with a continuation semantics for quantifiers, where surface scope is the
+default, and inverse scope will only be achievable via additional application of
+the type-shifting rules posited.
+
+\ex
+\acf{ScoT}\\
+If the order of two elements at LF is $A>B$, then the order at PF is $A>B$.
+\xe
+
+We still need to account for the availability of \textit{inverse scope readings}
+in English, and other languages however. We'll do this using \textit{multi-story
+towers}.
+
+\subsection{Deriving inverse scope}
+
+Recall that \(\ml{LIFT}\) is a \textit{polymorphic function} -- it lifts a value
+into a trivial tower:
+
+\ex
+$a^{↑} ≔ \semtower{[]}{a}$
+\xe
+
+Since \ml{LIFT} is polymorphic, in principle it can apply to any kind of value
+-- even a tower! Let's flip back to lambda notation to see what happens.
+
+\ex
+$\eval{everyone} ≔ λ k . ∀x[k x]$
+\xe
+
+\ex~
+$\eval{everyone}^{↑} = λ l . l (λ k . ∀x[k x])$
+\xe
+
+\begin{tcolorbox}
+  Question
+  \tcblower
+  What is the \textit{type} of lifted \textit{everyone}?
+\end{tcolorbox}
+
+Going back to tower notation, lifting a tower adds a trivial third
+story:\sidenote{In fact, via successive application of \ml{LIFT}, we can
+  generate an $n-$story tower.} Following \citet{Charlowc}, when we apply
+\ml{LIFT} to a tower, we'll describe the operation as \textit{external lift}
+(although, it's worth bearing in mind that this is really just our original
+\ml{LIFT} function).
+
+
+One important thing to note is that, when we externally lift a tower, the
+quantificational part of the meaning always remains on the same story relative
+to the bottom floor. Intuitively, this reflects the fact that, ultimately,
+\ml{LIFT} alone isn't going to be enough to derive quantifier scope ambiguities.
+
+\ex
+\(\left(\semtower{∀x[]}{x}\right)^{↑} = \semtower{[]}{\semtower{∀x[]}{x}}\)
+\xe
+
+\begin{tcolorbox}
+\textbf{Question}
+\tcblower
+Which (if any) of the following bracketings make sense for a three-story tower:
+
+\begin{multicols}{2}
+\ex
+$\semtower{\left(\semtower{f []}{g []}\right)}{x}$
+\xe
+\columnbreak
+\ex
+$\semtower{f []}{\left(\semtower{g []}{x}\right)}$
+\xe
+\end{multicols}
+\end{tcolorbox}
+
+The extra ingredient we're going to need, is the ability to sandwhich an empty
+story into the \textit{middle} of our tower, pushing the quantificational part
+of the meaning to the very top. This is \textit{internal lift} ($⇈$).\sidenote{I
+can tell what you're thinking: \enquote{seriously? Another \textit{darn}
+  type-shifter? How many of these are we going to need?!}.
+Don't worry, I got you. Even thought we've defined internal lift here as a
+primitive operation, it actually just follows from our existing machinery.
+Concretely, \textit{internal lift} is really just \textit{lifted} \ml{LIFT} (so
+many lifts!). Lifted \ml{LIFT} applies to its argument via \ml{S}.
+
+\ex
+$(\ml{LIFT}^{↑}) \ml{S} \semtower{f []}{x} = \semtower{f []}{\semtower{[]}{x}}$
+\xe
+
+}
+
+\pex
+\textit{Internal lift} (def.)\\
+\a \((⇈) : \type{K_{t} a → K_{t} (K_{t} a)}\)
+\a \(m^{⇈} ≔ λ k . m (λ x . k x^{↑})\)
+\xe
+
+It's much easier to see what internal lift is doing by using the tower notation.
+We can also handily compare its effects to those of \textit{external} lift.
+
+\begin{multicols}{2}
+\ex \textit{Internal lift} (tower ver.)\\
+\(\left(\semtower{f []}{x}}\right)^{⇈} ≔ \semtower{f []}{\semtower{[]}{x}}\)
+\xe
+\columnbreak
+\ex \textit{External lift} (tower ver.)\\
+\(\left({\semtower{f []}{x}}\right)^{↑} ≔ \semtower{[]}{\semtower{f []}{x}}\)
+\xe
+
+\end{multicols}
+
+Armed with \textit{internal} and \textit{external} lifting operations, we now
+have everything we need to derive inverse scope. We'll start with a simple
+example (\ref{ex:classic1}).
+
+The trick is: we \textit{internally} lift the quantifier that is destined to
+take wide scope.
+
+\ex
+A boy danced with every girl.\hfill $∀ > ∃$\label{ex:classic1}
+\xe
+
+Before we proceed, we need to generalize \ml{LIFT} and \ac{sfa} to three-story
+towers.\sidenote{
+Before you get worries about expanding our set of primitive operations, notice
+that \textit{3-story lift} is just ordinary lift applied twice. \textit{3-story}
+\ac{sfa} is just \ac{sfa}, but where the bottom story combines via \ml{S} not
+\ml{A}. In fact, we can generalize these operations to $n-$story towers.
+}
+
+\begin{multicols}{2}
+\ex
+$x^{↑_{2}} ≔ \semtower{[]}{\semtower{[]}{x}}$
+\xe
+
+\columnbreak
+
+\ex
+$\semtower{f []}{m} \ml{S}_{2} \semtower{g []}{n} ≔ \semtower{f (g [])}{m \ml{S} n}$
+\xe
+
+\end{multicols}
+
+
+\begin{fullwidth}
+  \begin{multicols}{2}
+\ex Step 1: internally lift \textit{every girl} \\
+\begin{forest}
+  [{$\ml{S}_{2}$}
+    [{$\semtower{[]}{\semtower{[]}{\ml{danceWith}}}$} [{dance-with$^{↑_{2}}$}]]
+    [{$\semtower{∀x[]}{\semtower{[]}{x}}$} [{$⇈$} [{every girl},roof]]]
+  ]
+\end{forest}
+\xe
+
+\columnbreak
+
+\ex
+Step 2: \textit{ex}ternally lift \textit{a boy}\\
+\begin{forest}
+  [{$\ml{S}_{2}$}
+    [{$\semtower{[]}{\semtower{∃y[\ml{boy} y ∧ []]}{y}}$} [{a boy$^{↑}$}]]
+    [{$\semtower{∀x[\ml{girl} x → []]}{\semtower{[]}{λ y . y \ml{danceWith} x}}$} [{dance with every girl},roof]]
+  ]
+\end{forest}
+\xe
+\end{multicols}
+\end{fullwidth}
+
+What we're left with now is a 3-story tower with the universal on the top story
+and the existential on the middle story. We can collapse the tower by first
+collapsing the bottom two stories, and then collapsing the result. In order to
+do this, we'll first define \textit{internal lower}.\sidenote{Let's again
+  address the issue of expanding our set of primitive operations (in what is
+  becoming something of a theme). Internal lower is just lifted lower, applying
+  via \ml{S}. In other words:
+
+  \ex
+  $m^{⇊} ≡ (↓)^{↑} \ml{S} m$
+  \xe
+
+}
+
+\ex
+\textit{Internal lower} (def.)
+$\left(\semtower{f []}{\semtower{g []}{p}}\right)^{⇊} ≔ \semtower{f []}{\left(\semtower{g []}{x}\right)^{↓}}$
+\xe
+
+Now we can collapse the tower by doing \textit{internal lower}, followed by
+\textit{lower}:
+
+\ex
+\begin{forest}
+  [{\fbox{$∀x[\ml{girl} x → (∃y[\ml{boy} y ∧ y \ml{danceWith} x])]$}}
+  [{$↓$}
+    [{$\semtower{∀x[\ml{girl} x → []]}{∃ x[\ml{boy} x ∧ y \ml{danceWith} x]}$}
+      [{$⇊$}
+        [{$\semtower{∀x[\ml{girl} x → []]}{\semtower{∃y[\ml{boy} y ∧ []]}{y \ml{danceWith} x}}$} [{a boy danced with every girl},roof]]
+  ]]]]
+\end{forest}
+\xe
+
+Great! We've shown how to achieve quantifier scope ambiguities using our new
+framework. Let's look at the derivations again side-by-side.
+
+\begin{fullwidth}
+\begin{multicols}{2}
+
+  \ex
+  Surface scope (schematic derivation)\\
+  \begin{forest}
+    [{$↓$}
+    [{$\ml{S}$}
+      [{$Q_{1}$}]
+      [{$\ml{S}$}
+        [{$R^{↑}$}]
+        [{$Q_{2}$}]
+      ]
+    ]]
+  \end{forest}
+  \xe
+
+  \columnbreak
+
+  \ex
+  Inverse scope (schematic derivation)\\
+  \begin{forest}
+    [{$↓$}
+    [{$⇊$}
+  [{$\ml{S}_{2}$}
+    [{$Q_{1}^{↑}$}]
+    [{$\ml{S}_{2}$}
+      [{$R^{↑_{2}}$}]
+      [{$Q_{2}^{⇈}$}]
+    ]
+  ]]]
+  \end{forest}
+  \xe
+
+\end{multicols}
+\end{fullwidth}
+
+There's a couple of interesting things to note here:
+
+\begin{itemize}
+
+    \item The inverse scope derivation involves more applications of our
+    type-shifting operations -- this becomes especially clear if we decompose
+    the complex operations
+    $\ml{S}_{2}$, $↑_{2}$, $⇈$, and $⇊$.
+
+    \item In order to derive an inverse scope reading, what was \textit{crucial}
+    was the availability of \textit{internal lift}; the remaining operations,
+    $\ml{S}_{2}, ↑_{2}, ⇊$ only functioned to massage composition for
+    three-story towers.
+
+\end{itemize}
+
+On the latter point, it's tempting to conjecture that in, e.g., German, Japanese
+and other languages which \enquote{wear their LF on their sleeve}, the semantic
+correlate of \textit{scrambling} is \textit{internal lift}, whereas in
+scope-flexible languages such as English, internal lift is a freely available
+operation.\sidenote{To make sense of this, we would of course need to say
+  something more concrete about the relationship between syntax and semantics.
+  For an attempt at marrying continuations to a standard, minimalist syntactic
+component, see my manuscript \textit{Movement as higher-order structure building}.}
+
+If we adopt some version of the \textit{derivational complexity hypothesis}, we
+also predict that inverse scope readings should take longer to process than
+surface scope readings. This is something Martin may discuss is a couple of
+weeks time.
+
+It's worth mentioning, incidentally, that although we collapsed the resulting
+three-story tower via internal lower followed by lower, we can also define an
+operation that collapses a three-story tower two an ordinary tower in a
+different way. Let's call it \textit{join}:\sidenote{Join for three-story towers
+corresponds directly to the \textit{join} function associated with the
+continuation monad. For more on continuations from a categorical perspective,
+see the first appendix.}
+
+\ex \textit{join} (def.)\\
+$m^{μ} ≔ λ k . m (λ c . c k)$\hfill$μ: \type{K_{t} (K_{t} a) → K_{t} a}$
+\xe
+
+In tower terms, join takes a three-story tower and sequences quantifiers from
+top to bottom:
+
+ \ex
+  $
+  \left(\semtower{f []}{\semtower{g []}{x}}\right)^{μ} = \semtower{f (g [])}{x}
+  $
+  \xe
+
+Doing internal lower on a three-story tower followed by lower is equivalent to doing
+join on a three-story tower followed by lower (as an exercise, convince yourself
+of this). However, there's may be a good empirical reason for having internal lower as a
+distinct operation (and since it's just lifted lower, it \enquote{comes for
+  free} in a certain sense).
+
+\ex
+Daniele wants a boy to dance with every girl.\hfill $∀ > \ml{want} > ∃$\label{ex:dani1}
+\xe
+
+Arguably, (\ref{ex:dani1}) can be true if for every girl $x$, Daniele has the following
+desire: \textit{a boy dances with $y$}. This is the reading on which
+\textit{every boy} scopes over the intensional verb, and \textit{a boy} scopes
+below it.
+
+If we have \textit{internal lower}, getting this is easy. We \textit{internally
+  lift} \textit{every girl} and \textit{externally lift} \textit{a boy}. Before
+we reach the intensional verb, we fix the scope of \textit{a boy} by doing
+internal lower. Now we have an ordinary tower, and we can defer fixing the scope
+of \textit{every girl} via \textit{lower} until after the intensional verb.
+
+If we only have \textit{join} then the scope of \textit{a boy} and \textit{every
+girl} may vary amongst themselves, but they should either both scope below
+\textit{want} or both scope above \textit{want}.
+
+
+
+\section{Scope islands and obligatory evaluation}
+
+Inspired by research on \textit{delimited control} in computer
+science\sidenote{See, e.g., \cite{danvyFilinski1992} and \cite{wadler1994}.},
+\citet{Charlowc} develops an interesting take on scope islands couched in terms
+of continuations.
+
+He proposes the following definition:
+
+\ex
+\textit{Scope islands} (def.)\\
+A \textit{scope island} is a constituent that is subject to \textit{obligatory
+  evaluation}.\\
+\phantom{,}\hfill\citep[p. 90]{Charlowc}
+\xe
+
+By \textit{obligatory evaluation}, we mean that every continuation argument
+\textit{must} be saturated before semantic computation can proceed. In other
+words, a scope island is a constituent where, if we have something of type
+$\type{K_{t} a}$, we cannot proceed.
+
+One way of thinking about this, is that the presence of an unsaturated
+continuation argument means that there is some computation that is being
+deferred until later. Scope islands are constituents at which evaluation is
+\textit{forced}. As noted by \citeauthor{Charlowc}, this idea bears an
+intriguing similarity to \citeauthor{chomskyPhase}'s notion of a
+\textit{phase}.\sidenote{Exploring this parallel in greater depth could make for
+an interesting term paper topic.}
+
+How does this work in practice? A great deal of ink has been spilled arguing
+that, e.g., a finite clause is a scope island.
+
+\ex
+A boy said $\overbrace{\text{\fbox{that Susan greeted every
+      linguist}}}^{\text{scope island}}$.\hfill$∃>∀; \text{\xmark} ∀ > ∃$
+\xe
+
+The derivation of the embedded clause proceeds as usual via lift and \ac{sfa}.
+
+\newpage
+
+\begin{fullwidth}
+\begin{multicols}{2}
+\ex
+Scope island with an unevaluated type\\
+\begin{forest}
+  [{...}
+    [{...} [{a boy},roof]]
+    [{...}
+      [{said}]
+      [{\xmark $\semtower{∀x[\ml{linguist} x → []]}{\ml{Susan greeted }x}$} [{Susan greeted every linguist},roof]]
+    ]
+  ]
+\end{forest}
+\xe
+\columnbreak
+\ex
+Scope island with an evaluated type\\
+\begin{forest}
+  [{...}
+    [{...} [{a boy},roof]]
+    [{...}
+      [{said}]
+      [{\cmark $∀x[\ml{linguist} x→ \ml{Susan greeted }x]$}
+      [{$↓$} [{$\semtower{∀x[\ml{linguist} x → []]}{\ml{Susan greeted }x}$} [{Susan greeted every linguist},roof]]]]
+    ]
+  ]
+\end{forest}
+\xe
+\end{multicols}
+\end{fullwidth}
+
+This story leaves a lot of questions unanswered of course:
+
+\begin{itemize}
+
+    \item Is this just a recapitulation of a representational constraint on
+    quantifier raising?\sidenote{The answer to this question may ultimate be
+    \textit{yes}, in my view.}
+
+    \item Can we give a principled story about islands for overt movement using
+    similar mechanisms? What explains the difference between overt movement and
+    scope taking with respect to locality?\footnote{If we want to give a more
+    general account of phases using this mechanism, we need to give an account
+    of overt movement in terms of continuations, too. See my unpublished ms.
+    \textit{Movement as higher-order structure building} for progress in this direction.}
+
+\end{itemize}
+
+One interesting property of this theory of scope islands is that it goes
+some way towards explaining why certain expressions, such as indefinites, are able to take
+\textit{exceptional} scope, given certain assumptions about their semantics.
+
+\citet{Charlowc} shows that, if we conceive of indefinites as inducing
+alternatives, scope islands may be obviated by, in a certain sense, pied-piping
+the scope islands. This strategy won't work for ordinary quantifiers
+however.\sidenote{See \citet{demirok2019} for a parallel story couched in more
+  familiar \citeauthor{heimKratzer1998}-esque machinery.}
+
+Time permitting, we'll discuss how \citeauthor{Charlowc} accounts for the
+exceptional scope-taking properties of indefinites using continuations, either
+next week, or in our discussion of crossover phenomena.
+
+\section{Next week}
+
+Hopefully you're starting to get a feel for what continuations can accomplish
+with very few primitives. Next week, we'll pick up where we left off, with a
+discussion of:
+
+\begin{itemize}
+
+  \item Generalized con/dis-junction.
+
+  \item \textit{Indexed} continuations and a semantics for determiners.
+
+  \item Continuations and exceptional scope
+
+\end{itemize}
+
+After that, Martin will take over with a re-assessment of QR.
+
+\printbibliography
+
+\begin{appendices}
+
+  \section{Continuations from a categorical perspective}
+
+  The way we've presented continuation semantics here makes crucial use of three
+  building blocks:
+
+  \begin{itemize}
+
+      \item A type
+  constructor \type{K_t} -- a way of getting from any type \type{a} to an
+      enriched type-space characterizing \textit{continuized} values.
+
+      \item A function $\ml{LIFT} (↑)$, i.e., a way of lifting a value $a$ into a
+      \textit{trivial} inhabitant of our enriched type-space.
+
+      \item A composition rule \acf{sfa}, i.e., an
+  instruction for how to do function application in our enriched type-space.
+
+      \end{itemize}
+
+  There's a rich literature in category theory and (derivatively) functional
+  programming on how to characterize this kind of construct, together with
+  law-like properties its components should satisfy in order to qualify as
+  \enquote{natural}. In fact, as discussed in, e.g.,
+  \cite{charlow2018,elliott2019applicatives}, exactly this kind of general
+  construct is \textit{implicit} in a great deal of semantic theory, including
+  for example theories of pronouns and binding, and theories of focus.
+
+  Formally, the triple $(\type{K_{t}},↑,\ml{S})$ is a special case of an \textit{applicative functor}, a
+  highly influential notion in the literature on functional programming
+  (\citealt{mcbridePaterson2008}); for applications in linguistic semantics see
+  \cite{kiselyov2017}, \cite{charlow2018}, and \cite{elliott2019applicatives}.
+
+  An applicative functor consists of three components: a \textit{type
+    constructor} \type{F}, a way of lifting an inhabitant of $\type{a}$ into an
+  inhabitant of $\type{F a}$, called $η$, and a way of doing \textit{function
+    application} in the enriched type-space $\type{F a}$, called
+  $⊛$.\footnote{If you want pronounceable names for these things, $η$ is called
+    \textit{pure} in haskell, and $⊛$ is called \textit{ap} (short for
+    \textit{application}).} The components of the applicative functor are
+  additionally subject to a number of laws. I give the full definition below:
+
+  \pex \textit{Applicative functor} (def.)\\
+  An \textit{applicative} functor consists of the following three components
+  subject to \textbf{homomorphism} \textbf{identity}, \textbf{interchange}, and
+  \textbf{composition} laws:
+  \a  $F: \type{type → type}$
+  \a $η:\type{a → F a}$
+  \a $⊛: \type{F (a → b) → F a → F b}$
+  \xe
+
+  \begin{multicols}{2}
+
+    \ex
+    \textbf{Homomorphism}\\
+    $f^{η} ⊛ x^{η} ≡ (f x)^{η}$
+    \xe
+
+    \ex~
+    \textbf{Interchange}\\
+    $(λ k . k x)^{η} ⊛ m ≣ m ⊛ x^{η}$
+    \xe
+
+    \columnbreak
+
+    \ex
+    \textbf{Identity}\\
+    $id^{η} ⊛ m ≡ m$
+    \xe
+
+    \ex~
+    \textbf{Composition}\\
+    $(∘)^{η} ⊛ u ⊛ v ⊛ w ≡ u ⊛ (v ⊛ w)$
+    \xe
+
+    \end{multicols}
+
+        You can verify for yourselves that the triple $(\type{K_{t}},↑,\ml{S})$
+    obeys the applicative laws -- we can call it the \textit{continuation applicative}.
+
+    A related, more powerful abstraction from the functional programming
+    literature is \textit{monads}. There is a growing body of literature in
+    linguistic semantics that explicitly makes use of monads
+    (see, e.g., \citealt{shan2002monads,Charlowc,grove2019}, and others). A monad, like an applicative
+    functor, is defined as a triple consisting of a type constructor and two
+    functions. Monads are strictly speaking more powerful than applicative
+    functors; that is to say, if you have a monad you are guaranteed to have an
+    applicative functor, but not vice versa.
+
+    \pex
+    \textit{Monad} (def.)\\
+    A \textit{monad} consists of the following three components, subject to
+    \textbf{associativity} and \textbf{identity}.\sidenote{I've defined the monad laws here in terms of
+      \ml{map}, which we haven't discussed. In haskell, this corresponds to
+      \texttt{fmap}. In category theory, given a functor $F:C → D$, this corresponds
+      to the mapping from morphisms in $C$ to morphisms in $D$ supplied by the
+      definition of $F$. Here, we'll define $\ml{map}$ as follows: a pair
+      $(\type{F},\ml{map})$ is a \textit{functor}:
+
+
+      P.s. don't worry if you don't know what any of this means! This is only
+      here as a tidbit for interested parties.}
+    \a $\type{F : \type{type} → \type{type}}$
+    \a $η : \type{a → F a}$
+    \a $μ: \type{F (F a)
+          → F a}$
+        \xe
+
+    \begin{multicols}{2}
+
+      \ex
+      \textbf{Associativity}\\
+      \(μ ∘ (\ml{map} μ) ≡ μ ∘ μ\)
+      \xe
+
+      \columnbreak
+
+      \ex~
+      \textbf{Identity}\\
+      \(μ . (\ml{map} η) ≡ \ml{join} ∘ η ≡ id\)
+      \xe
+
+     \end{multicols}
+
+     We can define join for the continuation monad as follows:
+
+     \pex
+    \textit{join} (def.)\\
+    \a \(μ : \type{K_{t} (K_{t} a) → K_{t} a}\)
+    \a \(m^{μ} ≔ λ k . m (λ c . c k)\)
+    \xe
+
+
+    In tower terms, \textit{join} takes a two-level tower and sequences effects
+    from the top story down:
+
+    \ex
+    $
+    \left\semtower{f []}{\semtower{g []}{x}}\right^{μ} = \semtower{f (g [])}{x}
+    $
+    \xe
+
+    Interestingly, it looks like we can define join just in terms of operations
+    from the applicative instance; in other words, the continuations in their
+    monadic guide are no more expressive than continuations in their applicative
+    guise:\sidenote{Thanks to Julian Grove for discussing this point with me.}
+
+    \ex
+    $m^{μ} = m ∘ (↑)$
+    \xe
+
+    I leave a demonstration of this fact as an exercise.
+
+    % \section{Shift and reset}
+
+    % \pex
+    % \ml{SHIFT} (def.)
+    % \a $\ml{SHIFT}: \type{((a → t) → K_{t} t) → K_{t} a}$
+    % \a $\ml{SHIFT} m = λ k . (m k)^{↓}$
+    % \xe
+
+    % \pex
+    % \(\ml{RESET}\) (def.)\\
+    % \a \((⇵) : \type{K_{t} t → K_{t} a}\)
+    % \a \(a^{⇵} = (a^{↓})^{↑}\)
+    % \xe
+
+
+  \section{{\LaTeX} dojo}
+
+  Here is the macro I use to typeset towers in \LaTeX. Declare this in your
+  preamble. You'll need the \texttt{booktabs} and \texttt{xparse} packages too.
+
+  \begin{lstlisting}[language=TeX]
+    \NewDocumentCommand\semtower{mm}{
+      \begin{tabular}[c]{@{\,}c@{\,}}
+        \(#1\)
+        \\
+        \midrule
+        \(#2\)
+        \\
+      \end{tabular}
+    }
+  \end{lstlisting}
+
+ A simple two-level tower can now be typeset as follows:
+
+    \begin{lstlisting}[language=TeX]
+      $$\semtower{f []}{x}$$
+  \end{lstlisting}
+
+  Resulting in:
+
+  $$\semtower{f []}{x}$$
+
+  \end{appendices}
+
+\end{document}
