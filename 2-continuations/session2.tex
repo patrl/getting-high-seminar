@@ -593,13 +593,14 @@ Howie sneezed and/or coughed.
 Lan kissed and/or hugged Irene.
 \xe
 
-Unlike other expressions we've seen so far, we can characterize \textit{and} as
-something that takes two continuized values as arguments.\sidenote{Note that
+Unlike other expressions we've seen so far, we can characterize \textit{and} and
+\textit{or} as expressions that takes two continuized values as arguments.\sidenote{Note that
   since the continuation argument $k$ occurs more than once in the function
   body, we can no longer abbreviate the flat lambda-expression using a tower.}
 
-\ex
-\(m \ml{and} n ≔ λ k . m k ∧ n k\)\hfill$\ml{and} : \type{K_{t} a → K_{t} a → K_{t} a}$
+\pex
+\a \(m \ml{and} n ≔ λ k . m k ∧ n k\)\hfill$\ml{and} : \type{K_{t} a → K_{t} a → K_{t} a}$
+\a \(m \ml{or} n ≔ λ k . m k ∨ n k\)\hfill$\ml{or} : \type{K_{t} a → K_{t} a → K_{t} a}$
 \xe
 
 
@@ -608,8 +609,14 @@ that are \textit{guaranteed} to give back truth values at some future stage of c
 
 This accounts for the basic cases discussed by \citet{parteeRooth}, with a
 single (polymorphic) entry for \textit{and}, as illustrated below:\sidenote{
-Unlike other lexical entries we've seen so far, \textit{and} is looking for
-something.
+Unlike other lexical entries we've seen so far, \textit{and} is
+\textit{lexically specified} as seeking continuized arguments. As such, if a
+value isn't already typed as an instantiation of \type{K_t a}, it must be
+lifted.
+
+In the derivations below, you can observe that, unlike the cases we've
+encountered so far, \textit{and} composes with its arguments via \ac{fa} rather
+than \ac{sfa}.
 }
 
 \ex Lan and some woman arrived.\\
@@ -642,10 +649,17 @@ something.
   \end{forest}
 \xe
 
-Conjunction exhibits \enquote{scope} ambiguities:
+\subsection{The scope of con/dis-junction}
 
-\ex
-You're not allowed to dance and sing.\hfill $¬ > ◇ > ∧;∧ > ¬ > ◇$
+Both conjunction and disjunction exhibit \enquote{scope} ambiguities. This is
+illustrated below for conjunction:
+
+\pex
+You're not allowed to dance and sing.
+\a \textit{You're not allowed to dance and you're not allowed to sing}\\
+\phantom{,}\hfill$∧ > ¬ > ◇$
+\a \textit{You're not allowed to both dance and sing (at the same time)}\\
+\phantom{,}\hfill$¬ > ◇ > ∧$
 \xe
 
 We can account for the wide/narrow scope ambiguity as a matter of where we
