@@ -1,0 +1,171 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\setcounter{secnumdepth}{3}
+
+\title{Definitions\thanks{24.979: Topics in
+    semantics\\\noindent\textit{Getting high: Scope, projection, and evaluation order}}}
+
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott\sidenote{\texttt{pdell@mit.edu}} \& Martin Hackl\sidenote{\texttt{hackl@mit.edu}}}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\section{Tower notation}
+
+\begin{multicols}{2}
+\ex Tower values (def.)\\
+$\semtower{f []}{x} ≔ λ k . f (k x)$
+\xe
+
+\columnbreak
+
+\ex Tower types (def.)\\
+$\semtower{\type{b}}{\type{a}} ≔ \type{(a → b) → b}$
+\xe
+
+\end{multicols}
+
+N.b. we also use $\type{K_{b} a}$ as an abbreviation for types of the form $\type{(a → b) → b}$.
+
+\section{Composition rules}
+
+\subsection{Bidirectional \acf{fa}}
+
+\pex \acf{fa} (def.)
+      \a $f \ml{A} x ≔ f x$\hfill$\ml{A}:\type{(a → b) → a → b}$
+      \a $x \ml{A} f ≔ f x$\hfill$\ml{A}:\type{a → (a → b) → b}$
+      \xe
+
+\subsection{\ml{LIFT}}
+
+\ml{LIFT} (a generalization of \textit{Montague lift}) lifts a value into a
+trivially continuized value.
+
+\begin{multicols}{2}
+
+\ex
+\ml{LIFT} (def.)\\
+$a^{↑} ≔ λ k . k a$\hfill$(↑):\type{a → K_{t} a}$
+\xe
+
+\columnbreak
+
+\ex
+\ml{LIFT} (tower ver.)\\
+$a^{↑} ≔ \semtower{[]}{a}$
+\xe
+
+\end{multicols}
+
+Since \ml{LIFT} is polymorphic, we can use it to lift continuized values -- we
+call this \textit{external lift} (although it's really just \ml{LIFT}).
+
+\subsection{\acf{sfa}}
+
+\begin{fullwidth}
+\begin{multicols}{2}
+\ex
+\acf{sfa} (def.)\\
+$m \ml{S} n ≔ λ k . m (λ a . n (λ b . k (a \ml{A} b)))$\\
+\xe
+
+\columnbreak
+
+\ex~
+\acf{sfa} (tower ver.)\\
+$\semtower{f []}{x} \ml{S} \semtower{g []}{y} ≔
+\semtower{f (g [])}{x \ml{A} y}$
+\xe
+
+\end{multicols}
+\end{fullwidth}
+
+\subsection{\ml{LOWER}}
+
+\begin{multicols}{2}
+
+   \ex
+       $\ml{LOWER}$ (def.)\\
+       $m^{↓} ≔ m id$\hfill$\ml{LOWER}: \type{((a → a) → a) → a}$
+       \xe
+
+
+  \columnbreak
+
+\ex~
+\ml{LOWER} (tower ver.)\\
+$\left(\semtower{f []}{p}\right)^{↓} = f p$\hfill$(↓) : \type{K_{t} t → t}$
+\xe
+
+\end{multicols}
+
+
+
+\printbibliography
+
+
+\end{document}
