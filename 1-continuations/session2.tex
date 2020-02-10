@@ -36,7 +36,7 @@
 
 \setcounter{secnumdepth}{3}
 
-\title{Continuation semantics i\thanks{24.979: Topics in
+\title{Continuation semantics ii\thanks{24.979: Topics in
     semantics\\\noindent\textit{Getting high: Scope, projection, and evaluation order}}}
 
 \author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott\sidenote{\texttt{pdell@mit.edu}} \& Martin Hackl\sidenote{\texttt{hackl@mit.edu}}}
@@ -101,10 +101,11 @@ via successive application of \textsc{Merge}.\sidenote{I'll often use
 \xe
 
 I'll furthermore adopt the hypothesis that the syntactic derivation proceeds in
-lockstep with the semantic computation. This conjecture, which goes back to
-MONTAGUE\todo{cite montague} is often described as \textit{direct
-  compositionality}.\sidenote{Although direct compositionality is often strongly
-associated with Combinatory Categorial Grammar, it's in principle independent.
+lockstep with the semantic computation. This conjecture, which goes back at
+least to
+\citet{montague1973}, is often described as \textit{direct
+  compositionality}.\sidenote{Although direct compositionality is often
+  associated with frameworks such as variable free semantics and Combinatory Categorial Grammar, it's in principle independent.
 See, e.g., \citet{kobele2006} for an explicit formalization of a directly compositional minimalist grammar.}
 
 Minimally, the formatives must be \textit{tuples} consisting of phonological
@@ -112,7 +113,7 @@ features and semantic features: (\texttt{phon}, \texttt{sem}, ...). Semantic
 features could be cashed out as model theoretic objects, or perhaps as
 expressions of the simply typed lambda calculus.
 
-Heretically, I'll assume that part of what \textsc{Merge} does is concatenate
+I'll assume that part of what \textsc{Merge} does is concatenate
 phonological features. This is because \textsc{Merge} is just an instruction for
 combining formatives. On the semantic side, it typically does function application.
 
@@ -455,7 +456,35 @@ excluded by, e.g., \citealt{heimKratzer1998} in any case).
 $\eval{no employees} ≔ λ k . ¬ k (λ l . ∃x[\ml{employee} x ∧ l x])$
 \xe
 
+Tower version:
 
+\ex
+$\eval{no employees} ≔ \semtower{¬ []}{\semtower{∃x[\ml{employee} x ∧ []]}{x}}$
+\xe
+
+We get the split scope reading by doing internal lower first below the modal,
+and then external lower above the modal.
+
+\ex
+\begin{forest}
+  [{$¬ (□ (∃x[\ml{company} x ∧ \ml{the-company fire }x]))$}
+  [{$↓$}
+  [{$\semtower{¬ []}{□ (∃x[\ml{company} x ∧ \ml{the-company fire }x])}$\\\ml{S}$}
+    [{need$^{↑}$}]
+    [{$\semtower{¬ []}{∃x[\ml{company} x ∧ \ml{the-company fire }x]}$} [{$⇊$} [{$\ml{S}_{2}$}
+      [{the company$^{↑_{2}}$}]
+      [{$\ml{S}_{2}$}
+        [{fire$^{↑_{2}}$}]
+        [{$\semtower{¬ []}{\semtower{∃x[\ml{employee} x ∧ []]}{x}}$}]
+      ]
+    ]
+  ]]]]]
+\end{forest}
+\xe
+
+One interesting property of split scope readings is that it is essential that we
+be able to \textit{lower} a 3-story tower in two distinct steps --
+\textit{internal lower} followed by \textit{lower}.
 
 \section{Scope islands and obligatory evaluation}
 
@@ -546,42 +575,62 @@ This story leaves a lot of questions unanswered of course:
 
 \end{itemize}
 
-\section{Generalized coordination}
+\section{Generalized con/dis-junction}
 
-Unlike other expressions we've seen so far, we can characterize \textit{and} as
-something that takes two continuized values as arguments.
+The flexibility of \textit{and} and \textit{or} has been discussed at length by,
+e.g., \citet{parteeRooth}, \citet{winter_flexibility_2001}, among
+others.\sidenote{We saw an example of this when we motivated \ml{LIFT}.}
 
 \ex
-\(m \ml{and} n ≔ λ k . m k ∧ n k\)
+Lan and some woman arrived.
+\xe
+
+\ex~
+Howie sneezed and/or coughed.
+\xe
+
+\ex~
+Lan kissed and/or hugged Irene.
+\xe
+
+Unlike other expressions we've seen so far, we can characterize \textit{and} as
+something that takes two continuized values as arguments.\sidenote{Note that
+  since the continuation argument $k$ occurs more than once in the function
+  body, we can no longer abbreviate the flat lambda-expression using a tower.}
+
+\ex
+\(m \ml{and} n ≔ λ k . m k ∧ n k\)\hfill$\ml{and} : \type{K_{t} a → K_{t} a → K_{t} a}$
 \xe
 
 
 The intuition here is as follows: \textit{and} wants as its arguments things
 that are \textit{guaranteed} to give back truth values at some future stage of computation.
 
-\newpage
+This accounts for the basic cases discussed by \citet{parteeRooth}, with a
+single (polymorphic) entry for \textit{and}, as illustrated below:\sidenote{
+Unlike other lexical entries we've seen so far, \textit{and} is looking for
+something.
+}
 
-\begin{fullwidth}
-  \begin{multicols}{2}
-\ex
+\ex Lan and some woman arrived.\\
 \begin{forest}
-  [{$\ml{John} \ml{left} ∧ \ml{Mary} \ml{left}$\\$\ml{A}$}
-  [{$λ k . k \ml{John}∧ k \ml{Mary}$\\\ml{A}}
-    [{$λ k . k \ml{John}$\\John$^{↑}$}]
-    [{$λ nk . n k ∧ k \ml{Mary}$\\$\ml{A}$}
+  [{$\ml{Lan} \ml{arrived} ∧ ∃x[\ml{woman} x ∧ \ml{arrived} x]$\\$\ml{A}$}
+  [{$λ k . k \ml{Lan}∧ ∃x[\ml{woman} x ∧ k x]$\\\ml{A}}
+    [{$λ k . k \ml{Lan}$\\Lan$^{↑}$}]
+    [{$λ nk . n k ∧ ∃x[\ml{woman} x ∧ k x]$\\$\ml{A}$}
       [{$λ mnk . n k ∧ m k$\\and}]
-      [{$λ k .k \ml{Mary}$\\Mary$^{↑}$}]
+      [{$λ k .∃x[\ml{woman} x ∧ k x]$\\some woman}]
     ]
   ]
-    [{left}]
+    [{arrived}]
   ]
 \end{forest}
 \xe
-\columnbreak
-\ex
+
+\ex~ Howie sneezed and coughed.\\
 \begin{forest}
-  [{$\ml{John sneezed and coughed}$\\$\ml{A}$}
-    [{$λ k . k \ml{John}$\\John$^{↑}$}]
+  [{$\ml{Howie sneezed and coughed}$\\$\ml{A}$}
+    [{$λ k . k \ml{Howie}$\\Howie$^{↑}$}]
     [{$λ k . k \ml{sneezed} ∧ k \ml{coughed}$\\\ml{A}}
       [{$λ k . k (\ml{sneezed})$\\sneezed$^{↑}$}]
       [{\ml{A}}
@@ -592,8 +641,6 @@ that are \textit{guaranteed} to give back truth values at some future stage of c
   ]
   \end{forest}
 \xe
-\end{multicols}
-\end{fullwidth}
 
 Conjunction exhibits \enquote{scope} ambiguities:
 
@@ -649,6 +696,134 @@ should be subject to scope islands:
 \ex
 John isn't allowed to claim [that you sing and dance].\hfill \xmark $∧ > ¬ > ◇$
 \xe
+
+\subsection{Split scope with conjunction}
+
+\citet{hirsch2017} claims that conjunction reduction is necessary in order to
+derive the \enquote{split scope} reading of the following sentence:
+
+\ex
+John refused to visit any city in Europe and any city in Asia.\label{ex:hirsch1}
+\xe
+
+\citeauthor{hirsch2017}'s analysis:
+
+\ex
+John \bracketStr[vP]{refused to visit any city in Europe} and\\
+\bracketStr[vP]{refused to visit any city in Asia}
+\xe
+
+Here, I'm going to argue that we can get the split scope reading of
+(\ref{ex:hirsch1}) using just the machinery we've already introduced.
+Concretely:
+\begin{itemize}
+    \item Our entry for \textit{and}.
+    \item The free availability of \textit{external lift}.
+\end{itemize}
+
+First of all, each conjunct is going to be \textit{externally lifted}.
+
+\ex
+$\eval{any city in Europe}^{↑} = λ l . l (λ k . ∃x[\ml{city-europe} x ∧ k x])$
+\xe
+
+\textit{and}, in our view, is polymorphic -- it's looking for two arguments of
+type $\type{K_{t} a}$. This means it can compose the externally lifted DPs,
+returning the following meaning:
+
+\ex
+$λ l . l \left(\semtower{∃x[\ml{europe-city} x ∧ []]}{x}\right) ∧ l \left(\semtower{∃x[\ml{asia-city} x ∧ []]}{x}\right):\type{K_{t} (K_{t} a)}$
+\xe
+
+Remember that $\ml{S}_{2}$ is just like $\ml{S}}$, only it does \ml{S} of
+the wrapped values. Composition can proceed via $↑_{2}$ and $\ml{S}_{2}$ up to
+the prejacent of \textit{refuse}.
+
+To get the scope of the quantifiers right, we do \textit{internal lower} just
+before we compose with \textit{refuse}.
+
+\ex
+\begin{forest}
+  [{$λ l . l (\ml{refuse }∃x[\ml{europe-city} x ∧ \ml{pro visit }x]) ∧ l (\ml{refuse} ∃x[\ml{europe-city} x ∧ \ml{pro visit }x])$\\\ml{S}}
+    [{refuse$^{↑}$}]
+    [{$λ l . l (∃x[\ml{europe-city} x ∧ \ml{pro visit }x]) ∧ l (∃x[\ml{europe-city} x ∧ \ml{pro visit }x])$}
+    [{$⇊$}
+    [{$λ l . l \left(\semtower{∃x[\ml{europe-city} x ∧ []]}{\ml{pro visit} x}\right) ∧ l \left(\semtower{∃x[\ml{asia-city} x ∧ []]}{\ml{pro visit }x}\right)$} [{PRO visit any city in Europe\\and any city in Asia},roof]]
+  ]]]
+\end{forest}
+\xe
+
+Lowering the result gives us...the split-scope reading:
+
+\ex
+\begin{forest}
+  [{$\ml{refuse }∃x[\ml{europe-city} x ∧ \ml{pro visit }x ∧ \ml{refuse }∃x[\ml{asia-city} x ∧ \ml{pro visit }x]$}
+  [{$\ml{LOWER}$}
+    [{\fbox{$λ l . l (\ml{refuse }∃x[\ml{europe-city} x ∧ \ml{pro visit }x]) ∧ l (\ml{refuse} ∃x[\ml{europe-city} x ∧ \ml{pro visit }x])$}}]
+  ]
+  ]
+\end{forest}
+\xe
+
+So, continuations can get split-scope readings of conjunction straightforwardly.
+This is a notable result.\sidenote{To my knowledge, this is a novel observation.
+
+\citeauthor{hirsch2017} doesn't consider an analysis of this data in terms of
+continuations, but does entertain a similar analysis involving lifting the
+quantificational conjuncts, alongside QR with higher-type traces.
+\citet{hirsch2017} rejects this analysis on the basis that it allows for the
+quantifiers to be syntactically above the intensional verb, while semantically
+reconstructing below it -- a configuration which has been argued to be ruled
+out. Note that an analysis in terms of continuations doesn't face this objection
+-- at no point in the analysis did we need to invoke covert movement.
+}
+
+Note that this theory of split-scope coordination explains the lack of
+split-scope reading in the following example, from \citet{parteeRooth}.
+
+\ex
+John hopes [that some company will hire a maid and a cook].\\
+\xmark \textit{John hopes that some company will hire a maid,\\
+and John hopes that
+some company will hire a cook.}
+\xe
+
+This is simply because the embedded finite clause is a scope island, and
+therefore the scope of \textit{and} is trapped.
+
+% \section{Indexed continuations}
+
+% Given the definitions of \ac{sfa}, it's possible to generalize the
+% types even further.\sidenote{This discussion is based on \citet{wadler1994}.}
+
+% \ex
+% $m_{\type{((a → b) → i) → r}} \ml{S} n_{\type{(a → r) → i}} ≔ λ k_{\type{b →
+%     r}} . m (λ
+% f_{\type{a → b}} . n (λ x_{\type{a}} . \underbrace{k \overbrace{(f x)}^{\type{b}})}_{\type{r}})$
+% \xe
+
+% The type schema $\type{(a → r) → r}$ is a special instance of the type schema
+% $\type{(a → i) → r}$, where $\type{i = r}$.
+
+% \citet{barkerShan2015} generalize tower notation to the more general type-schema.
+
+% \ex Tower values (revised def.)\\
+% $\tower{\type{r}}{\type{i}}{\type{a}} ≔ \type{(a → i) → r}$
+% \xe
+
+% The intuition here is that \type{r} is the type of the final return value,
+% whereas \type{i} is the type of the \textit{intermediate} return value.
+
+% This is useful for characterizing the meanings of determiners:
+
+% \ex
+% $\eval{every$_n$} ≔ λ k . λ l . (k (λ g . g_{1})) ⊆ l$
+% \xe
+
+% \ex
+% $\tower{\semtower{\type{t}}{\type{e}}}{\type{G t}}{\type{G e}}$
+% \xe
+
 
 \printbibliography
 

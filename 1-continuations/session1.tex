@@ -997,412 +997,412 @@ We still need to account for the availability of \textit{inverse scope readings}
 in English, and other languages however. We'll do this using \textit{multi-story
 towers}.
 
-\subsection{Deriving inverse scope}
-
-Recall that \(\ml{LIFT}\) is a \textit{polymorphic function} -- it lifts a value
-into a trivial tower:
-
-\ex
-$a^{↑} ≔ \semtower{[]}{a}$
-\xe
-
-Since \ml{LIFT} is polymorphic, in principle it can apply to any kind of value
--- even a tower! Let's flip back to lambda notation to see what happens.
-
-\ex
-$\eval{everyone} ≔ λ k . ∀x[k x]$
-\xe
-
-\ex~
-$\eval{everyone}^{↑} = λ l . l (λ k . ∀x[k x])$
-\xe
-
-\begin{tcolorbox}
-  Question
-  \tcblower
-  What is the \textit{type} of lifted \textit{everyone}?
-\end{tcolorbox}
-
-Going back to tower notation, lifting a tower adds a trivial third
-story:\sidenote{In fact, via successive application of \ml{LIFT}, we can
-  generate an $n-$story tower.} Following \citet{Charlowc}, when we apply
-\ml{LIFT} to a tower, we'll describe the operation as \textit{external lift}
-(although, it's worth bearing in mind that this is really just our original
-\ml{LIFT} function).
-
-
-One important thing to note is that, when we externally lift a tower, the
-quantificational part of the meaning always remains on the same story relative
-to the bottom floor. Intuitively, this reflects the fact that, ultimately,
-\ml{LIFT} alone isn't going to be enough to derive quantifier scope ambiguities.
-
-\ex
-\(\left(\semtower{∀x[]}{x}\right)^{↑} = \semtower{[]}{\semtower{∀x[]}{x}}\)
-\xe
-
-\begin{tcolorbox}
-\textbf{Question}
-\tcblower
-Which (if any) of the following bracketings make sense for a three-story tower:
-
-\begin{multicols}{2}
-\ex
-$\semtower{\left(\semtower{f []}{g []}\right)}{x}$
-\xe
-\columnbreak
-\ex
-$\semtower{f []}{\left(\semtower{g []}{x}\right)}$
-\xe
-\end{multicols}
-\end{tcolorbox}
-
-The extra ingredient we're going to need, is the ability to sandwhich an empty
-story into the \textit{middle} of our tower, pushing the quantificational part
-of the meaning to the very top. This is \textit{internal lift} ($⇈$).\sidenote{I
-can tell what you're thinking: \enquote{seriously? Another \textit{darn}
-  type-shifter? How many of these are we going to need?!}.
-Don't worry, I got you. Even thought we've defined internal lift here as a
-primitive operation, it actually just follows from our existing machinery.
-Concretely, \textit{internal lift} is really just \textit{lifted} \ml{LIFT} (so
-many lifts!). Lifted \ml{LIFT} applies to its argument via \ml{S}.
-
-\ex
-$(\ml{LIFT}^{↑}) \ml{S} \semtower{f []}{x} = \semtower{f []}{\semtower{[]}{x}}$
-\xe
-
-}
-
-\pex
-\textit{Internal lift} (def.)\\
-\a \((⇈) : \type{K_{t} a → K_{t} (K_{t} a)}\)
-\a \(m^{⇈} ≔ λ k . m (λ x . k x^{↑})\)
-\xe
-
-It's much easier to see what internal lift is doing by using the tower notation.
-We can also handily compare its effects to those of \textit{external} lift.
-
-\begin{multicols}{2}
-\ex \textit{Internal lift} (tower ver.)\\
-\(\left(\semtower{f []}{x}}\right)^{⇈} ≔ \semtower{f []}{\semtower{[]}{x}}\)
-\xe
-\columnbreak
-\ex \textit{External lift} (tower ver.)\\
-\(\left({\semtower{f []}{x}}\right)^{↑} ≔ \semtower{[]}{\semtower{f []}{x}}\)
-\xe
-
-\end{multicols}
-
-Armed with \textit{internal} and \textit{external} lifting operations, we now
-have everything we need to derive inverse scope. We'll start with a simple
-example (\ref{ex:classic1}).
-
-The trick is: we \textit{internally} lift the quantifier that is destined to
-take wide scope.
-
-\ex
-A boy danced with every girl.\hfill $∀ > ∃$\label{ex:classic1}
-\xe
-
-Before we proceed, we need to generalize \ml{LIFT} and \ac{sfa} to three-story
-towers.\sidenote{
-Before you get worries about expanding our set of primitive operations, notice
-that \textit{3-story lift} is just ordinary lift applied twice. \textit{3-story}
-\ac{sfa} is just \ac{sfa}, but where the bottom story combines via \ml{S} not
-\ml{A}. In fact, we can generalize these operations to $n-$story towers.
-}
-
-\begin{multicols}{2}
-\ex
-$x^{↑_{2}} ≔ \semtower{[]}{\semtower{[]}{x}}$
-\xe
-
-\columnbreak
-
-\ex
-$\semtower{f []}{m} \ml{S}_{2} \semtower{g []}{n} ≔ \semtower{f (g [])}{m \ml{S} n}$
-\xe
-
-\end{multicols}
-
-
-\begin{fullwidth}
-  \begin{multicols}{2}
-\ex Step 1: internally lift \textit{every girl} \\
-\begin{forest}
-  [{$\ml{S}_{2}$}
-    [{$\semtower{[]}{\semtower{[]}{\ml{danceWith}}}$} [{dance-with$^{↑_{2}}$}]]
-    [{$\semtower{∀x[]}{\semtower{[]}{x}}$} [{$⇈$} [{every girl},roof]]]
-  ]
-\end{forest}
-\xe
-
-\columnbreak
-
-\ex
-Step 2: \textit{ex}ternally lift \textit{a boy}\\
-\begin{forest}
-  [{$\ml{S}_{2}$}
-    [{$\semtower{[]}{\semtower{∃y[\ml{boy} y ∧ []]}{y}}$} [{a boy$^{↑}$}]]
-    [{$\semtower{∀x[\ml{girl} x → []]}{\semtower{[]}{λ y . y \ml{danceWith} x}}$} [{dance with every girl},roof]]
-  ]
-\end{forest}
-\xe
-\end{multicols}
-\end{fullwidth}
-
-What we're left with now is a 3-story tower with the universal on the top story
-and the existential on the middle story. We can collapse the tower by first
-collapsing the bottom two stories, and then collapsing the result. In order to
-do this, we'll first define \textit{internal lower}.\sidenote{Let's again
-  address the issue of expanding our set of primitive operations (in what is
-  becoming something of a theme). Internal lower is just lifted lower, applying
-  via \ml{S}. In other words:
-
-  \ex
-  $m^{⇊} ≡ (↓)^{↑} \ml{S} m$
-  \xe
-
-}
-
-\ex
-\textit{Internal lower} (def.)
-$\left(\semtower{f []}{\semtower{g []}{p}}\right)^{⇊} ≔ \semtower{f []}{\left(\semtower{g []}{x}\right)^{↓}}$
-\xe
-
-Now we can collapse the tower by doing \textit{internal lower}, followed by
-\textit{lower}:
-
-\ex
-\begin{forest}
-  [{\fbox{$∀x[\ml{girl} x → (∃y[\ml{boy} y ∧ y \ml{danceWith} x])]$}}
-  [{$↓$}
-    [{$\semtower{∀x[\ml{girl} x → []]}{∃ x[\ml{boy} x ∧ y \ml{danceWith} x]}$}
-      [{$⇊$}
-        [{$\semtower{∀x[\ml{girl} x → []]}{\semtower{∃y[\ml{boy} y ∧ []]}{y \ml{danceWith} x}}$} [{a boy danced with every girl},roof]]
-  ]]]]
-\end{forest}
-\xe
-
-Great! We've shown how to achieve quantifier scope ambiguities using our new
-framework. Let's look at the derivations again side-by-side.
-
-\begin{fullwidth}
-\begin{multicols}{2}
-
-  \ex
-  Surface scope (schematic derivation)\\
-  \begin{forest}
-    [{$↓$}
-    [{$\ml{S}$}
-      [{$Q_{1}$}]
-      [{$\ml{S}$}
-        [{$R^{↑}$}]
-        [{$Q_{2}$}]
-      ]
-    ]]
-  \end{forest}
-  \xe
-
-  \columnbreak
-
-  \ex
-  Inverse scope (schematic derivation)\\
-  \begin{forest}
-    [{$↓$}
-    [{$⇊$}
-  [{$\ml{S}_{2}$}
-    [{$Q_{1}^{↑}$}]
-    [{$\ml{S}_{2}$}
-      [{$R^{↑_{2}}$}]
-      [{$Q_{2}^{⇈}$}]
-    ]
-  ]]]
-  \end{forest}
-  \xe
-
-\end{multicols}
-\end{fullwidth}
-
-There's a couple of interesting things to note here:
-
-\begin{itemize}
-
-    \item The inverse scope derivation involves more applications of our
-    type-shifting operations -- this becomes especially clear if we decompose
-    the complex operations
-    $\ml{S}_{2}$, $↑_{2}$, $⇈$, and $⇊$.
-
-    \item In order to derive an inverse scope reading, what was \textit{crucial}
-    was the availability of \textit{internal lift}; the remaining operations,
-    $\ml{S}_{2}, ↑_{2}, ⇊$ only functioned to massage composition for
-    three-story towers.
-
-\end{itemize}
-
-On the latter point, it's tempting to conjecture that in, e.g., German, Japanese
-and other languages which \enquote{wear their LF on their sleeve}, the semantic
-correlate of \textit{scrambling} is \textit{internal lift}, whereas in
-scope-flexible languages such as English, internal lift is a freely available
-operation.\sidenote{To make sense of this, we would of course need to say
-  something more concrete about the relationship between syntax and semantics.
-  For an attempt at marrying continuations to a standard, minimalist syntactic
-component, see my manuscript \textit{Movement as higher-order structure building}.}
-
-If we adopt some version of the \textit{derivational complexity hypothesis}, we
-also predict that inverse scope readings should take longer to process than
-surface scope readings. This is something Martin may discuss is a couple of
-weeks time.
-
-It's worth mentioning, incidentally, that although we collapsed the resulting
-three-story tower via internal lower followed by lower, we can also define an
-operation that collapses a three-story tower two an ordinary tower in a
-different way. Let's call it \textit{join}:\sidenote{Join for three-story towers
-corresponds directly to the \textit{join} function associated with the
-continuation monad. For more on continuations from a categorical perspective,
-see the first appendix.}
-
-\ex \textit{join} (def.)\\
-$m^{μ} ≔ λ k . m (λ c . c k)$\hfill$μ: \type{K_{t} (K_{t} a) → K_{t} a}$
-\xe
-
-In tower terms, join takes a three-story tower and sequences quantifiers from
-top to bottom:
-
- \ex
-  $
-  \left(\semtower{f []}{\semtower{g []}{x}}\right)^{μ} = \semtower{f (g [])}{x}
-  $
-  \xe
-
-Doing internal lower on a three-story tower followed by lower is equivalent to doing
-join on a three-story tower followed by lower (as an exercise, convince yourself
-of this). However, there's may be a good empirical reason for having internal lower as a
-distinct operation (and since it's just lifted lower, it \enquote{comes for
-  free} in a certain sense).
-
-\ex
-Daniele wants a boy to dance with every girl.\hfill $∀ > \ml{want} > ∃$\label{ex:dani1}
-\xe
-
-Arguably, (\ref{ex:dani1}) can be true if for every girl $x$, Daniele has the following
-desire: \textit{a boy dances with $y$}. This is the reading on which
-\textit{every boy} scopes over the intensional verb, and \textit{a boy} scopes
-below it.
-
-If we have \textit{internal lower}, getting this is easy. We \textit{internally
-  lift} \textit{every girl} and \textit{externally lift} \textit{a boy}. Before
-we reach the intensional verb, we fix the scope of \textit{a boy} by doing
-internal lower. Now we have an ordinary tower, and we can defer fixing the scope
-of \textit{every girl} via \textit{lower} until after the intensional verb.
-
-If we only have \textit{join} then the scope of \textit{a boy} and \textit{every
-girl} may vary amongst themselves, but they should either both scope below
-\textit{want} or both scope above \textit{want}.
-
-
-
-\section{Scope islands and obligatory evaluation}
-
-Inspired by research on \textit{delimited control} in computer
-science\sidenote{See, e.g., \cite{danvyFilinski1992} and \cite{wadler1994}.},
-\citet{Charlowc} develops an interesting take on scope islands couched in terms
-of continuations.
-
-He proposes the following definition:
-
-\ex
-\textit{Scope islands} (def.)\\
-A \textit{scope island} is a constituent that is subject to \textit{obligatory
-  evaluation}.\\
-\phantom{,}\hfill\citep[p. 90]{Charlowc}
-\xe
-
-By \textit{obligatory evaluation}, we mean that every continuation argument
-\textit{must} be saturated before semantic computation can proceed. In other
-words, a scope island is a constituent where, if we have something of type
-$\type{K_{t} a}$, we cannot proceed.
-
-One way of thinking about this, is that the presence of an unsaturated
-continuation argument means that there is some computation that is being
-deferred until later. Scope islands are constituents at which evaluation is
-\textit{forced}. As noted by \citeauthor{Charlowc}, this idea bears an
-intriguing similarity to \citeauthor{chomskyPhase}'s notion of a
-\textit{phase}.\sidenote{Exploring this parallel in greater depth could make for
-an interesting term paper topic.}
-
-How does this work in practice? A great deal of ink has been spilled arguing
-that, e.g., a finite clause is a scope island.
-
-\ex
-A boy said $\overbrace{\text{\fbox{that Susan greeted every
-      linguist}}}^{\text{scope island}}$.\hfill$∃>∀; \text{\xmark} ∀ > ∃$
-\xe
-
-The derivation of the embedded clause proceeds as usual via lift and \ac{sfa}.
-
-\newpage
-
-\begin{fullwidth}
-\begin{multicols}{2}
-\ex
-Scope island with an unevaluated type\\
-\begin{forest}
-  [{...}
-    [{...} [{a boy},roof]]
-    [{...}
-      [{said}]
-      [{\xmark $\semtower{∀x[\ml{linguist} x → []]}{\ml{Susan greeted }x}$} [{Susan greeted every linguist},roof]]
-    ]
-  ]
-\end{forest}
-\xe
-\columnbreak
-\ex
-Scope island with an evaluated type\\
-\begin{forest}
-  [{...}
-    [{...} [{a boy},roof]]
-    [{...}
-      [{said}]
-      [{\cmark $∀x[\ml{linguist} x→ \ml{Susan greeted }x]$}
-      [{$↓$} [{$\semtower{∀x[\ml{linguist} x → []]}{\ml{Susan greeted }x}$} [{Susan greeted every linguist},roof]]]]
-    ]
-  ]
-\end{forest}
-\xe
-\end{multicols}
-\end{fullwidth}
-
-This story leaves a lot of questions unanswered of course:
-
-\begin{itemize}
-
-    \item Is this just a recapitulation of a representational constraint on
-    quantifier raising?\sidenote{The answer to this question may ultimate be
-    \textit{yes}, in my view.}
-
-    \item Can we give a principled story about islands for overt movement using
-    similar mechanisms? What explains the difference between overt movement and
-    scope taking with respect to locality?\footnote{If we want to give a more
-    general account of phases using this mechanism, we need to give an account
-    of overt movement in terms of continuations, too. See my unpublished ms.
-    \textit{Movement as higher-order structure building} for progress in this direction.}
-
-\end{itemize}
-
-One interesting property of this theory of scope islands is that it goes
-some way towards explaining why certain expressions, such as indefinites, are able to take
-\textit{exceptional} scope, given certain assumptions about their semantics.
-
-\citet{Charlowc} shows that, if we conceive of indefinites as inducing
-alternatives, scope islands may be obviated by, in a certain sense, pied-piping
-the scope islands. This strategy won't work for ordinary quantifiers
-however.\sidenote{See \citet{demirok2019} for a parallel story couched in more
-  familiar \citeauthor{heimKratzer1998}-esque machinery.}
-
-Time permitting, we'll discuss how \citeauthor{Charlowc} accounts for the
-exceptional scope-taking properties of indefinites using continuations, either
-next week, or in our discussion of crossover phenomena.
+% \subsection{Deriving inverse scope}
+
+% Recall that \(\ml{LIFT}\) is a \textit{polymorphic function} -- it lifts a value
+% into a trivial tower:
+
+% \ex
+% $a^{↑} ≔ \semtower{[]}{a}$
+% \xe
+
+% Since \ml{LIFT} is polymorphic, in principle it can apply to any kind of value
+% -- even a tower! Let's flip back to lambda notation to see what happens.
+
+% \ex
+% $\eval{everyone} ≔ λ k . ∀x[k x]$
+% \xe
+
+% \ex~
+% $\eval{everyone}^{↑} = λ l . l (λ k . ∀x[k x])$
+% \xe
+
+% \begin{tcolorbox}
+%   Question
+%   \tcblower
+%   What is the \textit{type} of lifted \textit{everyone}?
+% \end{tcolorbox}
+
+% Going back to tower notation, lifting a tower adds a trivial third
+% story:\sidenote{In fact, via successive application of \ml{LIFT}, we can
+%   generate an $n-$story tower.} Following \citet{Charlowc}, when we apply
+% \ml{LIFT} to a tower, we'll describe the operation as \textit{external lift}
+% (although, it's worth bearing in mind that this is really just our original
+% \ml{LIFT} function).
+
+
+% One important thing to note is that, when we externally lift a tower, the
+% quantificational part of the meaning always remains on the same story relative
+% to the bottom floor. Intuitively, this reflects the fact that, ultimately,
+% \ml{LIFT} alone isn't going to be enough to derive quantifier scope ambiguities.
+
+% \ex
+% \(\left(\semtower{∀x[]}{x}\right)^{↑} = \semtower{[]}{\semtower{∀x[]}{x}}\)
+% \xe
+
+% \begin{tcolorbox}
+% \textbf{Question}
+% \tcblower
+% Which (if any) of the following bracketings make sense for a three-story tower:
+
+% \begin{multicols}{2}
+% \ex
+% $\semtower{\left(\semtower{f []}{g []}\right)}{x}$
+% \xe
+% \columnbreak
+% \ex
+% $\semtower{f []}{\left(\semtower{g []}{x}\right)}$
+% \xe
+% \end{multicols}
+% \end{tcolorbox}
+
+% The extra ingredient we're going to need, is the ability to sandwhich an empty
+% story into the \textit{middle} of our tower, pushing the quantificational part
+% of the meaning to the very top. This is \textit{internal lift} ($⇈$).\sidenote{I
+% can tell what you're thinking: \enquote{seriously? Another \textit{darn}
+%   type-shifter? How many of these are we going to need?!}.
+% Don't worry, I got you. Even thought we've defined internal lift here as a
+% primitive operation, it actually just follows from our existing machinery.
+% Concretely, \textit{internal lift} is really just \textit{lifted} \ml{LIFT} (so
+% many lifts!). Lifted \ml{LIFT} applies to its argument via \ml{S}.
+
+% \ex
+% $(\ml{LIFT}^{↑}) \ml{S} \semtower{f []}{x} = \semtower{f []}{\semtower{[]}{x}}$
+% \xe
+
+% }
+
+% \pex
+% \textit{Internal lift} (def.)\\
+% \a \((⇈) : \type{K_{t} a → K_{t} (K_{t} a)}\)
+% \a \(m^{⇈} ≔ λ k . m (λ x . k x^{↑})\)
+% \xe
+
+% It's much easier to see what internal lift is doing by using the tower notation.
+% We can also handily compare its effects to those of \textit{external} lift.
+
+% \begin{multicols}{2}
+% \ex \textit{Internal lift} (tower ver.)\\
+% \(\left(\semtower{f []}{x}}\right)^{⇈} ≔ \semtower{f []}{\semtower{[]}{x}}\)
+% \xe
+% \columnbreak
+% \ex \textit{External lift} (tower ver.)\\
+% \(\left({\semtower{f []}{x}}\right)^{↑} ≔ \semtower{[]}{\semtower{f []}{x}}\)
+% \xe
+
+% \end{multicols}
+
+% Armed with \textit{internal} and \textit{external} lifting operations, we now
+% have everything we need to derive inverse scope. We'll start with a simple
+% example (\ref{ex:classic1}).
+
+% The trick is: we \textit{internally} lift the quantifier that is destined to
+% take wide scope.
+
+% \ex
+% A boy danced with every girl.\hfill $∀ > ∃$\label{ex:classic1}
+% \xe
+
+% Before we proceed, we need to generalize \ml{LIFT} and \ac{sfa} to three-story
+% towers.\sidenote{
+% Before you get worries about expanding our set of primitive operations, notice
+% that \textit{3-story lift} is just ordinary lift applied twice. \textit{3-story}
+% \ac{sfa} is just \ac{sfa}, but where the bottom story combines via \ml{S} not
+% \ml{A}. In fact, we can generalize these operations to $n-$story towers.
+% }
+
+% \begin{multicols}{2}
+% \ex
+% $x^{↑_{2}} ≔ \semtower{[]}{\semtower{[]}{x}}$
+% \xe
+
+% \columnbreak
+
+% \ex
+% $\semtower{f []}{m} \ml{S}_{2} \semtower{g []}{n} ≔ \semtower{f (g [])}{m \ml{S} n}$
+% \xe
+
+% \end{multicols}
+
+
+% \begin{fullwidth}
+%   \begin{multicols}{2}
+% \ex Step 1: internally lift \textit{every girl} \\
+% \begin{forest}
+%   [{$\ml{S}_{2}$}
+%     [{$\semtower{[]}{\semtower{[]}{\ml{danceWith}}}$} [{dance-with$^{↑_{2}}$}]]
+%     [{$\semtower{∀x[]}{\semtower{[]}{x}}$} [{$⇈$} [{every girl},roof]]]
+%   ]
+% \end{forest}
+% \xe
+
+% \columnbreak
+
+% \ex
+% Step 2: \textit{ex}ternally lift \textit{a boy}\\
+% \begin{forest}
+%   [{$\ml{S}_{2}$}
+%     [{$\semtower{[]}{\semtower{∃y[\ml{boy} y ∧ []]}{y}}$} [{a boy$^{↑}$}]]
+%     [{$\semtower{∀x[\ml{girl} x → []]}{\semtower{[]}{λ y . y \ml{danceWith} x}}$} [{dance with every girl},roof]]
+%   ]
+% \end{forest}
+% \xe
+% \end{multicols}
+% \end{fullwidth}
+
+% What we're left with now is a 3-story tower with the universal on the top story
+% and the existential on the middle story. We can collapse the tower by first
+% collapsing the bottom two stories, and then collapsing the result. In order to
+% do this, we'll first define \textit{internal lower}.\sidenote{Let's again
+%   address the issue of expanding our set of primitive operations (in what is
+%   becoming something of a theme). Internal lower is just lifted lower, applying
+%   via \ml{S}. In other words:
+
+%   \ex
+%   $m^{⇊} ≡ (↓)^{↑} \ml{S} m$
+%   \xe
+
+% }
+
+% \ex
+% \textit{Internal lower} (def.)
+% $\left(\semtower{f []}{\semtower{g []}{p}}\right)^{⇊} ≔ \semtower{f []}{\left(\semtower{g []}{x}\right)^{↓}}$
+% \xe
+
+% Now we can collapse the tower by doing \textit{internal lower}, followed by
+% \textit{lower}:
+
+% \ex
+% \begin{forest}
+%   [{\fbox{$∀x[\ml{girl} x → (∃y[\ml{boy} y ∧ y \ml{danceWith} x])]$}}
+%   [{$↓$}
+%     [{$\semtower{∀x[\ml{girl} x → []]}{∃ x[\ml{boy} x ∧ y \ml{danceWith} x]}$}
+%       [{$⇊$}
+%         [{$\semtower{∀x[\ml{girl} x → []]}{\semtower{∃y[\ml{boy} y ∧ []]}{y \ml{danceWith} x}}$} [{a boy danced with every girl},roof]]
+%   ]]]]
+% \end{forest}
+% \xe
+
+% Great! We've shown how to achieve quantifier scope ambiguities using our new
+% framework. Let's look at the derivations again side-by-side.
+
+% \begin{fullwidth}
+% \begin{multicols}{2}
+
+%   \ex
+%   Surface scope (schematic derivation)\\
+%   \begin{forest}
+%     [{$↓$}
+%     [{$\ml{S}$}
+%       [{$Q_{1}$}]
+%       [{$\ml{S}$}
+%         [{$R^{↑}$}]
+%         [{$Q_{2}$}]
+%       ]
+%     ]]
+%   \end{forest}
+%   \xe
+
+%   \columnbreak
+
+%   \ex
+%   Inverse scope (schematic derivation)\\
+%   \begin{forest}
+%     [{$↓$}
+%     [{$⇊$}
+%   [{$\ml{S}_{2}$}
+%     [{$Q_{1}^{↑}$}]
+%     [{$\ml{S}_{2}$}
+%       [{$R^{↑_{2}}$}]
+%       [{$Q_{2}^{⇈}$}]
+%     ]
+%   ]]]
+%   \end{forest}
+%   \xe
+
+% \end{multicols}
+% \end{fullwidth}
+
+% There's a couple of interesting things to note here:
+
+% \begin{itemize}
+
+%     \item The inverse scope derivation involves more applications of our
+%     type-shifting operations -- this becomes especially clear if we decompose
+%     the complex operations
+%     $\ml{S}_{2}$, $↑_{2}$, $⇈$, and $⇊$.
+
+%     \item In order to derive an inverse scope reading, what was \textit{crucial}
+%     was the availability of \textit{internal lift}; the remaining operations,
+%     $\ml{S}_{2}, ↑_{2}, ⇊$ only functioned to massage composition for
+%     three-story towers.
+
+% \end{itemize}
+
+% On the latter point, it's tempting to conjecture that in, e.g., German, Japanese
+% and other languages which \enquote{wear their LF on their sleeve}, the semantic
+% correlate of \textit{scrambling} is \textit{internal lift}, whereas in
+% scope-flexible languages such as English, internal lift is a freely available
+% operation.\sidenote{To make sense of this, we would of course need to say
+%   something more concrete about the relationship between syntax and semantics.
+%   For an attempt at marrying continuations to a standard, minimalist syntactic
+% component, see my manuscript \textit{Movement as higher-order structure building}.}
+
+% If we adopt some version of the \textit{derivational complexity hypothesis}, we
+% also predict that inverse scope readings should take longer to process than
+% surface scope readings. This is something Martin may discuss is a couple of
+% weeks time.
+
+% It's worth mentioning, incidentally, that although we collapsed the resulting
+% three-story tower via internal lower followed by lower, we can also define an
+% operation that collapses a three-story tower two an ordinary tower in a
+% different way. Let's call it \textit{join}:\sidenote{Join for three-story towers
+% corresponds directly to the \textit{join} function associated with the
+% continuation monad. For more on continuations from a categorical perspective,
+% see the first appendix.}
+
+% \ex \textit{join} (def.)\\
+% $m^{μ} ≔ λ k . m (λ c . c k)$\hfill$μ: \type{K_{t} (K_{t} a) → K_{t} a}$
+% \xe
+
+% In tower terms, join takes a three-story tower and sequences quantifiers from
+% top to bottom:
+
+%  \ex
+%   $
+%   \left(\semtower{f []}{\semtower{g []}{x}}\right)^{μ} = \semtower{f (g [])}{x}
+%   $
+%   \xe
+
+% Doing internal lower on a three-story tower followed by lower is equivalent to doing
+% join on a three-story tower followed by lower (as an exercise, convince yourself
+% of this). However, there's may be a good empirical reason for having internal lower as a
+% distinct operation (and since it's just lifted lower, it \enquote{comes for
+%   free} in a certain sense).
+
+% \ex
+% Daniele wants a boy to dance with every girl.\hfill $∀ > \ml{want} > ∃$\label{ex:dani1}
+% \xe
+
+% Arguably, (\ref{ex:dani1}) can be true if for every girl $x$, Daniele has the following
+% desire: \textit{a boy dances with $y$}. This is the reading on which
+% \textit{every boy} scopes over the intensional verb, and \textit{a boy} scopes
+% below it.
+
+% If we have \textit{internal lower}, getting this is easy. We \textit{internally
+%   lift} \textit{every girl} and \textit{externally lift} \textit{a boy}. Before
+% we reach the intensional verb, we fix the scope of \textit{a boy} by doing
+% internal lower. Now we have an ordinary tower, and we can defer fixing the scope
+% of \textit{every girl} via \textit{lower} until after the intensional verb.
+
+% If we only have \textit{join} then the scope of \textit{a boy} and \textit{every
+% girl} may vary amongst themselves, but they should either both scope below
+% \textit{want} or both scope above \textit{want}.
+
+
+
+% \section{Scope islands and obligatory evaluation}
+
+% Inspired by research on \textit{delimited control} in computer
+% science\sidenote{See, e.g., \cite{danvyFilinski1992} and \cite{wadler1994}.},
+% \citet{Charlowc} develops an interesting take on scope islands couched in terms
+% of continuations.
+
+% He proposes the following definition:
+
+% \ex
+% \textit{Scope islands} (def.)\\
+% A \textit{scope island} is a constituent that is subject to \textit{obligatory
+%   evaluation}.\\
+% \phantom{,}\hfill\citep[p. 90]{Charlowc}
+% \xe
+
+% By \textit{obligatory evaluation}, we mean that every continuation argument
+% \textit{must} be saturated before semantic computation can proceed. In other
+% words, a scope island is a constituent where, if we have something of type
+% $\type{K_{t} a}$, we cannot proceed.
+
+% One way of thinking about this, is that the presence of an unsaturated
+% continuation argument means that there is some computation that is being
+% deferred until later. Scope islands are constituents at which evaluation is
+% \textit{forced}. As noted by \citeauthor{Charlowc}, this idea bears an
+% intriguing similarity to \citeauthor{chomskyPhase}'s notion of a
+% \textit{phase}.\sidenote{Exploring this parallel in greater depth could make for
+% an interesting term paper topic.}
+
+% How does this work in practice? A great deal of ink has been spilled arguing
+% that, e.g., a finite clause is a scope island.
+
+% \ex
+% A boy said $\overbrace{\text{\fbox{that Susan greeted every
+%       linguist}}}^{\text{scope island}}$.\hfill$∃>∀; \text{\xmark} ∀ > ∃$
+% \xe
+
+% The derivation of the embedded clause proceeds as usual via lift and \ac{sfa}.
+
+% \newpage
+
+% \begin{fullwidth}
+% \begin{multicols}{2}
+% \ex
+% Scope island with an unevaluated type\\
+% \begin{forest}
+%   [{...}
+%     [{...} [{a boy},roof]]
+%     [{...}
+%       [{said}]
+%       [{\xmark $\semtower{∀x[\ml{linguist} x → []]}{\ml{Susan greeted }x}$} [{Susan greeted every linguist},roof]]
+%     ]
+%   ]
+% \end{forest}
+% \xe
+% \columnbreak
+% \ex
+% Scope island with an evaluated type\\
+% \begin{forest}
+%   [{...}
+%     [{...} [{a boy},roof]]
+%     [{...}
+%       [{said}]
+%       [{\cmark $∀x[\ml{linguist} x→ \ml{Susan greeted }x]$}
+%       [{$↓$} [{$\semtower{∀x[\ml{linguist} x → []]}{\ml{Susan greeted }x}$} [{Susan greeted every linguist},roof]]]]
+%     ]
+%   ]
+% \end{forest}
+% \xe
+% \end{multicols}
+% \end{fullwidth}
+
+% This story leaves a lot of questions unanswered of course:
+
+% \begin{itemize}
+
+%     \item Is this just a recapitulation of a representational constraint on
+%     quantifier raising?\sidenote{The answer to this question may ultimate be
+%     \textit{yes}, in my view.}
+
+%     \item Can we give a principled story about islands for overt movement using
+%     similar mechanisms? What explains the difference between overt movement and
+%     scope taking with respect to locality?\footnote{If we want to give a more
+%     general account of phases using this mechanism, we need to give an account
+%     of overt movement in terms of continuations, too. See my unpublished ms.
+%     \textit{Movement as higher-order structure building} for progress in this direction.}
+
+% \end{itemize}
+
+% One interesting property of this theory of scope islands is that it goes
+% some way towards explaining why certain expressions, such as indefinites, are able to take
+% \textit{exceptional} scope, given certain assumptions about their semantics.
+
+% \citet{Charlowc} shows that, if we conceive of indefinites as inducing
+% alternatives, scope islands may be obviated by, in a certain sense, pied-piping
+% the scope islands. This strategy won't work for ordinary quantifiers
+% however.\sidenote{See \citet{demirok2019} for a parallel story couched in more
+%   familiar \citeauthor{heimKratzer1998}-esque machinery.}
+
+% Time permitting, we'll discuss how \citeauthor{Charlowc} accounts for the
+% exceptional scope-taking properties of indefinites using continuations, either
+% next week, or in our discussion of crossover phenomena.
 
 \section{Next week}
 
@@ -1411,6 +1411,8 @@ with very few primitives. Next week, we'll pick up where we left off, with a
 discussion of:
 
 \begin{itemize}
+
+  \item Inverse scope.
 
   \item Generalized con/dis-junction.
 
