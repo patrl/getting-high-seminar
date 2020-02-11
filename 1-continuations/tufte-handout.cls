@@ -1,1 +1,1 @@
-/home/patrl/repos/getting-high-seminar/boilerplate/tufte-handout.cls
+../boilerplate/tufte-handout.cls
