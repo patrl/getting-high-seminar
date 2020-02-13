@@ -445,7 +445,9 @@ In the first p-set, I asked you how to think about analyzing split scope of
 non-upward-monotone quantifiers:
 
 \ex
-The company need fire no employees.\hfill $¬ > □ > ∃$\\
+The company need fire no employees.\\
+\textit{It's not the case that the company \textit{needs} to hire
+  employees.}\hfill $¬ > □ > ∃$
 \xe
 
 With continuation semantics, we can understand this data as providing support
@@ -453,7 +455,7 @@ for the idea that expressions can denote three-story towers (something not
 excluded by, e.g., \citealt{heimKratzer1998} in any case).
 
 \ex
-$\eval{no employees} ≔ λ k . ¬ k (λ l . ∃x[\ml{employee} x ∧ l x])$
+$\eval{no employees} ≔ λ k . ¬ k (λ l . ∃x[\ml{employee} x ∧ l x])$\hfill$\type{K_{t} (K_{t} a)}$
 \xe
 
 Tower version:
@@ -805,39 +807,158 @@ some company will hire a cook.}
 This is simply because the embedded finite clause is a scope island, and
 therefore the scope of \textit{and} is trapped.
 
-% \section{Indexed continuations}
+\section{DP internal composition and indexed continuations}
 
-% Given the definitions of \ac{sfa}, it's possible to generalize the
-% types even further.\sidenote{This discussion is based on \citet{wadler1994}.}
+As you'll probably have noticed, we've spent this whole time treating
+quantificational DPs such as \textit{every boy} as primitives.
 
-% \ex
-% $m_{\type{((a → b) → i) → r}} \ml{S} n_{\type{(a → r) → i}} ≔ λ k_{\type{b →
-%     r}} . m (λ
-% f_{\type{a → b}} . n (λ x_{\type{a}} . \underbrace{k \overbrace{(f x)}^{\type{b}})}_{\type{r}})$
-% \xe
+At this point a natural question to ask is: how do determiners compose with
+their restrictors?
 
-% The type schema $\type{(a → r) → r}$ is a special instance of the type schema
-% $\type{(a → i) → r}$, where $\type{i = r}$.
+Surprisingly, the answer isn't as straightforward as you might think.
 
-% \citet{barkerShan2015} generalize tower notation to the more general type-schema.
+Naively, we may assume that determiners receive they're standard meaning --
+essentially, a function from a predicate to a \textit{continuized} individual.
 
-% \ex Tower values (revised def.)\\
-% $\tower{\type{r}}{\type{i}}{\type{a}} ≔ \type{(a → i) → r}$
-% \xe
+\ex
+$\eval{every} \stackrel{?}{\coloneq} λ P . \semtower{∀y[P y → []]}{y}$
+\xe
 
-% The intuition here is that \type{r} is the type of the final return value,
-% whereas \type{i} is the type of the \textit{intermediate} return value.
+This will (obviously) work fine for a nominal restrictor.
 
-% This is useful for characterizing the meanings of determiners:
+But, what happens if the restrictor itself contains a quantificational
+expression? Consider the following example:
 
-% \ex
-% $\eval{every$_n$} ≔ λ k . λ l . (k (λ g . g_{1})) ⊆ l$
-% \xe
+\ex
+Every boy with a book left.\hfill $∀ > ∃$
+\xe
 
-% \ex
-% $\tower{\semtower{\type{t}}{\type{e}}}{\type{G t}}{\type{G e}}$
-% \xe
+Let's first compute the meaning of the restrictor \textit{boy with a
+  book}:\sidenote{Here, I'm using $\ml{S}_{\wedge}$ as an abbreviation for
+  \textit{continuized predicate modification}.\todo{say something more here
+    about liftA2 -- maybe this should go in an appendix?}}
 
+\ex~
+\begin{forest}
+  [{$\semtower{∃x[\ml{book} x ∧ []]}{λy . \ml{boy} y ∧ y \ml{with} x}$\\$\ml{S}_{∧}$}
+    [{$\semtower{[]}{λ y . \ml{boy} y}$\\boy$^{↑}$}]
+    [{$\semtower{∃x[\ml{book} x ∧ []]}{λ y . y \ml{with} x}$\\$\ml{S}$}
+      [{$\semtower{[]}{λ xy . y \ml{with} x}$\\with$^{↑}$}]
+      [{$\semtower{∃x[\ml{book} x ∧ []]}{x}$} [{a book},roof]]
+    ]
+  ]
+\end{forest}
+\xe
+
+What we end of with is a continuized predicate of type
+$\type{\semtower{t}{e → t}}$.
+
+How do we compose this with our
+determiner of type $\type{(e → t) → \semtower{t}{e}}$?
+
+One possiblity is to simply lift the determiner. There are two problems with
+this approach.
+
+\begin{itemize}
+
+  \item This will give \textit{a book} scope over \textit{every} -- here, we're
+    interested in the surface scope reading.
+
+  \item Despite potentially being a useful strategy for deriving
+    inversely-linked interpretations, this will ultimately allow the inner
+    quantifier to take scope outside of the containing DP -- this runs into
+    issues with Larson's generalization. We'll come back to
+    this.\sidenote{Essentially, there is some quite strong evidence that DP is a
+    scope island.}\todo{make sure
+    that I DO actually come back to this.}
+
+\end{itemize}
+
+Instead, we're going to pursue the idea that the determiner itself \textit{takes
+scope}.\sidenote{Add some arguments for this assumption.} Making sense of this will require us to generalize our existing machinery.
+
+Consider our type constructor $\type{K_{t}}$ -- it takes a type $\type{a}$ and
+returns a new type $\type{(a → t) → t}$.
+
+In principle, we could parameterize
+$\type{K}$ to any type $\type{r}$ (here $\type{r = t}$). Let's call $\type{r}$ the
+\textit{return type}, since it tells us the type of the value we get when the
+continuation argument $k$ applies to its argument.
+
+What if applying $k$ to its argument gives back an intermediate result of type
+$\type{i}$, which is subsequently transformed into a final result of type
+$\type{r}$? We can model this idea using the type constructor
+$\type{K_{r}^{i}}$:\sidenote{This ultimately goes back to \cite{wadler1994}.}
+
+\ex
+$\type{K_{r}^{i} a ≔ (a → i) → r}$
+\xe
+
+\citet{barkerShan2015} generalize tower notation to the more general
+type-schema.\sidenote{See also \citet[chapter 3]{Charlowc}.}
+
+\ex Tripartite tower types (def.)\\
+$\tower{\type{r}}{\type{i}}{\type{a}} ≔ \type{(a → i) → r}$
+\xe
+
+We can think of our existing tower notation as an abbreviation for a tripartite
+tower type, where the intermediate and final result types happen to be the same:
+
+\ex Bipartite towers as abbreviations for tripartite towers\\
+$\type{\semtower{r}{a} ≔ \tower{r}{r}{a}}$
+\xe
+
+
+\ex Standard determiner semantics for \textit{every}\\
+$\eval{every} ≔ λ c . \ml{every} (λ x . c x)$
+\xe
+
+\ex~
+\(\eval{every} : \type{(e → t) → (e → t) → t}\)
+\xe
+
+\ex~
+$\semtower{\ml{every} (λ x . [])}{x}$\hfill$: \tower{\semtower{\type{t}}{\type{e}}}{\type{t}}{\type{e}}$
+\xe
+
+\ex~
+\begin{forest}
+  [{$\semtower{∃x[\ml{book} x ∧ []]}{λy . \ml{boy} y ∧ y \ml{with} x}$}
+    [{boy}]
+    [{...}
+      [{$λ xy . y \ml{with} x$\\with}]
+      [{$\semtower{∃x[\ml{book} x ∧ []]}{x}$} [{a book},roof]]
+    ]
+  ]
+\end{forest}
+\xe
+
+\ex
+\begin{forest}
+  [{$\semtower{∀y[(∃x[\ml{book} x ∧ \ml{boy} y ∧ y \ml{with} x]) → []]}{y}$} [{\fbox{$\ml{every} (λ y . ∃x[\ml{book} x ∧ \ml{boy} y ∧ y \ml{with} x])$}} [{$\semtower{\ml{every} (λ y . ∃x[\ml{book} x ∧ []])}{\ml{boy} y ∧ y \ml{with} x}$}
+    [{$\semtower{\ml{every} (λ y . [])}{y}$}]
+    [{$\semtower{∃x[\ml{book} x ∧ []]}{λy . \ml{boy} y ∧ y \ml{with} x}$} [{boy with a book},roof]]
+  ]]]
+\end{forest}
+\xe
+
+\subsection{Inverse linking}
+
+\ex
+$\eval{every} = λ c_{e→ t} . λ s_{e → t} . \ml{every} (λ x . c x) (λ y . s y)$
+\xe
+
+\ex
+$\eval{every'} = λ d_{e→ (e→ t) → t} . λ s_{e → t} . \ml{every} (λ y . (d y s)^{↓}) (λ x . s x)$
+\xe
+
+\ex
+$λ s . \ml{every} (λ y . ∃x[\ml{book} x ∧ s (\ml{boy} y ∧ y \ml{with} x)]) (λ x . s x)$
+\xe
+
+\ex
+$\$
+\xe
 
 \printbibliography
 
