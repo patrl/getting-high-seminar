@@ -597,7 +597,7 @@ What we need to accomplish is the following:
        \columnbreak
        \ex~ Step 2: compose the resulting VP-denotation with \ml{LIFT}-ed \textit{Howie}\\
        \begin{forest}
-         [{$\type{(t → t) → t}$\\\fbox{$λ k . k (∃x[\ml{woman} x ∧ \ml{Howie} \ml{hug} x])$}}
+         [{$\type{(t → t) → t}$\\\fbox{$λ k . ∃x[\ml{woman} x ∧ k (\ml{Howie} \ml{hug} x])$}}
          [{$\ml{S}$}
            [{$\type{(e → t) → t}$\\$λ k . k \ml{Howie}$} [{$\ml{LIFT}$} [{Howie}]]]
            [{$\type{((e → t) → t) → t}$\\$λ k . ∃x[\ml{woman} x ∧ k (λ y . y \ml{hug} x)]$} [{hug some woman},roof]]
