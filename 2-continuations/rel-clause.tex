@@ -1,0 +1,143 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\setcounter{secnumdepth}{3}
+
+\title{Relative clause pied-piping}
+
+\author[Patrick D. Elliott]{Patrick~D. Elliott}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+We can assume that the relative operator is just an identity function:
+
+\ex
+$Op_{Rel} ≔ λ x . x$\hfill$\type{r → r}$
+\xe
+
+We can shift a relative operator into a scope taker via a shifter we can call $\ml{Q}_{Rel}$.
+
+\ex
+$Q_{Rel} m ≔ λ k . λ x . k (m x)$\hfill$\type{(r → a) → (a → b) → r → b}$
+\xe
+
+Now we have everything we need to get simple pied-piping:
+
+\ex
+Mary met the man [[the portrait of whom] John bought].
+\xe
+
+Let's start with the composition of the pied-piped DP -- we shift the relative
+operator to a scope-taker via $Q_{Rel}$, and scope it to the edge:
+
+\ex
+\begin{forest}
+  [{$λ x . ιy[y \ml{portrait} x]$}
+  [{$λ k . λ x . k x$}
+    [{$Q_{Rel}$}]
+    [{$Op_{Rel}$}]
+  ]
+  [{$λ x . ιy[y \ml{portrait} x]$}
+  [{$λ x$}]
+  [{...}
+    [{the}]
+    [{...}
+      [{portrait}]
+      [{$t_{x}$}]
+    ]
+  ]
+  ]]
+\end{forest}
+\xe
+
+Now we shift the result into a scope-taker via $Q_{Rel}$, and scope it to the
+edge of the relative clause, returning a derived predicate:
+
+\ex
+\begin{forest}
+  [{$λ x . j \ml{bought} ιy[y \ml{portrait} x]$}
+  [{$λ k . λ x . k (ι y[y \ml{portrait} x])$}
+    [{$Q_{Rel}$}]
+    [{$λ x . ιy[y \ml{portrait} x]$} [{the portrait of whom},roof]]
+  ]
+  [{$λ x . j \ml{bought} z$}
+    [{$λ x$}]
+    [{...}
+      [{John}]
+      [{...}
+        [{bought}]
+        [{$t_{x}$}]
+      ]
+    ]
+  ]
+  ]
+\end{forest}
+\xe
+
+\printbibliography
+
+\end{document}

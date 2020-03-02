@@ -1,0 +1,258 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\setcounter{secnumdepth}{3}
+
+\title{p-set 2}
+
+\date{\today}
+
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott\sidenote{\texttt{pdell@mit.edu}} \& Martin Hackl\sidenote{\texttt{hackl@mit.edu}}}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\textbf{Deadline: }02.20 (i.e., before next class)
+
+\section{Warming up}
+
+Compute the indicated reading of the following sentence:
+
+\ex
+Exactly three students gave at least one book to every
+girl.\\
+\phantom{,}\hfill$∀ > \ml{atLeastOne} > \ml{exactlyThree}$
+\xe
+
+Assume (roughly) the following syntax:
+
+\ex
+\begin{forest}
+  [{...}
+    [{...} [{exactly three students},roof]]
+    [{...}
+    [{}
+      [{give}]
+      [{...} [{at least one book},roof]]
+    ]
+      [{...}
+        [{to}]
+        [{...} [{every student},roof]]
+      ]
+    ]
+  ]
+\end{forest}
+\xe
+
+Note:
+
+\begin{itemize}
+
+    \item You'll probably want to assume that \textit{to} is semantically
+    vacuous, and treat \textit{give} as a type \type{e → e → e → t} function.
+
+    \item Feel free to eschew lambda expressions in favour of tower notation,
+    unless you feel like you need extra practice.
+
+    \item In class, we mostly talked about \textit{every} and \textit{some},
+    which we can easily represent as first order quantifiers. Here's a general
+    recipe for modeling any quantificational DP as a continuized individual,
+    taking advantage of a simple equivalence:
+
+    \ex
+    $Q ≣ λ k . Q (λ x . k x)$\hfill $\type{(e → t) → t}$
+    \xe
+
+    In tower terms:
+
+    \ex
+    $\semtower{Q (λ x . [])}{x}$
+    \xe
+
+\end{itemize}
+
+\section{More on con/dis-junction}
+
+\subsection{Conjunction practice}
+
+The following sentence has a \enquote{split scope} reading (in my view) that can
+be paraphrased as: \textit{John refused to stay in any hotel, and John refused
+  to rent any car}.
+
+\ex
+John refused to stay in any hotel or rent any car.\hfill $∧ > \ml{refuse} > \ml{any}$
+\xe
+
+Assume that a WYSIWYG syntactic structure. Show how we can derive the split scope reading using the machinery introduced in class.
+
+
+\subsection{Scope of disjunction}
+
+In class, we claimed that our account predicts that the scope of conjunction is
+sensitive to scope islands, on the basis of examples like the following:
+
+\ex
+John hopes [that some company will hire a main and a cook].\\
+\xmark \textit{John hopes that some company will hire a maid, and John hopes
+  that some company will hire a cook.}
+\xe
+
+Is the scope of \textit{dis}junction sensitive to scope islands? We predict that
+it is; can you come up with counterexamples?
+
+\section{DP-internal composition}
+
+\begin{tcolorbox}
+N.b. this question is based heavily on section 6 of the handout from session 2.
+Consult the handout if you run into trouble.
+\end{tcolorbox}
+
+\subsection{Part i}
+
+As you'll probably have noticed, we've spent this whole time treating
+quantificational DPs such as \textit{every boy} as primitives.
+
+At this point a natural question to ask is: how do determiners compose with
+their restrictors?
+
+Surprisingly, the answer isn't as straightforward as you might think.
+
+Naively, we may assume that determiners receive they're standard meaning --
+essentially, a function from a predicate to a \textit{continuized} individual.
+
+\ex
+$\eval{every} \stackrel{?}{\coloneq} λ P . \semtower{∀y[P y → []]}{y}$
+\xe
+
+But, what happens if the restrictor itself contains a quantificational
+expression? Consider the following example:
+
+\ex
+Every boy with a book left.\hfill $∀ > ∃$
+\xe
+
+Try to compute the meaning of the subject, and explain what goes wrong and why.
+
+\subsection{Part ii}
+
+\citet{barkerShan2015} generalize tower notation to the more general
+type-schema.\sidenote{See also \citet[chapter 3]{Charlowc}.}
+
+\ex Tripartite tower types (def.)\\
+$\tower{\type{r}}{\type{i}}{\type{a}} ≔ \type{(a → i) → r}$
+\xe
+
+We can think of our existing tower notation as an abbreviation for a tripartite
+tower type, where the intermediate and final result types happen to be the same:
+
+\ex Bipartite towers as abbreviations for tripartite towers\\
+$\type{\semtower{r}{a} ≔ \tower{r}{r}{a}}$
+\xe
+
+Now that we have tripartite tower types, we can think of the restrictor argument
+$c$ of \textit{every} as a \textit{continuation argument}.
+
+\ex Standard determiner semantics for \textit{every}\\
+$\eval{every} ≔ λ c . \left[λ P . \semtower{∀y[P y → []]}{y}\right] (λ x . c x)$\hfill$\type{(e → t) → \semtower{t}{e}}$
+\xe
+
+We can abbreviate the meaning of \textit{every} as a tower, where $c$ is the
+continuation argument:
+
+\ex
+$\semtower{\left[λ P . \semtower{∀y[P y → []]}{y}\right] (λ x . [])}{x}$\hfill$: \tower{\semtower{\type{t}}{\type{e}}}{\type{t}}{\type{e}}$
+\xe
+
+
+Our existing definition of $\ml{S}$ can be made more type-general, in order to
+accommodate tripartite tower types. \textit{Adjacent types} match and cancel out:
+
+\ex
+$\ml{S} : \type{\tower{r}{i}{a → b} → \tower{i}{j}{a} → \tower{r}{j}{b}}$
+\xe
+
+The actual definition of $\ml{S}$ doesn't change.
+
+\ex \textit{scopal function application} (def.)\\
+$m \ml{S} n ≔ λ k . m (λ x . n (λ y . k (x \ml{A} y)))$
+\xe
+
+Likewise, the type of \textit{lower} is further generalized; the definition
+doesn't change:
+
+\ex
+$(↓) : \type{\tower{a}{b}{b} → a}$
+\xe
+
+Show how generalizing our existing machinery allows us to derive the surface
+scope reading of our original sentence:
+
+\ex
+Every boy with a book left.
+\xe
+
+\end{document}

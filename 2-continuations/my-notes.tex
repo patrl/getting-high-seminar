@@ -1,0 +1,119 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\setcounter{secnumdepth}{3}
+
+\title{Notes}
+
+\author[Patrick D. Elliott]{Patrick~D. Elliott}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\section{A simple case of ACD}
+
+\ex
+Mary met every professor John did.
+\xe
+
+Computing the meaning of the DP:
+
+\ex
+\begin{forest}
+  [{$\semtower{λ R . []}{\semtower{∀x[(\ml{prof} x ∧ \ml{j }R x) → []]}{x}}$}
+  [{$↓$}]
+  [{$\semtower{λ R . []}{\semtower{\ml{every} (λ x . [])}{\ml{prof} x ∧ \ml{j} R x}}$}
+    [{$\semtower{\ml{every} (λ x . [])}{x}$\\every}]
+    [{$\semtower{λ R . []}{λ x . \ml{prof} x ∧ \ml{j }R x}$}
+      [{$↓$}]
+      [{$\semtower{λ R . []}{\semtower{λ x . \ml{prof} x ∧ []}{\ml{j }R x}}$}
+        [{John}]
+        [{}
+          [{$\semtower{[]}{\semtower{λ x . \ml{prof} x ∧ []}{x}}$}]
+          [{$\semtower{λ R . []}{\semtower{[]}{R}}$}]
+        ]
+      ]
+    ]
+  ]]
+\end{forest}
+\xe
+
+\ex
+\begin{forest}
+  [{...}
+    [{Mary}]
+    [{...}
+      [{$\semtower{(λS . ([] S)) \ml{met}}{S}$}]
+      [{$\semtower{λ R . []}{\semtower{∀x[(\ml{prof} x ∧ \ml{j }R x) → []]}{x}}$}]
+    ]
+  ]
+\end{forest}
+\xe
+
+
+\printbibliography
+
+\end{document}
