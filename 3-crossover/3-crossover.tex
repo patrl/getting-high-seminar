@@ -1,0 +1,165 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\setcounter{secnumdepth}{3}
+
+\title{Crossover i\thanks{24.979: Topics in
+    semantics\\\noindent\textit{Getting high: Scope, projection, and evaluation order}}}
+
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott\sidenote{\texttt{pdell@mit.edu}} \& Martin Hackl\sidenote{\texttt{hackl@mit.edu}}}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\section{Setting the stage}
+
+\section{The phenomenon}
+
+\subsection{Weak crossover and overt movement}
+
+% The strong crosso
+
+% \ex
+% Who$^{x}$ $t_{x}$ likes himself$_{x}$
+% \xe
+
+% \ex~
+% Who$^{x}$ does he$_{x}$ like $t_{x}$?
+% \xe
+
+The simplest form of the \ac{wco} paradigm\sidenote{The term \enquote{crossover}
+  was originally coined by Paul Postal.
+\todo[inline]{Add actual reference}
+} is illustrated below:
+
+\pex
+\a Who$^{x}$ $t_{x}$ likes his$_{x}$ mother?
+\a\ljudge{*}Who$^{x}$ does his mother like $t_{x}$?
+\xe
+
+At first blush, it looks like the \textit{wh-}quantifier can only bind a
+pronominal if the base-position of the \textit{wh} c-commands the pronoun.
+
+Why is this a problem? It is fairly standard to assume that scope feeds binding;
+in fact, according in semantics 101, it's often assumed that scope is
+\textit{necessary} for binding -- moving the \textit{wh} creates an abstraction
+index.
+
+The following LF should be perfectly legitimate from the perspective of the
+semantics:
+
+\ex
+who $1$ [his$_{1}$ mother likes $t_{1}$]?
+\xe
+
+Since both traces and pronouns are interpreted as variables, there is no reason
+why the representation above shouldn't result in a sensible reading.
+
+\subsection{Strong crossover}
+
+\pex
+\a\ljudge{*}Who$^{x}$ did he$_{x}$ say Mary saw $t_{x}$?
+\a Who$^{x}$ said Mary saw him$_{x}$.
+\xe
+
+\subsection{\ac{wco} and quantificational scope}
+
+This constraint on variable binding
+extends beyond configurations involving overt \textit{wh}-movement to those
+involving quantificational scope.\sidenote{This was first observed by Chomsky
+  (1976)
+\todo[inline]{Add proper reference}
+}
+
+\pex
+\a Everyone$^{x}$ loves his$_{x}$ mother.
+\a\ljudge{*}His$_{x}$ mother loves everyone$^{x}$.
+\xe
+
+\subsection{A- vs. A'-dependencies}
+
+\ex
+Everyone seems to his mother to be a genius.
+\xe
+
+\ex
+Who seems to his mother to be a genius.
+\xe
+
+\section{Weakest crossover}
+
+\todo[inline]{Cite Lasnik and Stowell}
+
+\ex
+Who did you stay with before his wife had spoken to?
+\xe
+
+Idea: the pronominal is bound by the \textit{wh-}expression, NOT the parasitic gap.
+
+\printbibliography
+
+
+\end{document}

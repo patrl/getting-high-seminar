@@ -1,0 +1,1463 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\setcounter{secnumdepth}{3}
+
+\title{Continuation semantics ii\thanks{24.979: Topics in
+    semantics\\\noindent\textit{Getting high: Scope, projection, and evaluation order}}}
+
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott\sidenote{\texttt{pdell@mit.edu}} \& Martin Hackl\sidenote{\texttt{hackl@mit.edu}}}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\begin{tcolorbox}
+Homework
+\tcblower
+\begin{itemize}
+\item Finish reading \cite{barkerShan2015} chapters 1 and 4, if you haven't already.
+\item Read \cite{barkerShan2015} chapter 7.
+\item Do p-set 2 (to be posted on Stellar later today)!
+\end{itemize}
+\end{tcolorbox}
+
+\section{Roadmap}
+
+This week, I'll finish introducing \textit{continuation semantics}. We'll
+minimally try to cover:
+
+\begin{itemize}
+
+    \item The syntax-semantics interface (more explicitly, this time).
+
+    \item Inverse scope via multi-story towers.
+
+    \item Split scope.
+
+    \item Scope islands as \textit{evaluation islands} + remarks on scope economy.
+
+    \item Generalized con/dis-junction + \enquote{split scope} readings.
+
+\end{itemize}
+
+With potentially two extensions:
+
+\begin{itemize}
+
+    \item DP-internal composition and indexed continuations.
+
+    \item Exceptionally-scoping indefinites via continuations (\citealt{Charlowc}).
+
+\end{itemize}
+
+\section{A note on syntax}
+
+So far, I've been a little shy about saying explicitly what we're assuming here
+about syntax, and what we're assuming about the syntax-semantics mapping.
+
+I'll assume a derivational theory, according to which structures are built-up
+via successive application of \textsc{Merge}.\sidenote{I'll often use
+  \enquote{syntactic structure speak} when talking about trees. This is
+  harmless, since they can always be interpreted as the graph of a syntactic
+  derivation, especially since trees encode both structure and order.}
+
+\ex
+\begin{forest}
+  [{\textsc{Merge}}
+    [{..}]
+    [{\textsc{Merge}}
+      [{..}]
+      [{\textsc{Merge}}
+        [{...}]
+        [{...}]
+      ]
+    ]
+  ]
+\end{forest}
+\xe
+
+I'll furthermore adopt the hypothesis that the syntactic derivation proceeds in
+lockstep with the semantic computation. This conjecture, which goes back at
+least to
+\citet{montague1973}, is often described as \textit{direct
+  compositionality}.\sidenote{Although direct compositionality is often
+  associated with frameworks such as variable free semantics and Combinatory Categorial Grammar, it's in principle independent.
+See, e.g., \citet{kobele2006} for an explicit formalization of a directly compositional minimalist grammar.}
+
+Minimally, the formatives must be \textit{tuples} consisting of phonological
+features and semantic features: (\texttt{phon}, \texttt{sem}, ...). Semantic
+features could be cashed out as model theoretic objects, or perhaps as
+expressions of the simply typed lambda calculus.
+
+I'll assume that part of what \textsc{Merge} does is concatenate
+phonological features. This is because \textsc{Merge} is just an instruction for
+combining formatives. On the semantic side, it typically does function
+application.\sidenote{It follows that \textsc{Merge} is a \textit{non-symmetric
+    relation}, departing from, e.g., \citet{chomsky1995}, but consistent with
+  \citet{stabler1997} and related work.}
+
+\ex
+$(𝕩,x) ∗ (𝕪,y) ≔ ([𝕩 𝕪], x \ml{A} y)$
+\xe
+
+It can also do concatenation of phonological features, plus \ac{sfa} of semantic
+values (whence the left-to-right bias of \ml{S}).
+
+\ex
+$(𝕩,x) ∗ (𝕪,y) ≔ ([𝕩 𝕪], x \ml{S} y)$
+\xe
+
+I've define \ml{LIFT} as a purely semantic operation -- this is to be taken as
+shorthand for an operation on a formative that only effects the semantic value:
+
+\ex
+$(𝕩,x)^{↑} ≔ (𝕩,x^{↑})$
+\xe
+
+This constitutes the basics of the system laid out in
+\cite{elliott2019movement}. See \citeauthor{elliott2019movement} for an
+elaboration of how to supplement this system with a feature
+calculus, but for today's purposes we won't need any additional assumptions.
+
+\subsection{Deriving inverse scope}
+
+Last type we got as far as being able to derive \textit{surface scope} readings,
+as well as scopal ambiguities arising via interactions with scopally-immobile
+expressions.
+
+We achieved this latter coverage by allowing \ml{LOWER} to fix the scope of a
+quantifier at different points in the derivation.
+
+We still don't have any way of accounting for scopal interactions between
+multiple scopally-mobile expressions (i.e., quantifiers). Since every major
+theory of quantifier scope is tailored to achieve this, we have a major problem
+on our hands!
+
+Fortunately, we already have all of the primitive operations we need in order to
+achieve inverse scope readings.
+
+Recall that \(\ml{LIFT}\) is a \textit{polymorphic function} -- it lifts a value
+into a trivial tower:
+
+\ex
+$a^{↑} ≔ \semtower{[]}{a}$
+\xe
+
+Since \ml{LIFT} is polymorphic, in principle it can apply to any kind of value
+-- even a tower! Let's flip back to lambda notation to see what happens.
+
+\ex
+$\eval{everyone} ≔ λ k . ∀x[k x]$\hfill $\type{(e → t) → t}$
+\xe
+
+\ex~
+$\eval{everyone}^{↑} = λ l . l (λ k . ∀x[k x])$\hfill$\type{(((e → t) → t) → t) → t}$
+\xe
+
+Going back to tower notation, lifting a tower adds a trivial third
+story:\sidenote{In fact, via successive application of \ml{LIFT}, we can
+  generate an $n-$story tower.} Following \citet{Charlowc}, when we apply
+\ml{LIFT} to a tower, we'll describe the operation as \textit{external lift}
+(although, it's worth bearing in mind that this is really just our original
+\ml{LIFT} function).
+
+The third story of the tower corresponds to whatever takes scope over the outer
+continuation variable (here, $l$), and the second story of the tower corresponds
+to whatever takes scope over the inner continuation variable (here, $k$).
+
+\ex
+\(\left(\semtower{∀x[]}{x}\right)^{↑} = \semtower{[]}{\semtower{∀x[]}{x}}\)
+\xe
+
+One important thing to note is that, when we externally lift a tower, the
+quantificational part of the meaning always remains on the same story relative
+to the bottom story. Intuitively, this reflects the fact that, ultimately,
+\ml{LIFT} alone isn't going to be enough to derive quantifier scope ambiguities.
+
+\begin{tcolorbox}
+\textbf{Question}
+\tcblower
+Which (if any) of the following bracketings make sense for a three-story tower:
+
+\begin{multicols}{2}
+\ex
+$\semtower{\left(\semtower{f []}{g []}\right)}{x}$
+\xe
+\columnbreak
+\ex
+$\semtower{f []}{\left(\semtower{g []}{x}\right)}$
+\xe
+\end{multicols}
+\end{tcolorbox}
+
+The extra ingredient we're going to need in order to derive inverse scope, is the ability to sandwhich an empty
+story into the \textit{middle} of our tower, pushing the quantificational part
+of the meaning to the very top.
+
+This is \textit{internal lift} ($⇈$).\sidenote{I
+can tell what you're thinking: \enquote{seriously? Another \textit{darn}
+  type-shifter? How many of these are we going to need?!}.
+Don't worry, I got you. Even thought we've defined internal lift here as a
+primitive operation, it actually just follows from our existing machinery.
+Concretely, \textit{internal lift} is really just \textit{lifted} \ml{LIFT} (so
+many lifts!). Lifted \ml{LIFT} applies to its argument via \ml{S}.
+
+\ex
+$\semtower{[]}{↑} \ml{S} \semtower{f []}{x} = \semtower{f []}{\semtower{[]}{x}}$
+\xe
+
+}
+
+\pex
+\textit{Internal lift} (def.)\\
+\a \((⇈) : \type{K_{t} a → K_{t} (K_{t} a)}\)
+\a \(m^{⇈} ≔ λ k . m (λ x . k x^{↑})\)
+\xe
+
+It's much easier to see what internal lift is doing by using the tower notation.
+We can also handily compare its effects to those of \textit{external} lift.
+
+\begin{multicols}{2}
+\ex \textit{Internal lift} (tower ver.)\\
+\(\left(\semtower{f []}{x}}\right)^{⇈} ≔ \semtower{f []}{\semtower{[]}{x}}\)
+\xe
+\columnbreak
+\ex \textit{External lift} (tower ver.)\\
+\(\left({\semtower{f []}{x}}\right)^{↑} ≔ \semtower{[]}{\semtower{f []}{x}}\)
+\xe
+
+\end{multicols}
+
+Armed with \textit{internal} and \textit{external} lifting operations, we now
+have everything we need to derive inverse scope. We'll start with a simple
+example (\ref{ex:classic1}).
+
+The trick is: we \textit{internally} lift the quantifier that is destined to
+take wide scope.
+
+\ex
+A boy danced with every girl.\hfill $∀ > ∃$\label{ex:classic1}
+\xe
+
+Before we proceed, we need to generalize \ml{LIFT} and \ac{sfa} to three-story
+towers.\sidenote{
+Before you get worries about expanding our set of primitive operations, notice
+that \textit{3-story lift} is just ordinary lift applied twice. \textit{3-story}
+\ac{sfa} is just \ac{sfa}, but where the bottom story combines via \ml{S} not
+\ml{A}. In fact, we can generalize these operations to $n-$story towers.
+}
+
+\begin{multicols}{2}
+\ex
+$x^{↑_{2}} ≔ \semtower{[]}{\semtower{[]}{x}}$
+\xe
+
+\columnbreak
+
+\ex
+$\semtower{f []}{m} \ml{S}_{2} \semtower{g []}{n} ≔ \semtower{f (g [])}{m \ml{S} n}$
+\xe
+
+\end{multicols}
+
+
+\begin{fullwidth}
+  \begin{multicols}{2}
+\ex Step 1: internally lift \textit{every girl} \\
+\begin{forest}
+  [{\fbox{$\semtower{∀x[\ml{girl} x → []]}{\semtower{[]}{λ y . y \ml{danceWith} x}}$}\\$\ml{S}_{2}$}
+    [{$\semtower{[]}{\semtower{[]}{\ml{danceWith}}}$} [{dance-with$^{↑_{2}}$}]]
+    [{$\semtower{∀x[]}{\semtower{[]}{x}}$} [{$⇈$} [{every girl},roof]]]
+  ]
+\end{forest}
+\xe
+
+\columnbreak
+
+\ex
+Step 2: \textit{ex}ternally lift \textit{a boy}\\
+\begin{forest}
+  [{\fbox{$\semtower{∀x[\ml{girl} x → []]}{\semtower{∃y[\ml{boy} y ∧ []]}{y \ml{danceWith} x}}$}\\$\ml{S}_{2}$}
+    [{$\semtower{[]}{\semtower{∃y[\ml{boy} y ∧ []]}{y}}$} [{a boy$^{↑}$}]]
+    [{$\semtower{∀x[\ml{girl} x → []]}{\semtower{[]}{λ y . y \ml{danceWith} x}}$} [{dance with every girl},roof]]
+  ]
+\end{forest}
+\xe
+\end{multicols}
+\end{fullwidth}
+
+What we're left with now is a 3-story tower with the universal on the top story
+and the existential on the middle story. We can collapse the tower by first
+collapsing the bottom two stories, and then collapsing the result. In order to
+do this, we'll first define \textit{internal lower}.\sidenote{Let's again
+  address the issue of expanding our set of primitive operations (in what is
+  becoming something of a theme). Internal lower is just lifted lower, applying
+  via \ml{S}. In other words:
+
+  \ex
+  $m^{⇊} ≡ (↓)^{↑} \ml{S} m$
+  \xe
+
+}
+
+\pex \textit{Internal lower} (def)
+\a $(⇊): \type{K_{t} (K_{t} a) → K_{t} a}$
+\a $m^{⇊} ≔ λ k . m (λ n . k n^{↓})$
+\xe
+
+\ex
+\textit{Internal lower} (def.)
+$\left(\semtower{f []}{\semtower{g []}{p}}\right)^{⇊} ≔ \semtower{f []}{\left(\semtower{g []}{p}\right)^{↓}}$
+\xe
+
+Now we can collapse the tower by doing \textit{internal lower}, followed by
+\textit{lower}:
+
+\ex
+\begin{forest}
+  [{\fbox{$∀x[\ml{girl} x → (∃y[\ml{boy} y ∧ y \ml{danceWith} x])]$}}
+  [{$↓$}
+    [{$\semtower{∀x[\ml{girl} x → []]}{∃ x[\ml{boy} x ∧ y \ml{danceWith} x]}$}
+      [{$⇊$}
+        [{$\semtower{∀x[\ml{girl} x → []]}{\semtower{∃y[\ml{boy} y ∧ []]}{y \ml{danceWith} x}}$} [{a boy danced with every girl},roof]]
+  ]]]]
+\end{forest}
+\xe
+
+Great! We've shown how to achieve quantifier scope ambiguities using our new
+framework. Let's look at the derivations again side-by-side.
+
+\begin{fullwidth}
+\begin{multicols}{2}
+
+  \ex
+  Surface scope (schematic derivation)\\
+  \begin{forest}
+    [{$↓$}
+    [{$\ml{S}$}
+      [{$Q_{1}$}]
+      [{$\ml{S}$}
+        [{$R^{↑}$}]
+        [{$Q_{2}$}]
+      ]
+    ]]
+  \end{forest}
+  \xe
+
+  \columnbreak
+
+  \ex
+  Inverse scope (schematic derivation)\\
+  \begin{forest}
+    [{$↓$}
+    [{$⇊$}
+  [{$\ml{S}_{2}$}
+    [{$Q_{1}^{↑}$}]
+    [{$\ml{S}_{2}$}
+      [{$R^{↑_{2}}$}]
+      [{$Q_{2}^{⇈}$}]
+    ]
+  ]]]
+  \end{forest}
+  \xe
+
+\end{multicols}
+\end{fullwidth}
+
+There's a couple of interesting things to note here:
+
+\begin{itemize}
+
+    \item The inverse scope derivation involves more applications of our
+    type-shifting operations -- this becomes especially clear if we decompose
+    the complex operations
+    $\ml{S}_{2}$, $↑_{2}$, $⇈$, and $⇊$.
+
+    \item In order to derive an inverse scope reading, what was \textit{crucial}
+    was the availability of \textit{internal lift}; the remaining operations,
+    $\ml{S}_{2}, ↑_{2}, ⇊$ only functioned to massage composition for
+    three-story towers.
+
+\end{itemize}
+
+On the latter point, it's tempting to conjecture that in, e.g., German, Japanese
+and other languages which \enquote{wear their LF on their sleeve}, the semantic
+correlate of \textit{scrambling} is \textit{internal lift}, whereas in
+scope-flexible languages such as English, internal lift is a freely available
+operation.\sidenote{To make sense of this, we would of course need to say
+  something more concrete about overt movement.
+  For an attempt at marrying continuations to a standard, minimalist syntactic
+component, see my manuscript \textit{Movement as higher-order structure building}.}
+
+If we adopt some version of the \textit{derivational complexity hypothesis}\sidenote{I.e., that derivational complexity correlates
+  with processing difficulty.}, we
+also predict that inverse scope readings should take longer to process than
+surface scope readings.
+
+It's worth mentioning, incidentally, that although we collapsed the resulting
+three-story tower via internal lower followed by lower, we can also define an
+operation that collapses a three-story tower two an ordinary tower in a
+different way. Let's call it \textit{join}:\sidenote{Join for three-story towers
+corresponds directly to the \textit{join} function associated with the
+continuation monad. For more on continuations from a categorical perspective,
+see the appendix to the first handout.}
+
+\ex \textit{join} (def.)\\
+$m^{μ} ≔ λ k . m (λ c . c k)$\hfill$μ: \type{K_{t} (K_{t} a) → K_{t} a}$
+\xe
+
+In tower terms, join takes a three-story tower and sequences quantifiers from
+top to bottom:
+
+ \ex
+  $
+  \left(\semtower{f []}{\semtower{g []}{x}}\right)^{μ} = \semtower{f (g [])}{x}
+  $
+  \xe
+
+Doing internal lower on a three-story tower followed by lower is equivalent to doing
+join on a three-story tower followed by lower (as an exercise, convince yourself
+of this). However, there's may be a good empirical reason for having internal lower as a
+distinct operation (and since it's just lifted lower, it \enquote{comes for
+  free} in a certain sense).
+
+\ex
+Daniele wants a boy to dance with every girl.\hfill $∀ > \ml{want} > ∃$\label{ex:dani1}
+\xe
+
+Arguably, (\ref{ex:dani1}) can be true if for every girl $x$, Daniele has the following
+desire: \textit{a boy dances with $y$}. This is the reading on which
+\textit{every boy} scopes over the intensional verb, and \textit{a boy} scopes
+below it.
+
+If we have \textit{internal lower}, getting this is easy. We \textit{internally
+  lift} \textit{every girl} and \textit{externally lift} \textit{a boy}. Before
+we reach the intensional verb, we fix the scope of \textit{a boy} by doing
+internal lower. Now we have an ordinary tower, and we can defer fixing the scope
+of \textit{every girl} via \textit{lower} until after the intensional
+verb.
+
+\begin{fullwidth}
+  \begin{multicols}{2}
+    \ex Step 1: scope \textit{every girl} over \textit{a boy}\\
+    \begin{forest}
+      [{\fbox{$\semtower{∀x[\ml{girl} x → []]}{\semtower{∃y[\ml{boy} y ∧ []]}{y \ml{{dance-with} x}}}$}\\$\ml{S}_2$}
+        [{...} [{$↑$} [{a boy},roof]]]
+        [{$\ml{S}_2$}
+          [{dance with$^{↑_2}$}]
+          [{...} [{$⇈$} [{every girl},roof]]]
+        ]
+      ]
+    \end{forest}
+    \xe
+    \columnbreak
+    \ex Step 2: internally lower below \textit{want}
+    \begin{forest}
+      [{\fbox{$\semtower{∀x[\ml{girl} x → []]}{∃y[\ml{boy} y ∧ y \ml{dance-with} x]}$}}
+      [{$⇊$}
+        [{$\semtower{∀x[\ml{girl} x → []]}{\semtower{∃y[\ml{boy} y ∧ []]}{y \ml{{dance-with} x}}}$}]
+      ]
+      ]
+    \end{forest}
+    \xe
+  \end{multicols}
+  \end{fullwidth}
+
+    \ex
+    Step 3: scope \textit{every girl} over \textit{want}\\
+    \begin{forest}
+      [{\fbox{$\semtower{∀x[\ml{girl} x → []]}{\ml{daniele} \ml{want} (∃y[\ml{boy} y ∧ y \ml{dance-with} x])}$}\\$\ml{S}$}
+        [{Daniele$^↑$}]
+        [{$\ml{S}$}
+          [{wants$^↑$}]
+          [{$\semtower{∀x[\ml{girl} x → []]}{∃y[\ml{boy} y ∧ y \ml{dance-with} x]}$} [{...},roof]]
+        ]
+      ]
+    \end{forest}
+    \xe
+
+    \ex~
+    Step 4: lower\\
+    \begin{forest}
+      [{\fbox{$∀x\left[\begin{aligned}[c]
+            &\ml{girl} x\\
+            &→ \left(\ml{daniele} \ml{want} \left(∃y\left[\begin{aligned}[c]
+                &\ml{boy} y\\
+                &∧ y \ml{dance-with} x
+                \end{aligned}\right]\right)\right)
+            \end{aligned}\right]$}}
+      [{$↓$}
+       [{$\semtower{∀x[\ml{girl} x → []]}{\ml{daniele} \ml{want} (∃y[\ml{boy} y ∧ y \ml{dance-with} x])}$}]
+      ]
+      ]
+    \end{forest}
+    \xe
+
+If we only have \textit{join} then the scope of \textit{a boy} and \textit{every
+girl} may vary amongst themselves, but they should either both scope below
+\textit{want} or both scope above \textit{want}.}
+
+Note that we haven't given a concrete treatment of intensionality here, but, mechanically,
+we can simply replace every occurrence of $\type{t}$ with type $\type{s → t}$.
+Intensional verbs take type $\type{s →
+  t}$ complements. Here are some sample lexical entries:
+
+\pex
+\a
+$\eval{every girl} ≔ λ k . λ w . ∀x[\ml{girl}_{w} x → k x]$\hfill$\type{(e → (s → t)) → s → t}$
+\a
+$\eval{dance with} ≔ λ yx . λ w . y \ml{dance-with}_{w} x$\hfill$\type{e → s → t}$
+\a
+$\eval{want} ≔ λ p . λ x . λ w . x \ml{want}_{w} p$\hfill$\type{(s → t) → e → s → t}$
+\xe
+
+Instead of giving back a return type $\type{t}$, in an intensional setting our continuation type
+constructor is defined in terms of a return type $\type{s → t}$:
+
+\ex
+$\type{K_{s → t} a≔ (a → (s → t)) → s → t}$
+\xe
+
+You can verify for yourselves that the core features of the system remain
+unaffected, i.e, the definitions of lift and \ml{S} can remain the same.
+
+\section{Split scope}
+
+In the first p-set, I asked you how to think about analyzing split scope of
+non-upward-monotone quantifiers:
+
+\ex
+The company need fire no employees.\\
+\textit{It's not the case that the company \textit{needs} to hire
+  employees.}\hfill $¬ > □ > ∃$
+\xe
+
+With continuation semantics, we can understand this data as providing support
+for the idea that expressions can denote three-story towers (something not
+excluded by, e.g., \citealt{heimKratzer1998} in any case).
+
+\ex
+$\eval{no employees} ≔ λ k . ¬ k (λ l . ∃x[\ml{employee} x ∧ l x])$\hfill$\type{K_{t} (K_{t} a)}$
+\xe
+
+Tower version:
+
+\ex
+$\eval{no employees} ≔ \semtower{¬ []}{\semtower{∃x[\ml{employee} x ∧ []]}{x}}$
+\xe
+
+We get the split scope reading by doing internal lower first below the modal,
+and then external lower above the modal.
+
+\ex
+\begin{forest}
+  [{\fbox{$¬ (□ (∃x[\ml{company} x ∧ \ml{the-company fire }x]))$}}
+  [{$↓$}
+  [{$\semtower{¬ []}{□ (∃x[\ml{company} x ∧ \ml{the-company fire }x])}$\\\ml{S}$}
+    [{need$^{↑}$}]
+    [{$\semtower{¬ []}{∃x[\ml{company} x ∧ \ml{the-company fire }x]}$} [{$⇊$} [{$\ml{S}_{2}$}
+      [{the company$^{↑_{2}}$}]
+      [{$\ml{S}_{2}$}
+        [{fire$^{↑_{2}}$}]
+        [{$\semtower{¬ []}{\semtower{∃x[\ml{employee} x ∧ []]}{x}}$}]
+      ]
+    ]
+  ]]]]]
+\end{forest}
+\xe
+
+One interesting property of split scope readings is that it is essential that we
+be able to \textit{lower} a 3-story tower in two distinct steps --
+\textit{internal lower} followed by \textit{lower}.
+
+Despite being very elegant, I'm not sure whether this is a completely satisfactory account of split scope
+readings -- it's been observed, for example, that split scope always seems to
+involve narrow scope of an existential (see, e.g., \citealt{abelsMarti2010}). This
+doesn't fall out from the analysis outlined here.\sidenote{An investigation of split scope from the perspective
+  of continuations could be a good project for this class -- see, e.g.,
+  \cite{bumford2017} for relevant discussion.}
+
+\section{Scope islands and obligatory evaluation}
+
+Quantifiers can't take scope arbitrarily high -- rather, their scope is roofed
+by certain constituents. As is well known, the environments that are
+\textit{islands for scope taking} don't necessarily correspond to the
+environments that are islands for overt movement (see \citealt{may}).
+
+We still need a theory of scope islands in order to restrict the power of
+continuation semantics. It turns out that there is a very natural notion
+available to us, similar to \citeauthor{chomsky1995}'s notion of a \textit{phase}.
+
+Inspired by research on \textit{delimited control} in computer
+science\sidenote{See, e.g., \cite{danvyFilinski1992} and \cite{wadler1994}.},
+\citet{Charlowc} develops an interesting take on scope islands couched in terms
+of continuations.
+
+He proposes the following definition:
+
+\ex
+\textit{Scope islands} (def.)\\
+A \textit{scope island} is a constituent that is subject to \textit{obligatory
+  evaluation}.\\
+\phantom{,}\hfill\citep[p. 90]{Charlowc}
+\xe
+
+By \textit{obligatory evaluation}, we mean that every continuation argument
+\textit{must} be saturated before semantic computation can proceed. In other
+words, a scope island is a constituent where, if we have something of type
+$\type{K_{t} a}$, we must lower it before we can proceed.
+
+Let's be more precise:
+
+\pex
+\a A constituent X is \textit{evaluated} if it has an evaluated type $\type{a}$.
+\a A type $\type{a}$ is \textit{evaluated} if $\type{a} \neq \type{K_{t} b}$.
+\xe
+
+One way of thinking about this, is that the presence of an unsaturated
+continuation argument means that there is some computation that is being
+deferred until later.
+
+Scope islands are constituents at which evaluation is
+\textit{forced}. As noted by \citeauthor{Charlowc}, this idea bears an
+intriguing similarity to \citeauthor{chomskyPhase}'s notion of a
+\textit{phase}.\sidenote{Exploring this parallel in greater depth could make for
+an interesting term paper topic.}
+
+How does this work in practice? A great deal of ink has been spilled arguing
+that, e.g., a finite clause is a scope island.
+
+\ex
+A boy said $\overbrace{\text{\fbox{that Susan greeted every
+      linguist}}}^{\text{scope island}}$.\hfill$∃>∀; \text{\xmark} ∀ > ∃$
+\xe
+
+The derivation of the embedded clause proceeds as usual via lift and \ac{sfa}.
+
+\begin{fullwidth}
+\begin{multicols}{2}
+\ex
+Scope island with an unevaluated type\\
+\begin{forest}
+  [{...}
+    [{...} [{a boy},roof]]
+    [{...}
+      [{said}]
+      [{\xmark $\semtower{∀x[\ml{linguist} x → []]}{\ml{Susan greeted }x}$} [{Susan greeted every linguist},roof]]
+    ]
+  ]
+\end{forest}
+\xe
+\columnbreak
+\ex
+Scope island with an evaluated type\\
+\begin{forest}
+  [{...}
+    [{...} [{a boy},roof]]
+    [{...}
+      [{said}]
+      [{\cmark $∀x[\ml{linguist} x→ \ml{Susan greeted }x]$}
+      [{$↓$} [{$\semtower{∀x[\ml{linguist} x → []]}{\ml{Susan greeted }x}$} [{Susan greeted every linguist},roof]]]]
+    ]
+  ]
+\end{forest}
+\xe
+\end{multicols}
+\end{fullwidth}
+
+This story leaves a lot of questions unanswered of course:
+
+\begin{itemize}
+
+    \item Is this just a recapitulation of a representational constraint on
+    quantifier raising?\sidenote{The answer to this question may ultimate be
+    \textit{yes}, in my view.}
+
+    \item Are finite CPs the only scope island? What about DPs?\sidenote{In my
+    view, yes, the default assumption should be that DPs are scope islands. See
+    \cite{sauerland2005dp} and \cite{charlow2010} for relevant discussion.}
+
+    \item Can we give a principled story about islands for overt movement using
+    similar mechanisms? What explains the difference between overt movement and
+    scope taking with respect to locality?\footnote{If we want to give a more
+    general account of phases using this mechanism, we need to give an account
+    of overt movement in terms of continuations, too. See my unpublished ms.
+    \textit{Movement as higher-order structure building} for progress in this direction.}
+
+\end{itemize}
+
+\subsection{A brief remark on Scope Economy}
+
+As famously discovered by \cite{fox1995}, scope-shifting operations are subject
+to an economy condition.
+
+\ex
+Economy condition on scope shifting (\textit{Scope Economy}) (def.)\\
+OP can apply only if it affects semantic interpretation (i.e., only if
+inverse-scope and surface-scope are semantically distinct).\sidenote{Here, OP
+  stands for \textit{scope-shifting operation}, i.e., quantifier raising.}\\
+\phantom{,}\hfill(\citealt[p.,21]{fox2000})
+\xe
+
+Scope economy has an impressively wide empirical coverage, including
+interactions between scope and ellipsis. Consider, e.g., the following contrasts
+(from \citealt{fox1995}):
+
+\ex
+Some linguist likes every philosopher.\hfill $∃ > ∀; ∀ > ∃$
+\xe
+
+\ex~
+Some linguist likes every philosopher,\\
+and some mathematician does too.\hfill
+$∃ > ∀; ∀ > ∃$
+\xe
+
+\ex~
+Some linguist likes every philosopher,\\
+and Mary does too.\hfill
+$∃ > ∀; $\xmark $∀ > ∃$
+\xe
+
+\ex~
+Some linguist likes every philosopher,\\
+and every mathematician does too.\hfill
+$∃ > ∀; $\xmark $∀ > ∃$\label{ex:mary}
+\xe
+
+Scope economy gives us an explanation of this paradigm, just in case we assume
+that an elliptical sentence and its antecedent must involve \textit{parallel
+  scopal relations}.
+
+In (\ref{ex:mary}), for example, QR of \textit{every philosopher} over \textit{every
+  mathematician} is blocked by scope economy, since the relative scope of two
+universal quantifiers doesn't affect truth-conditions.
+
+\ex
+\ljudge{*}every philosopher [$λ x$ every mathematician does \fbox{like $t_{x}$}]
+\xe
+
+Since the antecedent must involve a parallel scopal relation, inverse scope is blocked.
+
+Here, I just want to point out that our continuation semantic framework is
+actually an extremely natural fit for scope economy:
+
+\ex
+Economy condition on scope shifting (continuations ver.)\\
+A derivation $D$ is ruled out if there is a simpler derivation $D'$ that gives rise to the same interpretation.
+\xe
+
+Just so long as the economy condition is evaluated at scope islands (as
+argued for by \citealt{fox1995}), we capture the basic observations, since scope
+\textit{every philosopher} over \textit{every mathematician}, involves,
+minimally, an additional internal lift of \textit{every philosopher}.
+
+\begin{fullwidth}
+\begin{multicols}{2}
+
+  \ex
+  Surface scope (schematic derivation)\\
+  \begin{forest}
+    [{$↓$}
+    [{$\ml{S}$}
+      [{$Q_{1}$}]
+      [{$\ml{S}$}
+        [{$R^{↑}$}]
+        [{$Q_{2}$}]
+      ]
+    ]]
+  \end{forest}
+  \xe
+
+  \columnbreak
+
+  \ex
+  Inverse scope (schematic derivation)\\
+  \begin{forest}
+    [{$↓$}
+    [{$⇊$}
+  [{$\ml{S}_{2}$}
+    [{$Q_{1}^{↑}$}]
+    [{$\ml{S}_{2}$}
+      [{$R^{↑_{2}}$}]
+      [{$Q_{2}^{⇈}$}]
+    ]
+  ]]]
+  \end{forest}
+  \xe
+
+\end{multicols}
+\end{fullwidth}
+
+
+It remains to be seen whether an economy condition framed in terms of
+the complexity of a continuation-semantic derivation makes
+any distinct predictions to an economy condition framed in terms of
+QR.\sidenote{Figuring this out would be a great student project, I think.}
+
+\section{Generalized con/dis-junction}
+
+The flexibility of \textit{and} and \textit{or} has been discussed at length by,
+e.g., \citet{parteeRooth}, \citet{winter_flexibility_2001}, among
+others.\sidenote{We saw an example of this when we motivated \ml{LIFT}.}
+
+\ex
+Lan and some woman arrived.
+\xe
+
+\ex~
+Howie sneezed and/or coughed.
+\xe
+
+\ex~
+Lan kissed and/or hugged Irene.
+\xe
+
+Unlike other expressions we've seen so far, we can characterize \textit{and} and
+\textit{or} as expressions that takes two continuized values as arguments.\sidenote{Note that
+  since the continuation argument $k$ occurs more than once in the function
+  body, we can no longer abbreviate the flat lambda-expression using a tower.}
+
+\pex
+\a \(m \ml{and} n ≔ λ k . m k ∧ n k\)\hfill$\ml{and} : \type{K_{t} a → K_{t} a → K_{t} a}$
+\a \(m \ml{or} n ≔ λ k . m k ∨ n k\)\hfill$\ml{or} : \type{K_{t} a → K_{t} a → K_{t} a}$
+\xe
+
+
+The intuition here is as follows: \textit{and} wants as its arguments things
+that are \textit{guaranteed} to give back truth values at some future stage of computation.
+
+This accounts for the basic cases discussed by \citet{parteeRooth}, with a
+single (polymorphic) entry for \textit{and}, as illustrated below:\sidenote{
+Unlike other lexical entries we've seen so far, \textit{and} is
+\textit{lexically specified} as seeking continuized arguments. As such, if a
+value isn't already typed as an instantiation of \type{K_t a}, it must be
+lifted.
+
+In the derivations below, you can observe that, unlike the cases we've
+encountered so far, \textit{and} composes with its arguments via \ac{fa} rather
+than \ac{sfa}.
+}
+
+\ex Lan and some woman arrived.\\
+\begin{forest}
+  [{$\ml{Lan} \ml{arrived} ∧ ∃x[\ml{woman} x ∧ \ml{arrived} x]$\\$\ml{A}$}
+  [{$λ k . k \ml{Lan}∧ ∃x[\ml{woman} x ∧ k x]$\\\ml{A}}
+    [{$λ k . k \ml{Lan}$\\Lan$^{↑}$}]
+    [{$λ nk . n k ∧ ∃x[\ml{woman} x ∧ k x]$\\$\ml{A}$}
+      [{$λ mnk . n k ∧ m k$\\and}]
+      [{$λ k .∃x[\ml{woman} x ∧ k x]$\\some woman}]
+    ]
+  ]
+    [{arrived}]
+  ]
+\end{forest}
+\xe
+
+\ex~ Howie sneezed and coughed.\\
+\begin{forest}
+  [{$\ml{Howie sneezed and coughed}$\\$\ml{A}$}
+    [{$λ k . k \ml{Howie}$\\Howie$^{↑}$}]
+    [{$λ k . k \ml{sneezed} ∧ k \ml{coughed}$\\\ml{A}}
+      [{$λ k . k (\ml{sneezed})$\\sneezed$^{↑}$}]
+      [{\ml{A}}
+        [{$λ mnk . n k ∧ m k$\\and}]
+        [{$λ k . k (\ml{coughed})$\\coughed$^{↑}$}]
+      ]
+    ]
+  ]
+  \end{forest}
+\xe
+
+\subsection{The scope of con/dis-junction}
+
+In a lot of the cases we've seen so far, teasing apart the power of QR from the
+power of continuations hasn't been at all trivial. In this section, we'll see an
+example of a case where it's clearer that continuations can help us in ways that
+QR can't.
+
+Both conjunction and disjunction exhibit \enquote{scope} ambiguities. This is
+illustrated below for conjunction:
+
+\pex
+You're not allowed to dance and sing.
+\a \textit{You're not allowed to dance and you're not allowed to sing}\\
+\phantom{,}\hfill$∧ > ¬ > ◇$
+\a \textit{You're not allowed to both dance and sing (at the same time)}\\
+\phantom{,}\hfill$¬ > ◇ > ∧$
+\xe
+
+We can account for the wide/narrow scope ambiguity as a matter of where we
+\ml{LOWER}.
+
+Let's first compute the semantic value of the prejacent of the modal:
+
+\ex
+\begin{forest}
+  [{$λ k . k (\ml{you dance}) ∧ k (\ml{you sing})$\\$\ml{S}$}
+    [{$λ k . k \ml{you}$\\you$^{↑}$}]
+    [{$λ k . k \ml{dance} ∧ k \ml{sing}$\\$\ml{A}$}
+       [{$λ k . k \ml{dance}$\\dance$^↑$}]
+       [{$\ml{A}$}
+         [{$λ mnk . n k ∧ m k$\\and}]
+         [{$λ k . k \ml{sing}$} [{sing$^{↑}$},roof]]
+       ]
+    ]
+  ]
+\end{forest}
+\xe
+
+If we \ml{LOWER} immediately we're just going to get a proposition, which
+\ml{allowed} will take as its argument, deriving the narrow scope
+reading.\sidenote{Instead of composing via \ml{S} and lowering, we could equivalently compose lifted
+  \textit{you} with its complement via \ml{A}, since it's a subject.}
+
+The \enquote{wide scope} reading is more interesting. We can simply defer
+lowering, and compose the prejacent with lifted \textit{allowed} via \ml{S}.
+
+\ex
+\begin{forest}
+  [{$(¬ (◇ (\ml{you sing}))) ∧ (¬ (◇ (\ml{you dance})))$}
+  [{\ml{LOWER}}
+  [{$λ k . k (¬ (◇ (\ml{you sing}))) ∧ k (¬ (◇ (\ml{you dance})))$\\$\ml{S}$}
+    [{$λ k . k (λ p . ¬ p)$\\not$^{↑}$}]
+    [{$\ml{S}$}
+      [{$λ k . k (λ p . ◇ p)$\\allowed$^{↑}$}]
+      [{$λ k . k (\ml{you dance}) ∧ k (\ml{you sing})$} [{you dance and sing},roof]]
+    ]
+  ]]]
+\end{forest}
+\xe
+
+We make the nice prediction that \enquote{wide scope} readings of conjunction
+should be subject to scope islands:
+
+\ex
+John isn't allowed to claim [that you sing and dance].\hfill \xmark $∧ > ¬ > ◇$
+\xe
+
+\subsection{Split scope with conjunction}
+
+\citet{hirsch2017} claims that conjunction reduction is necessary in order to
+derive the \enquote{split scope} reading of the following sentence:
+
+\ex
+John refused to visit any city in Europe and any city in
+Asia.\label{ex:hirsch1}\\
+\textit{John refused to visit any city in Europe, and he refused to visit any
+  city in Asia.}\hfill$∧ > \ml{refuse} > \ml{any}$
+\xe
+
+
+\citeauthor{hirsch2017}'s analysis:
+
+\ex
+John \bracketStr[vP]{refused to visit any city in Europe} and\\
+\bracketStr[vP]{refused to visit any city in Asia}
+\xe
+
+Here, I'm going to argue that we can get the split scope reading of
+(\ref{ex:hirsch1}) using just the machinery we've already introduced.
+Concretely:
+\begin{itemize}
+    \item Our entry for \textit{and}.
+    \item The free availability of \textit{external lift}.
+\end{itemize}
+
+First of all, each conjunct is going to be \textit{externally lifted}.
+
+\ex
+$\eval{any city in Europe}^{↑} = λ l . l (λ k . ∃x[\ml{city-europe} x ∧ k x])$
+\xe
+
+\textit{and}, in our view, is polymorphic -- it's looking for two arguments of
+type $\type{K_{t} a}$. This means it can compose the externally lifted DPs,
+returning the following meaning:
+
+\ex
+$λ l . l \left(\semtower{∃x[\ml{europe-city} x ∧ []]}{x}\right) ∧ l \left(\semtower{∃x[\ml{asia-city} x ∧ []]}{x}\right):\type{K_{t} (K_{t} a)}$
+\xe
+
+Remember that $\ml{S}_{2}$ is just like $\ml{S}}$, only it does \ml{S} of
+the wrapped values. Composition can proceed via $↑_{2}$ and $\ml{S}_{2}$ up to
+the prejacent of \textit{refuse}.
+
+To get the scope of the quantifiers right, we do \textit{internal lower} just
+before we compose with \textit{refuse}.
+
+\ex
+\begin{forest}
+  [{$λ l . l (\ml{refuse }∃x[\ml{europe-city} x ∧ \ml{pro visit }x]) ∧ l (\ml{refuse} ∃x[\ml{europe-city} x ∧ \ml{pro visit }x])$\\\ml{S}}
+    [{refuse$^{↑}$}]
+    [{$λ l . l (∃x[\ml{europe-city} x ∧ \ml{pro visit }x]) ∧ l (∃x[\ml{europe-city} x ∧ \ml{pro visit }x])$}
+    [{$⇊$}
+    [{$λ l . l \left(\semtower{∃x[\ml{europe-city} x ∧ []]}{\ml{pro visit} x}\right) ∧ l \left(\semtower{∃x[\ml{asia-city} x ∧ []]}{\ml{pro visit }x}\right)$} [{PRO visit any city in Europe\\and any city in Asia},roof]]
+  ]]]
+\end{forest}
+\xe
+
+Lowering the result gives us...the split-scope reading:
+
+\ex
+\begin{forest}
+  [{$\ml{refuse }∃x[\ml{europe-city} x ∧ \ml{pro visit }x ∧ \ml{refuse }∃x[\ml{asia-city} x ∧ \ml{pro visit }x]$}
+  [{$\ml{LOWER}$}
+    [{\fbox{$λ l . l (\ml{refuse }∃x[\ml{europe-city} x ∧ \ml{pro visit }x]) ∧ l (\ml{refuse} ∃x[\ml{europe-city} x ∧ \ml{pro visit }x])$}}]
+  ]
+  ]
+\end{forest}
+\xe
+
+So, continuations can get split-scope readings of conjunction straightforwardly.
+This is a notable result.\sidenote{To my knowledge, this is a novel observation.
+
+\citeauthor{hirsch2017} doesn't consider an analysis of this data in terms of
+continuations, but does entertain a similar analysis involving lifting the
+quantificational conjuncts, alongside QR with higher-type traces.
+\citet{hirsch2017} rejects this analysis on the basis that it allows for the
+quantifiers to be syntactically above the intensional verb, while semantically
+reconstructing below it -- a configuration which has been argued to be ruled
+out. Note that an analysis in terms of continuations doesn't face this objection
+-- at no point in the analysis did we need to invoke covert movement.
+}
+
+Note that this theory of split-scope coordination explains the lack of
+split-scope reading in the following example, from \citet{parteeRooth}.
+
+\ex
+John hopes [that some company will hire a maid and a cook].\\
+\xmark \textit{John hopes that some company will hire a maid,\\
+and John hopes that
+some company will hire a cook.}
+\xe
+
+This is simply because the embedded finite clause is a scope island, and
+therefore the scope of \textit{and} is trapped.
+
+\section{Extension i: DP internal composition and indexed continuations}
+
+As you'll probably have noticed, we've spent this whole time treating
+quantificational DPs such as \textit{every boy} as primitives.
+
+At this point a natural question to ask is: how do determiners compose with
+their restrictors?
+
+Surprisingly, the answer isn't as straightforward as you might think.
+
+Naively, we may assume that determiners receive they're standard meaning --
+essentially, a function from a predicate to a \textit{continuized} individual.
+
+\ex
+$\eval{every} \stackrel{?}{\coloneq} λ P . \semtower{∀y[P y → []]}{y}$
+\xe
+
+This will (obviously) work fine for a nominal restrictor.
+
+But, what happens if the restrictor itself contains a quantificational
+expression? Consider the following example:
+
+\ex
+Every boy with a book left.\hfill $∀ > ∃$
+\xe
+
+Let's first compute the meaning of the restrictor \textit{boy with a
+  book}:\sidenote{Here, I'm using $\ml{S}_{\wedge}$ as an abbreviation for
+  \textit{scopal predicate modification}. In fact, we can lift any binary
+  operation into its scopal counterpart.}
+
+\ex
+\begin{forest}
+  [{$\semtower{∃x[\ml{book} x ∧ []]}{λy . \ml{boy} y ∧ y \ml{with} x}$\\$\ml{S}_{∧}$}
+    [{$\semtower{[]}{λ y . \ml{boy} y}$\\boy$^{↑}$}]
+    [{$\semtower{∃x[\ml{book} x ∧ []]}{λ y . y \ml{with} x}$\\$\ml{S}$}
+      [{$\semtower{[]}{λ xy . y \ml{with} x}$\\with$^{↑}$}]
+      [{$\semtower{∃x[\ml{book} x ∧ []]}{x}$} [{a book},roof]]
+    ]
+  ]
+\end{forest}
+\xe
+
+What we end of with is a continuized predicate of type
+$\type{\semtower{t}{e → t}}$.
+
+How do we compose this with our
+determiner of type $\type{(e → t) → \semtower{t}{e}}$?
+
+One possiblity is to simply lift the determiner. There are two problems with
+this approach.
+
+\begin{itemize}
+
+  \item This will give \textit{a book} scope over \textit{every} -- here, we're
+    interested in the surface scope reading.
+
+  \item Despite potentially being a useful strategy for deriving
+    inversely-linked interpretations, this will ultimately allow the inner
+    quantifier to take scope outside of the containing DP -- this runs into
+    issues with Larson's generalization. We'll come back to
+    this.\sidenote{Essentially, there is some quite strong evidence that DP is a
+    scope island.}
+
+\end{itemize}
+
+Instead, we're going to pursue the idea that the determiner itself \textit{takes
+scope}.\sidenote{This has many precedents in the literature. See, for example, \citet{heim1982}.}
+
+Consider our type constructor $\type{K_{t}}$ -- it takes a type $\type{a}$ and
+returns a new type $\type{(a → t) → t}$.
+
+In principle, we could parameterize
+$\type{K}$ to any type $\type{r}$ (here $\type{r = t}$). Let's call $\type{r}$ the
+\textit{return type}, since it tells us the type of the value we get when the
+continuation argument $k$ applies to its argument.
+
+What if applying $k$ to its argument gives back an intermediate result of type
+$\type{i}$, which is subsequently transformed into a final result of type
+$\type{r}$? We can model this idea using the type constructor
+$\type{K_{r}^{i}}$:\sidenote{This ultimately goes back to \cite{wadler1994}.}
+
+\ex
+$\type{K_{r}^{i} a ≔ (a → i) → r}$
+\xe
+
+\citet{barkerShan2015} generalize tower notation to the more general
+type-schema.\sidenote{See also \citet[chapter 3]{Charlowc}.}
+
+\ex Tripartite tower types (def.)\\
+$\tower{\type{r}}{\type{i}}{\type{a}} ≔ \type{(a → i) → r}$
+\xe
+
+We can think of our existing tower notation as an abbreviation for a tripartite
+tower type, where the intermediate and final result types happen to be the same:
+
+\ex Bipartite towers as abbreviations for tripartite towers\\
+$\type{\semtower{r}{a} ≔ \tower{r}{r}{a}}$
+\xe
+
+Now that we have tripartite tower types, we can think of the restrictor argument
+$c$ of \textit{every} as a \textit{continuation argument}.
+
+\ex Standard determiner semantics for \textit{every}\\
+$\eval{every} ≔ λ c . \left[λ P . \semtower{∀y[P y → []]}{y}\right] (λ x . c x)$\hfill$\type{(e → t) → \semtower{t}{e}}$
+\xe
+
+We can abbreviate the meaning of \textit{every} as a tower, where $c$ is the
+continuation argument:
+
+\ex
+$\semtower{\left[λ P . \semtower{∀y[P y → []]}{y}\right] (λ x . [])}{x}$\hfill$: \tower{\semtower{\type{t}}{\type{e}}}{\type{t}}{\type{e}}$
+\xe
+
+
+Our existing definition of $\ml{S}$ can be made more type-general, in order to
+accommodate tripartite tower types. \textit{Adjacent types} match and cancel out:
+
+\ex
+$\ml{S} : \type{\tower{r}{i}{a → b} → \tower{i}{j}{a} → \tower{r}{j}{b}}$
+\xe
+
+The actual definition of $\ml{S}$ doesn't change.
+
+\ex \textit{scopal function application} (def.)\\
+$m \ml{S} n ≔ λ k . m (λ x . n (λ y . k (x \ml{A} y)))$
+\xe
+
+Likewise, the type of \textit{lower} is further generalized; the definition
+doesn't change:
+
+\ex
+$(↓) : \type{\tower{a}{b}{b} → a}$
+\xe
+
+We can now make sense of the idea that the determiner \textit{takes scope}.
+Let's consider again the following complex DP:
+
+\ex
+Every boy with a book.
+\xe
+
+First, we compute the meaning of the restrictor, returning something of type
+$\type{\tower{t}{t}{e → t}}$:
+
+
+\ex Step 1: compute \textit{boy with a book}\\
+\begin{forest}
+  [{$\semtower{∃x[\ml{book} x ∧ []]}{λy . \ml{boy} y ∧ y \ml{with} x}$}
+    [{boy}]
+    [{...}
+      [{$λ xy . y \ml{with} x$\\with}]
+      [{$\semtower{∃x[\ml{book} x ∧ []]}{x}$} [{a book},roof]]
+    ]
+  ]
+\end{forest}
+\xe
+
+Recall that \textit{every} is of type
+$\tower{\semtower{\type{t}}{\type{e}}}{\type{t}}{\type{e}}$, this is something
+that can compose with the restrictor via our more type-general formulation of \ac{sfa}.
+
+\ex
+\begin{forest}
+  [{$\semtower{∀y[(∃x[\ml{book} x ∧ \ml{boy} y ∧ y \ml{with} x]) → []]}{y}$}
+  [{\fbox{$\left[λ P . \semtower{∀y[P y → []]}{y}\right] (λ y . ∃x[\ml{book} x ∧ \ml{boy} y ∧ y \ml{with} x])$}}
+  [{$↓$}
+  [{$\semtower{\left[λ P . \semtower{∀y[P y → []]}{y}\right] (λ y . ∃x[\ml{book} x ∧ []])}{\ml{boy} y ∧ y \ml{with} x}$\\$\ml{S}$}
+    [{$\semtower{\left[λ P . \semtower{∀y[P y → []]}{y}\right] (λ y . [])}{y}}$]
+    [{$\semtower{∃x[\ml{book} x ∧ []]}{λy . \ml{boy} y ∧ y \ml{with} x}$} [{boy with a book},roof]]
+  ]]]]
+\end{forest}
+\xe
+
+\begin{tcolorbox}
+Exercise
+\tcblower
+As homework, you can attempt to work out the above derivation yourself. Convince
+yourself that the types work out.
+\end{tcolorbox}
+
+
+\section{Extension ii: Exceptional scope of indefinites}
+
+Unlike other quantificational expressions, indefinites don't obey scope islands:
+
+\ex
+Roger hopes that some student will be absent.\hfill $∃ > \ml{hope}$
+\xe
+
+\citet{Charlowc} outlines a theory of exceptional scope framed in terms of
+continuation semantics, compatible with the assumption that scope islands are
+obligatorily evaluated.
+
+\citeauthor{Charlowc} assumes that, unlike other
+quantificational expressions, indefinites denote sets of individuals:
+
+\pex
+\a $\eval{some student} ≔ \set{x|\ml{student} x}$
+\a $\eval{some student}: \type{\set{e}}$
+\xe
+
+The central component of \citeauthor{Charlowc}'s proposal is a method (let's
+call it $⋆$) for lifting a set into a scope taker.\sidenote{If you're familiar
+  with the notion of \textit{monads}, you'll noticed that $⋆$ is just the
+  \textit{bind} operation of the set monad.
+
+  One of \citeauthor{Charlowc}'s insights is that, for any monad $M$, the bind
+  of $M$ provides a way of lifting an inhabitant of $M a$ into a scope taker.
+}
+
+\ex
+$m^{⋆} ≔ λ k . \bigcup\limits_{x ∈ m} k x$\hfill$⋆: \type{\set{e} → (e → \set{t}) → \set{t}}$
+\xe
+
+In fact, we can write $⋆$ using tower notation:
+
+\ex
+$m^{⋆} ≔ \semtower{\bigcup\limits_{x ∈ m} []}{x}$
+\xe
+
+As you'll notice, $⋆$ gives back a \textit{continuized individual}, but with the
+return type generalized to $\type{\set{{t}}}$ rather than $\type{t}$.
+
+Our existing definitions of lift and \ac{sfa} allow us to compose a $⋆$-shifted
+indefinite straightforwardly, once the return type is set to $\type{\set{t}}$.
+The actual definitions of the operations don't change.
+
+Here I'll show how $⋆$, once combined with our existing mechanisms for doing
+scope-taking -- namely lift and \ml{S} -- \textit{predicts} that indefinites can
+exceptionally scope out of scope islands.
+
+I'll demonstrate this for our example: \textit{Roger hopes that some student is absent}:
+
+\ex Step 1: lift \textit{some student} into a scope-taker\\
+\begin{forest}
+  [{$λ k . \bigcup\limits_{x ∈ \ml{student}} k x$}
+  [{$⋆$}
+  [{$\set{x|\ml{student} x}$\\some student}]
+  ]
+  ]
+\end{forest}
+\xe
+
+\ex~ Step 2: scope via lift and \ml{S}\\
+\begin{forest}
+  [{$λ k . \bigcup\limits_{x ∈ \ml{student}} k (\ml{absent} x)$}
+    [{$λ k . \bigcup\limits_{x ∈ \ml{student}} k x$} [{some student$^{⋆}$},roof]]
+    [{$λ k . k (λ x . \ml{absent} x)$\\absent$^{↑}$}]
+  ]
+\end{forest}
+\xe
+
+We've reached a scope island now, so we need to \textit{evaluate} it. We can't use our
+ordinary lower function -- since we're dealing with sets, we lower by feeding n Partee's
+$\ml{IDENT}$, rather than the identity function:
+
+\ex
+$m^{⇓} ≔ m (λ x . \set{x})$\hfill $⇓: \type{((a → \set{a}) → \set{a}) → \set{a}}$
+\xe
+
+\ex Step 3: evaluate the scope island:\\
+\begin{forest}
+[{$\set{\ml{absent} x:\ml{student} x}$}
+[{$⇓$}
+[{$λ k . \bigcup\limits_{x ∈ \ml{student}} k (\ml{absent} x)$} [{some student is absent},roof]]
+]
+]
+\end{forest}
+\xe
+
+What we end up with is a set of propositions of the form \textit{$x$ is absent},
+where $x$ is a student.
+
+Now we re-lift the scope island into a scope taker via $⋆$:
+
+\ex
+Step 4: re-lift via $⋆$\\
+\begin{forest}
+  [{$λ k . \bigcup_{p ∈ \set{\ml{absent} x:\ml{student} x}} k p$}
+  [{$⋆$}
+    [{$\set{\ml{absent} x:\ml{student} x}$}]
+  ]
+  ]
+\end{forest}
+\xe
+
+Now we scope out the scope-island via lift and \ml{S} -- the indeterminacy
+introduced by the indefinite survives, and we get exceptional scope.
+
+\ex
+Step 5: scope via lift and $⋆$:\\
+\begin{forest}
+  [{$\set{\ml{roger hope} p:p∈\set{\ml{absent} x:\ml{student} x}}$}
+  [{$⇓$}
+  [{$λ k . \bigcup_{p ∈ \set{\ml{absent} x:\ml{student} x}} k (\ml{roger hope }p)$\\$\ml{S}$}
+    [{Roger$^{↑}$}]
+    [{$\ml{S}$}
+      [{hope$^{↑}$}]
+      [{$λ k . \bigcup_{p ∈ \set{\ml{absent} x:\ml{student} x}} k p$}]
+    ]
+  ]]]
+\end{forest}
+\xe
+
+The result of lowering is equivalent to the following:
+
+\ex
+$\set{\ml{roger hope (\ml{absent} x) : \ml{student} x}}$
+\xe
+
+In brief, unlike other quantifiers, indefinites introduce indeterminacy (which
+we model as a set). Indeterminacy survives obligatory evaluation at a scope island.
+
+Here is the derivation again from a bird's eye view:
+
+\ex
+\begin{forest}
+  [{$\set{t}$}
+  [{$⇓$}
+  [{$\type{K_{\set{t}} (t)}$\\\ml{S}}
+    [{$\type{K_{\set{t}} (e)}$\\Roger$^{↑}$}]
+    [{$\type{K_{\set{t}} (e → t)}$\\\ml{S}}
+      [{$\type{K_{\set{t}} (t → e → t)}$\\hope$^{↑}$}]
+      [{$\type{K_{\set{t}} t}$}
+      [{$⋆$}
+      [{$\type{\set{t}}$\\$⇓$}
+      [{$\type{K_{\set{t}} e}$\\$\ml{S}$}
+        [{$\type{K_{\set{t}} e}$} [{$⋆$} [{$\set{\type{e}}$\\some student}]]]
+        [{$\type{K_{\set{t}} (e → t)}$\\is absent$^↑$}]
+      ]
+      ]
+      ]
+      ]
+    ]
+  ]
+  ]
+  ]
+\end{forest}
+\xe
+
+
+% \subsection{Inverse linking}
+
+% \ex
+% $\eval{every} = λ c_{e→ t} . λ s_{e → t} . \ml{every} (λ x . c x) (λ y . s y)$
+% \xe
+
+% \ex
+% $\eval{every'} = λ d_{e→ (e→ t) → t} . λ s_{e → t} . \ml{every} (λ y . (d y s)^{↓}) (λ x . s x)$
+% \xe
+
+% \ex
+% $λ s . \ml{every} (λ y . ∃x[\ml{book} x ∧ s (\ml{boy} y ∧ y \ml{with} x)]) (λ x . s x)$
+% \xe
+
+% \ex
+% $\$
+% \xe
+
+\printbibliography
+
+
+\end{document}
