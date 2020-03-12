@@ -74,7 +74,95 @@
 
 \maketitle% this prints the handout title, author, and date
 
+\begin{tcolorbox}
+  \textbf{General notice}
+  \tcblower
+  \begin{itemize}
+      \item This will, as far as we're aware, be our final meeting in-person for
+      the remainder of the semester. We plan to hold subsequent meetings via
+      \texttt{zoom}. Details will follow.
+
+      \item Next week's class, is \textit{canceled}, and the following week is
+      spring break. The next class will therefore be on \textbf{Thursday April 2}.
+
+      \item We're going to do everything we can to make sure that this class
+      continues to run as smoothly as possible.
+
+      \item We're
+      available for remote meetings during normal working hours. Take advantage of this!
+  \end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}
+  \textbf{Homework}
+  \tcblower
+  \begin{itemize}
+      \item \textsc{Registered students}: please send us a \textit{project proposal}
+      (less than two pages long) by Thursday March 26. This should ideally
+      include a brief summary of what you plan to present in class (either a
+      paper, or your own work).
+      \item \textsc{Everyone}:
+
+      \begin{itemize}
+
+          \item Read Gennaro Chierchia's 2019 paper \enquote{Origins of weak
+          crossover: when dynamic semantics meets event semantics}
+          (\textit{Natural Language Semantics}). Send me at least one question
+          by the end of Spring break.
+
+          \item There will be a third problem set, posted on Friday.
+
+      \end{itemize}
+  \end{itemize}
+\end{tcolorbox}
+
 \section{Setting the stage}
+
+\begin{itemize}
+
+    \item Last time Martin gave an overview of the movement
+    approach to quantifier scope, and some of the other analytical approaches
+    available to us (e.g., the $ϵ$-calculus).
+
+    \item Given the extensive and rich literature, quantifier raising is
+    a powerful tool for analyzing phenomena such as \ac{acd}.
+
+    \item \textit{Continuation semantics} is a much less mature framework. There
+    haven't yet been serious attempts to model, e.g., \ac{acd}, but this should
+    at least be attempted.\sidenote{There are also over-generation issues. Much like
+    \ac{qr}, \textit{scope islands} seriously constrain scope-taking
+    possiblities (and unlike \ac{qr}, continuations allow for a purely
+    \textit{denotational} theory of scope islands). On other hand, our toy account
+    of split scope demonstrated that continuations are so powerful, that
+    unattested readings can be difficult to block.}.
+
+    \item There are some conceptual advantages to continuation semantics,
+    however -- it sidesteps non-compositional complications involving, e.g., \textit{trace
+    conversion}\sidenote{\cite{sauerland2004trace,FoxJohnson16}, etc.}, allowing
+    for expressions to take scope via a generalization of
+    \citeauthor{partee1986}'s \textsc{lift}.
+
+    \item Furthermore \ac{sfa} -- the composition rule essential for composing
+    continuized values -- has a \textit{built in left-to-right bias}.
+
+    \item So far we've only applied this to the (poorly understood) surface
+    scope bias for sentences with multiple QPs.
+
+    \item This week we'll be getting round to (arguably) the jewel in the crown
+    of the continuations literature -- a semantic account of \textit{crossover phenomena}.
+
+    \item I'll begin by giving a brief overview of the phenomenon, before
+    discussing pronominal binding in \acf{vfs}.
+
+    \item I'll show how the \citeauthor{barkerShan2015} account of crossover
+    leverages distinctive properties of continuation semantics, in a
+    \textit{variable free} setting.
+
+    \item In the next section, I'll show how we can translate
+    \citeauthor{barkerShan2015}'s account into the \enquote{standard} setting,
+    where pronouns denote variables.
+
+\end{itemize}
 
 \section{The phenomenon}
 
@@ -92,7 +180,6 @@
 
 The simplest form of the \ac{wco} paradigm\sidenote{The term \enquote{crossover}
   was originally coined by Paul Postal.
-\todo[inline]{Add actual reference}
 } is illustrated below:
 
 \pex
@@ -118,20 +205,10 @@ who $1$ [his$_{1}$ mother likes $t_{1}$]?
 Since both traces and pronouns are interpreted as variables, there is no reason
 why the representation above shouldn't result in a sensible reading.
 
-\subsection{Strong crossover}
-
-\pex
-\a\ljudge{*}Who$^{x}$ did he$_{x}$ say Mary saw $t_{x}$?
-\a Who$^{x}$ said Mary saw him$_{x}$.
-\xe
-
-\subsection{\ac{wco} and quantificational scope}
-
 This constraint on variable binding
 extends beyond configurations involving overt \textit{wh}-movement to those
 involving quantificational scope.\sidenote{This was first observed by Chomsky
   (1976)
-\todo[inline]{Add proper reference}
 }
 
 \pex
@@ -139,25 +216,1249 @@ involving quantificational scope.\sidenote{This was first observed by Chomsky
 \a\ljudge{*}His$_{x}$ mother loves everyone$^{x}$.
 \xe
 
+
+A special case of \ac{wco} is \textit{strong crossover} -- in a strong crossover
+configuration, the bound pronoun c-commands the base position of the binder.
+
+\pex
+\a\ljudge{*}Who$^{x}$ did he$_{x}$ say Mary saw $t_{x}$?
+\a Who$^{x}$ said Mary saw him$_{x}$.
+\xe
+
+\pex~
+\a\ljudge{*}He$_{x}$ wants to see everyone$^{x}$?
+\a Everyone$^{x}$ wants to see him$_{x}$.
+\xe
+
 \subsection{A- vs. A'-dependencies}
 
-\ex
-Everyone seems to his mother to be a genius.
-\xe
+Unlike A'-movement, A-movement \textit{bleeds} \ac{wco}.
+
+This is illustrated for A-movement (raising) of a QP...
 
 \ex
-Who seems to his mother to be a genius.
+Everyone$^{x}$ seems to his$_{x}$ mother to be a genius.
 \xe
+
+...and for A-movement, followed by A'-movement, of a \textit{wh-}expression. Crucially,
+the dependency spanning the bound variable is an A-dependency:
+
+\ex
+Who$^{x}$ seems to his$_{x}$ mother to be a genius.
+\xe
+
+We'll have something to say about this later on.
+
+\subsection{\ac{wco} is about scope, not c-command}
+
+It has been known for some time that variable binding \textit{doesn't} require
+c-command (contra received wisdom):
+
+In the following examples, the base-position of the binder doesn't c-command the
+bound variable, but binding is still possible (Ruys 1992 calls this the
+\textit{transitivity property} of variable binding).
+
+\ex
+{}[Every boy$^{x}$'s mother] loves him$_{x}$.
+\xe
+
+\ex~
+{}[[Every boy$^{x}$'s mother]'s husband] loves him$_{x}$.
+\xe
+
+\ex~
+{}[Which boy$^{x}$'s mother] loves him$_{x}$.
+\xe
+
+\ex~
+{}[[Which boy$^{x}$'s mother]'s husband] loves him$_{x}$.
+\xe
+
+Note that this paradigm could in itself be tricky for quantifier raising theories of
+scope (the \textit{wh} pied-piping cases fare even worse), especially if DP is
+a phase.
+
+Continuation semantics, on the other hand, straightforwardly predicts scope and
+hence binding out of DP, as we'll see later.
+
+Binding out of DP correlates with inverse linking readings:
+
+\ex
+{}[Someone in [every city]$^{x}$] hates it$_{x}$.\hfill
+\cmark $\forall > \exists$; \xmark $\exists > \forall$
+\xe
+
+Scope is harder to distinguish between two \textit{wh-}expressions:\sidenote{In
+  fact, if the \textit{wh-}expressions are just existential quantifiers, they
+  should be scopally commutative.
+
+  One might imagine that the binder must be the \textit{sort key} (in
+  \citeauthor{Kuno}'s \citeyear{Kuno} sense) under a pair-list reading of the
+  question. I've argued however in other work (see \citealt{elliott-nesting})
+  that what I call \textit{nested wh-questions} following
+  \cite{heim_questions_seminar}, lack a pair-list reading.
+
+  These kinds of examples deserve more careful consideration.
+}
+
+\ex
+{}[Which picture of [which boy]$^{x}$] pleased him$_{x}$.
+\xe
+
+Note that \ac{wco} effects obtain if the the pronoun precedes the base-position
+of the DP containing
+the binder:
+
+\ex
+\ljudge{*}His$_{x}$ father loves [every boy$^{x}$'s mother].
+\xe
+
+\ex~
+\ljudge{*}{}[Whose$^{x}$ father] does his$_{x}$ mother hate?
+\xe
+
+It seems that crossover obtains if a pronoun occurs to the \textit{left} of the
+base-position of its binder (modulo A-movement).
 
 \section{Weakest crossover}
 
-\todo[inline]{Cite Lasnik and Stowell}
+Lasnik \& Stowell observe that crossover is obviated in configurations such as
+the following:
 
 \ex
-Who did you stay with before his wife had spoken to?
+Who did you stay with [$Op_{PG}$ before his wife had spoken to \_\_]?
 \xe
 
-Idea: the pronominal is bound by the \textit{wh-}expression, NOT the parasitic gap.
+\section{Crossover phenomena in continuation semantics}
+
+\begin{fullwidth}
+\begin{tcolorbox}
+  \textbf{A refresher}
+  \tcblower
+  \begin{multicols}{2}
+
+\ex Tower notation (def.)\\
+$\semtower{f []}{x} ≔ λ k . f (k x)$
+\xe
+
+\ex Tower types (def.)\\
+$\semtower{\type{b}}{\type{a}} ≔ \type{(a → b) → b}$
+\xe
+
+\ex Type constructor \type{K_t} (def.)\\
+$\type{K_{t} a} ≔ \type{\semtower{t}{a}}$
+\xe
+
+
+\columnbreak
+
+\ex~
+\textit{lift} (def.)\\
+$a^{↑} ≔ \semtower{[]}{a}$\hfill$(↑):\type{a → K_{t} a}$
+\xe
+
+\ex \textit{Internal lift} (tower ver.)\\
+\(\left(\semtower{f []}{x}}\right)^{⇈} ≔ \semtower{f []}{\semtower{[]}{x}}\)
+\xe
+
+\ex~
+\textit{lower} (def.)\\
+$\left(\semtower{f []}{p}\right)^{↓} = f p$\hfill$(↓) : \type{K_{t} t → t}$
+\xe
+
+\ex
+\textit{Internal lower} (def.)\\
+$\left(\semtower{f []}{\semtower{g []}{p}}\right)^{⇊} ≔ \semtower{f []}{\left(\semtower{g []}{p}\right)^{↓}}$
+\xe
+
+
+\end{multicols}
+
+\ex~
+\acf{sfa} (def.)\\
+$\semtower{f []}{x} \ml{S} \semtower{g []}{y} ≔
+\semtower{f (g [])}{x \ml{A} y}$\hfill$\ml{S}:\type{K_{t} (a → b) → K_{t} a →
+  K_{t} b}$
+\xe
+
+
+\end{tcolorbox}
+\end{fullwidth}
+
+
+Remember: the default in continuation semantics is \textit{left-to-right
+  sequencing of scopal effects}.
+
+\textit{Lower} accounts for scopal ambiguities with scopally immobile
+expressions, such as intensional verbs etc.
+
+We need \textit{internal lift} and \textit{$n$-story towers} in order to obviate
+the \textit{left-to-right bias}, and account for inverse scope (in non
+scopally-rigid languages).\sidenote{See \cite{barker2002} for a different
+  approach couched in continuation semantics, which posits both a rightwards
+  version of \ac{sfa} and a leftwards version.}
+
+
+For a reminder of how this works, let's derive an inverse scope reading:
+
+\ex
+A boy danced with every girl.\hfill$\forall > \exists$
+\xe
+
+\begin{fullwidth}
+  \begin{multicols}{2}
+\ex Step 1: internally lift \textit{every girl} \\
+\begin{forest}
+  [{\fbox{$\semtower{∀x[\ml{girl} x → []]}{\semtower{[]}{λ y . y \ml{danceWith} x}}$}\\$\ml{S}_{2}$}
+    [{$\semtower{[]}{\semtower{[]}{\ml{danceWith}}}$} [{dance-with$^{↑_{2}}$}]]
+    [{$\semtower{∀x[]}{\semtower{[]}{x}}$} [{$⇈$} [{every girl},roof]]]
+  ]
+\end{forest}
+\xe
+
+\columnbreak
+
+\ex
+Step 2: \textit{ex}ternally lift \textit{a boy}\\
+\begin{forest}
+  [{\fbox{$\semtower{∀x[\ml{girl} x → []]}{\semtower{∃y[\ml{boy} y ∧ []]}{y \ml{danceWith} x}}$}\\$\ml{S}_{2}$}
+    [{$\semtower{[]}{\semtower{∃y[\ml{boy} y ∧ []]}{y}}$} [{a boy$^{↑}$}]]
+    [{$\semtower{∀x[\ml{girl} x → []]}{\semtower{[]}{λ y . y \ml{danceWith} x}}$} [{dance with every girl},roof]]
+  ]
+\end{forest}
+\xe
+\end{multicols}
+\end{fullwidth}
+
+Now we can collapse the tower by doing \textit{internal lower}, followed by
+\textit{lower}:
+
+\ex
+\begin{forest}
+  [{\fbox{$∀x[\ml{girl} x → (∃y[\ml{boy} y ∧ y \ml{danceWith} x])]$}}
+  [{$↓$}
+    [{$\semtower{∀x[\ml{girl} x → []]}{∃ x[\ml{boy} x ∧ y \ml{danceWith} x]}$}
+      [{$⇊$}
+        [{$\semtower{∀x[\ml{girl} x → []]}{\semtower{∃y[\ml{boy} y ∧ []]}{y \ml{danceWith} x}}$} [{a boy danced with every girl},roof]]
+  ]]]]
+\end{forest}
+\xe
+
+
+
+% \begin{multicols}{2}
+% \ex \textit{Internal lift} (tower ver.)\\
+% \(\left(\semtower{f []}{x}}\right)^{⇈} ≔ \semtower{f []}{\semtower{[]}{x}}\)
+% \xe
+% \columnbreak
+% \ex \textit{External lift} (tower ver.)\\
+% \(\left({\semtower{f []}{x}}\right)^{↑} ≔ \semtower{[]}{\semtower{f []}{x}}\)
+% \xe
+
+% \end{multicols}
+
+
+\subsection{Variable free foundations}
+
+Before we develop a story for crossover phenomena in continuation semantics, we
+need a story about pronominal binding.
+
+\citeauthor{barkerShan2015} adopt a version of Polly Jacobson's \acf{vfs} -- in
+this section, we'll lay out the foundations.
+
+The fundamental idea is that a sentence with a free pronoun denotes an open proposition.
+
+\ex
+$\eval{Jo likes him} \coloneq λ x . \ml{j likes }x$
+\xe
+
+How do we derive this compositionally?
+
+\citet{jacobson1999} develops a theory of pronominals according to which they
+denote the identity function on individuals -- this theory is known as \ac{vfs}:\sidenote{Pronouns also come with
+  phi features, which must be interpeted -- we'll mostly abstract away from this
+complication in what follows, but the most straightforward implementation is to
+treat pronouns with phi features as denoting partial (i.e., presuppositional)
+identity functions.
+
+\ex
+$\eval{her} ≔ λ x:\ml{identifies-fem} x . x$
+\xe
+
+}
+
+\ex
+$\ml{pro}_{Polly}  ≔ λ x . x$\hfill$\type{e → e}$
+\xe
+
+Pronominal meanings can compose with ordinary meanings via a type-shifter
+(analogous to \textit{lift}) and a composition rule (analagous to
+\ac{sfa}).\sidenote{This presentation of \ac{vfs} departs significantly from
+  Jacobson and is based on \cite{charlow2018,charlow2019vfs}.}
+
+\ex Pure (def.)\\
+$a^{ρ} ≔ λ x . a$\hfill$ρ : \type{a \rightarrow e \rightarrow a}$
+\xe
+
+\ex Ap (def.)\sidenote{
+Since \textit{ap} is defined in terms of bi-directional function application
+($\ml{A}$), we have a forwards ap and a backwards ap, depending on whether the
+function argument is on the left or the right. I give the type signatures of
+both functions here.
+}\\
+$m ⊛ n ≔ λ x . (m x) \ml{A} (n x)$\hfill$\circledast : \type{(e → (a → b)) → (e → a) → e → b}$\\
+\phantom{,}\hfill$\circledast : \type{(e → a) → (e → (a \rightarrow b)) → e → b}$
+\xe
+
+Composition of a sentence with a pronoun may now proceed via ap and pure --
+non-pronominal meanings get pure-shifted, and composition proceeds via ap.
+
+\ex
+\begin{forest}
+  [{$λ x . \ml{j likes} x$\\$⊛$}
+    [{$λ x . \ml{j}$\\Jo$^{ρ}$}]
+    [{$λ x . λ y . y \ml{likes} z$\\$⊛$}
+      [{$λ x . λ zy . y \ml{likes} z$\\likes$^{ρ}$}]
+      [{$λ x . x$\\$\ml{pro}_{Polly}$}]
+    ]
+  ]
+\end{forest}
+\xe
+
+\begin{tcolorbox}
+  An aside on \textbf{applicative functors}
+  \tcblower
+  As we've alluded to, there's a family resemblance between:
+
+  \begin{itemize}
+
+      \item The \textit{lift} of continuation semantics, and the \textit{pure}
+      of \ac{vfs}
+
+      \item \ac{sfa} from continuation semantics and the \textit{ap} of \ac{vfs}.
+
+  \end{itemize}
+
+  This is because both continuation semantics and \ac{vfs} implicitly use
+  \textit{applicative functors} (\citealt{mcbridePaterson2008}) -- a notion from functional programming and
+  category theory for characterizing composition in an enriched semantic domain.
+
+  An applicative functor simply consists of a type-constructor, characterizing
+  the enriched value-space, and two operations.
+ 
+\end{tcolorbox}
+
+\subsection{Going Scopal}
+
+How do we get pronouns to interact with scope-takers in our current setting?
+\citeauthor{barkerShan2015}'s solution is to treat pronouns \textit{themselves}
+as scope-takers:\sidenote[][-10\baselineskip]{\citet{charlow2019vfs} provides a different way of
+  incorporating \ac{vfs} and continuation semantics by composing applicative
+  functors.
+
+}
+
+\begin{multicols}{2}
+
+\ex Pronouns in continuation semantics\\
+$\ml{pro}_{BS}  ≔ λ k . λ x . k x$
+\xe
+
+\multicols
+
+\ex Pronouns (tower version)\\
+$\ml{pro} ≔ \semtower{λ x . []}{x}$
+\xe
+
+\end{multicols}
+
+The $\ml{pro}_{BS}$ denotation preserves the intuition of \ac{vfs} that pronouns
+should be treated as identity functions, but the $λ x$ part \textit{takes scope}.\sidenote[][-10\baselineskip]{How do we derive the $BS$ pronoun denotation from the
+  $Polly$ pronoun denotation? Explaining how requires borrowing a useful
+  notion from functional programming/category theory.
+
+  First, note that $\type{((→) e)}$ characterizes an \textit{enriched value
+    space} -- essentially, the value space assumed in \ac{vfs}. Informally,
+  meanings with an extra outer $λ x$ argument. $\type{((→) e)}$ is a \textit{functor},
+  which means that we can characterize a general way of applying ordinary functions
+  of type $\type{a → b}$ to values of type $\type{e → a}$. We'll call
+  this mapping $\ml{map}$.
+
+  \ex
+  $\ml{map} m ≔ λ k . λ x . k (m x)$\\
+  $\ml{map} : \type{(e \rightarrow a) \rightarrow (a \rightarrow b) \rightarrow e \rightarrow b}$
+  \xe
+
+  Applying $\ml{map}$ to $\ml{pro}_{Polly}$ gives back...$\ml{pro}_{BS}$!
+
+}
+
+Our current definition of \ac{sfa} is too rigidly typed to handle pronominal
+scope takers, however. To see why, consider the type of $\ml{pro}_{BS}$:
+
+\ex
+$\ml{pro}_{BS} : \type{(e → t) → e → t}$
+\xe
+
+\ac{sfa} is designed to handle scope-takers of type
+$\type{(a \rightarrow b) \rightarrow b}$, whereas a pronoun is a scope-taker of
+type $\type{(a → b) → c}$:
+
+\begin{itemize}
+\item It \textit{expects} at a constituent of type
+    $\type{t}$...
+
+\item ...and returns something of type $\type{e → t}$.
+\end{itemize}
+
+It turns out, however, that we can
+give our existing definition of \ac{sfa} a more general type in order to
+accommodate pronominal scope-takers:\sidenote{If you had a go at the second
+  problem set, and read the extra material from the second handout of the
+  semester, then this idea should be familiar. In fact, generalizing our
+  existing machinery to scope-takers of type $\type{(a → b) → c}$ receives
+  independent motivation from DP-internal composition. We'll come back to this
+  when we discuss scope out of DP and inverse linking later on.}
+
+\ex
+$m \ml{S} n ≔ λ k . m (λ x . n (λ y . k (x \ml{A} y)))$
+\xe
+
+\ex~
+$\ml{S}: \type{(((a → b) → \textcolor{red}{r₁}) → r₂) → ((a → r₃) → \textcolor{red}{r₁}) → (b → r₃) → r₂}$
+\xe
+
+Just so long as the scope type of the left input and the return type of the
+right input match, they cancel out.
+
+We can model this idea of a generalized scope-taker using the type constructor
+$\type{K_{r}^{i}}$:\sidenote{This ultimately goes back to \cite{wadler1994}.}
+
+\ex
+$\type{K_{r}^{i} a ≔ (a → i) → r}$
+\xe
+
+\citet{barkerShan2015} further generalize tower-type notation in order to accommodate
+scope takers in which the expected and return types differ.\sidenote{See also \cite{shan2002}.}
+
+\ex Tripartite tower types (def.)\\
+$\tower{\type{r}}{\type{i}}{\type{a}} ≔ \type{(a → i) → r}$
+\xe
+
+We can think of our existing tower notation as an abbreviation for a tripartite
+tower type, where the intermediate and final result types happen to be the same:
+
+\ex Bipartite towers as abbreviations for tripartite towers\\
+$\type{\semtower{r}{a} ≔ \tower{r}{r}{a}}$
+\xe
+
+We now have everything we need to accommodate pronominal scope-takers into our
+compositional regime:
+
+\ex
+Jo likes him.
+\xe
+
+\begin{multicols}{2}
+
+\ex
+\begin{forest}
+  [{$\type{\tower{e → t}{t}{t}}$\\$\ml{S}$}
+    [{$\type{\tower{e → t}{e →t}{e}}$\\Jo$^{↑}$}]
+    [{$\type{\tower{e → t}{t}{e → t}}$\\$\ml{S}$}
+    [{$\type{\tower{e →t}{e → t}{e → e → t}}$\\likes$^{↑}$}]
+      [{$\type{\tower{e → t}{t}{e}}$\\him}]
+    ]
+  ]
+\end{forest}
+\xe
+
+\columnbreak
+
+\ex
+\begin{forest}
+  [{\fbox{$\semtower{λ x . []}{\ml{j} \ml{likes} x}$}}
+    [{$\semtower{[]}{\ml{j}}$}]
+    [{$\semtower{λ x . []}{λ y . y \ml{likes} x}$}
+      [{$\semtower{[]}{λxy . y \ml{likes} x}$}]
+      [{$\semtower{λ x . []}{x}$}]
+    ]
+  ]
+\end{forest}
+\xe
+
+\end{multicols}
+
+Now that we have tripartite towers, we can also adopt a more general typing for
+\textit{lower}, which simply requires that the inner type and the scope type are
+both $\type{t}$.
+
+\ex Lower (revised type)\\
+$↓: \type{\tower{a}{t}{t} → \type{a}}$
+\xe
+
+The definition remains the same -- namely, when we \textit{lower} a continuized
+value, we saturate the continuation argument with the identity function.
+
+Observe that \textit{lowering} the result of scoping out $\ml{pro}_{BS}$ gives
+back a \ac{vfs}-style sentential meaning.
+
+\ex
+$\left(\semtower{λ x . []}{\ml{j likes }x}\right)^{↓} = λ x . \ml{j likes }x$
+\xe
+
+\section{Achieving variable binding}
+
+\citet{barkerShan2015} achieve \textit{binding} in their framework by
+type-shifting the binder.
+
+\ex Bind (def.)\\
+$m^{B} ≔ λ k . m (λ x . k x x)$\hfill$B : \type{((a → b) → c) → (a → a → b) → c}$
+\xe
+
+Bind pulls out the inner value from a continuized meaning, returns a new
+continuation with an extra argument saturated by the inner value. The tower
+version is perhaps more intuitive:
+
+\ex
+Bind (tower ver.)\\
+$\left(\semtower{f []}{x}\right) = \semtower{f ([] x)}{x}$\hfill$B: \type{\tower{c}{b}{a} \rightarrow \tower{c}{a → b}{a}}$
+\xe
+
+We'll illustrate with a quantifier, such as \textit{every boy}:
+
+\ex
+$\left(\semtower{∀x[\ml{boy} x → []]}{x}\right)^{B} = \semtower{∀ x[\ml{boy} x → ([] x)]}{x}$.
+\xe
+
+$B$-shifted \textit{every boy} expects an \textit{open
+  proposition}; pronominals create open propositions.
+
+We now have everything we need in order to account for a simple case of variable binding.
+
+\ex
+Every boy$^{x}$ loves his$_{x}$ mother.
+\xe
+
+\begin{fullwidth}
+  \begin{multicols}{2}
+
+\ex
+Step 1: scope out pronoun\\
+\begin{forest}
+  [{\fbox{$\semtower{λ z . []}{λ y . y \ml{loves} ιx[x \ml{mother} z]}$}\\\ml{S}}
+    [{loves$^↑$}]
+    [{$\semtower{λ z . []}{ιx[x \ml{mother} z]}$\\\ml{S}}
+      [{$\semtower{λ z . []}{z}$\\$\ml{pro}_{BS}$}]
+      [{$λ z . ι x[x \ml{mother} z]$\\\ml{A}}
+         [{'s}]
+         [{mother}]
+      ]
+    ]
+  ]
+\end{forest}
+\xe
+
+\ex~
+Step 2: Compose bind-shifted subject\\
+\begin{forest}
+  [{\fbox{$\semtower{∀ y[\ml{boy} y → ((λ z . []) y)]}{y \ml{loves} ιx[x \ml{mother} z]}$}\\$\ml{S}$}
+    [{$\semtower{∀ y[\ml{boy} y → ([] y)]}{y}$\\every boy$^B$}]
+    [{$\semtower{λ z . []}{λ y . y \ml{loves} ιx[x \ml{mother} z]}$} [{loves his mother},roof]]
+  ]
+\end{forest}
+\xe
+
+
+\columnbreak
+
+\ex
+Step 3: Lower the result\\
+\begin{forest}
+  [{\fbox{$∀y[\ml{boy} y → (y \ml{loves} ιx[x \ml{mother} y])]$}}
+  [{(reduce)}
+  [{$∀y[\ml{boy} y → ((λ z . y \ml{loves} ιx[x \ml{mother} z]) y)]$}
+  [{$↓$}
+  [{$\semtower{∀ y[\ml{boy} y → ((λ z . []) y)]}{y \ml{loves} ιx[x \ml{mother} z]}$}
+    [{every boy loves his mother},roof]
+  ]
+  ]
+  ]]]
+\end{forest}
+\xe
+
+\ex~
+Types:\\
+\begin{forest}
+  [{$\type{t}$}
+    [{$↓$}]
+    [{$\type{\semtower{t}{t}}$}
+      [{$\type{\tower{t}{e → t}{e}}$\\everyone$ᴮ$}]
+      [{$\type{\tower{e \rightarrow t}{t}{e → t}}$}
+        [{$\type{\semtower{e \rightarrow t}{e → e → t}}$\\loves$^{\uparrow}$}]
+        [{$\type{\tower{e \rightarrow t}{t}{e}}$} [{his mother},roof]]
+      ]
+    ]
+  ]
+\end{forest}
+\xe
+
+\end{multicols}
+
+\end{fullwidth}
+
+\begin{tcolorbox}
+  \textbf{Intuition}\\
+  \tcblower
+  Pronouns \textit{expect a proposition and return an open proposition},
+  whereas bind-shifted quantifiers \textit{expect an open proposition and return
+  a proposition}.
+\end{tcolorbox}
+
+\subsection{Getting the basic facts}
+
+Due to the \textit{left-to-right bias} of \ac{sfa} \ac{wco}-violating readings
+can never be fully lowered, assuming our basic inventory of combinators (we put
+higher-order combinators such as internal lift to one side for the time being).
+
+\begin{tcolorbox}
+\textbf{Assumption}\\
+A sentence is deemed felicitous only if computing its meaning results in a value
+of a lowerable type.
+\end{tcolorbox}
+
+To illustrate, let's try to compute the meaning of a \ac{wco} violating
+sentence, and see how far we get:
+
+\ex
+\ljudge{*}His$_{x}$ mother loves every boy$^{x}$.
+\xe
+
+
+First, we compute the value of the VP, first bind-shifting the quantifier:
+
+  \begin{multicols}{2}
+\ex Composition\\
+\begin{forest}
+  [{\fbox{$\semtower{∀x[\ml{boy} x → ([] x)]}{λ y . y \ml{loves} x}$}\\$\ml{S}$}
+    [{loves$^{\uparrow}$}]
+    [{every boy$^{B}$}]
+  ]
+\end{forest}
+\xe
+
+\columnbreak
+
+\ex Types:\\
+\begin{forest}
+  [{$\type{\tower{t}{e \rightarrow t}{e \rightarrow t}}$}
+    [{$\type{\semtower{t}{e \rightarrow e \rightarrow t}}$}]
+    [{$\type{\tower{t}{e \rightarrow t}{e}}$}]
+  ]
+\end{forest}
+\xe
+
+\end{multicols}
+
+Next, let's try to compose the pronoun. Since the effect of the pronoun (the
+$λ z$) gets processed \textit{before} the effect of the bind-shifted quantifier,
+binding is not and \emph{can not} be achieved.
+
+\begin{fullwidth}
+\begin{multicols}{2}
+  \ex
+  \begin{forest}
+    [{\fbox{$\semtower{λ z . ∀x[\ml{boy} x → ([] x)]}{ιy[y \ml{mother} z] \ml{loves} x}$}}
+      [{$\semtower{λ z . []}{ιy[y \ml{mother} z]}$} [{his mother},roof]]
+      [{$\semtower{∀x[\ml{boy} x → ([] x)]}{λ y . y \ml{loves} x}$} [{loves every boy},roof]]
+    ]
+  \end{forest}
+  \xe
+  \columnbreak
+  \ex
+  \begin{forest}
+    [{$\type{\semtower{e \rightarrow t}{t}}$}
+      [{$\type{\tower{e \rightarrow t}{t}{e}}$}]
+      [{$\type{\tower{t}{e \rightarrow t}{e \rightarrow t}}$}]
+    ]
+  \end{forest}
+  \xe
+\end{multicols}
+\end{fullwidth}
+
+Furthermore, the resulting meaning is of an \textit{unlowerable type} -- it
+expects an open proposition, and returns an open proposition. This is the basic account of crossover in \citet{barkerShan2015}.
+
+\subsection{Binding out of DP}
+
+It's worth noting that, since continuation semantics can straightforwardly account for scope out of DP,
+it can account for binding out of DP.
+
+Bona fide scope out of DP is independently motivated in any case:
+
+\ex
+{}[[No boy]$^{x}$'s mother] gave him$_{x}$ anything to read.
+\xe
+
+Consider a simple example of binding out of DP:
+
+\ex
+Every boy$^{x}$'s mother loves him$_{x}$.
+\xe
+
+\begin{fullwidth}
+\begin{multicols}{2}
+
+\ex
+Step 1: VP composition:\\
+\begin{forest}
+  [{\fbox{$\semtower{λ z . []}{λ y . y \ml{loves} z}$}}
+    [{loves$^{\uparrow}$}]
+    [{$\ml{pro}_{BS}$}]
+  ]
+\end{forest}
+\xe
+
+\columnbreak
+
+\ex
+Step 2: Subject composition:\\
+\begin{forest}
+[{\fbox{$\semtower{∀x[\ml{boy} x → ([] x)]}{ιy[y \ml{mother} x]}$}}
+   [{$\semtower{∀x[\ml{boy} x → ([] x)]}{x}$} [{every boy$^{B}$},roof]]
+   [{$\semtower{[]}{λ x . ιy[y \ml{mother} x]}$}
+   [{$↑$}
+   [{...}
+     [{'s}]
+     [{mother}]
+   ]
+]]]
+\end{forest}
+\xe
+
+\end{multicols}
+
+\ex~
+Step 3: compose and lower result\\
+\begin{forest}
+  [{\fbox{$∀x[\ml{boy} x → (ιy[y \ml{mother} x] \ml{loves} x)]$}}
+  [{$↓$}
+  [{$\semtower{∀x[\ml{boy} x → ((λ z . []) x)]}{ιy[y \ml{mother} x] \ml{loves} z}$}
+    [{$\semtower{∀x[\ml{boy} x → ([] x)]}{ιy[y \ml{mother} x]}$} [{every boy's mother},roof]]
+    [{$\semtower{λ z . []}{λ y . y \ml{loves} z}$} [{loves him},roof]]
+  ]]]
+\end{forest}
+\xe
+
+\end{fullwidth}
+
+
+\subsection{Can inverse scope obviate crossover?}
+
+Since continuation semantics has a mechanism for obviating the left-to-right
+bias -- namely, \textit{internal lift}, which allows QPs to take inverse scope
+-- we have to ensure that internal lift doesn't accidentally allow us to obviate crossover.
+
+Let's therefore try to bind-shift a crossover, and then internally lift it, to
+try to derive the unattested bound reading for \textit{his sister loves every
+  boy}:
+
+\ex
+\ljudge{*}His$_{x}$ sister loves every boy$^{x}$.
+\xe
+
+\begin{fullwidth}
+  \begin{multicols}{2}
+
+\ex
+Step 1: compose the VP meaning\\
+\begin{forest}
+  [{\fbox{$\semtower{∀x[\ml{boy} x → ([] x)]}{\semtower{[]}{λ y . y \ml{loves} x}}$}\\\ml{S}$_{2}$}
+    [{loves$^{\uparrow_{2}}$}]
+    [{$\semtower{∀x[\ml{boy} x → ([] x)]}{\semtower{[]}{x}}$\\every boy$^{\intLift ∘ B}$}]
+  ]
+\end{forest}
+\xe
+
+\columnbreak
+
+\ex
+Step 2: compose the subject\\
+\begin{forest}
+  [{\fbox{$\semtower{∀x[\ml{boy} x → ([] x)]}{\semtower{λ z . []}{ιy[y \ml{sister} z] \ml{loves} x}}$}}
+  [{$\semtower{[]}{\semtower{λ z . []}{ιy[y \ml{sister} z]}}$}
+    [{his sister$^{↑}$},roof]
+  ]
+    [{$\semtower{∀x[\ml{boy} x → ([] x)]}{\semtower{[]}{λ y . y \ml{loves} x}}$} [{loves every boy},roof]]
+  ]
+\end{forest}
+\xe
+
+\end{multicols}
+\end{fullwidth}
+
+The meaning we've computed looks fairly reasonable. Let's consider its type:
+
+\ex
+$\left(\semtower{∀x[\ml{boy} x → ([] x)]}{\semtower{λ z . []}{ιy[y \ml{sister} z] \ml{loves} x}}\right):\type{\tower{t}{e → t}{\tower{e → t}{t}{t}}}$
+\xe
+
+We can internally lower once, since on the bottom two stories, the expected type
+matches the inner type, and we get:
+
+\ex
+$\type{\tower{t}{e \rightarrow t}{e \rightarrow t}}$
+\xe
+
+There \textit{is} actually a sensible way to lower the result \textit{again}, in
+such a way as to achieve binding, but in order to do this we'd need minimally a lower of type $\type{(e \rightarrow t) \rightarrow e \rightarrow t}$.
+
+At the cost of being unable to treat lower simply as a polymorphic identity
+function, \citeauthor{barkerShan2015} conjecture that the grammar simply doesn't
+make a lower of the relevant type available -- lower is rigidly typed, such that
+it only applies to propositions.
+
+This is at the core of \citeauthor{barkerShan2015}'s account of \ac{wco} -- the
+payoff is a quantifier can only bind a pronoun on the same tower story.
+
+It's worth noting at this point that \citeauthor{barkerShan2015}'s makes an
+accurate prediction -- \ac{wco} is about \textit{scope}, not c-command -- in
+continuation semantics, a quantifier can bind a pronoun just in case it's
+processed first.
+
+This captures the fact that possessors can bind out of the DP:
+
+A problem with continuation semantics and \ac{vfs}: no obvious account of inverse
+linking.
+
+\section{Variables strike back}
+
+Does an explanation of crossover using continuations require a
+    commitment to \ac{vfs}?
+
+Here I'll show that it doesn't. Their account is fully compatible with the
+\enquote{standard picture}.
+
+\subsection{The \enquote{standard} picture}
+
+\ac{vfs} has been argued to have some conceptual advantages, but it's far more common to treat pronouns as \textit{variables}.
+
+According to the standard picture (e.g., \citealt{heimKratzer1998}), pronouns
+are indexed and acquire their value relative to the evaluation assignment (the
+interpretation function is parameterized to an assignment).
+
+\ex
+$\eval[g]{her$_1$}  ≔ g₁$
+\xe
+
+In the following I'll try to see if we can retain the essence of the
+\citeauthor{barkerShan2015} account of crossover in this more standard picture.
+
+The first move I'll main is to extensionalize the standard picture, i.e., for
+us, pronouns will be \textit{functions from assignments to individuals}:
+
+\ex Pronouns (first ver.)\\
+$\ml{pro}ₙ ≔ λ g . gₙ$\hfill$\ml{pro}ₙ : \type{g → e}$
+\xe
+
+Now, we can lift pronouns into scope takers in the same way as
+\citeauthor{barkerShan2015} lift the \ac{vfs} pronoun into a
+scope-taker:\sidenote{Implicitly, we're using the $\ml{map}$ of type
+  $\type{g a → (a → b) → g b}$.}
+
+\ex
+Pronouns (second ver.)\\
+$\ml{pro}ₙ ≔ \semtower{λ g . []}{gₙ}$\hfill$\ml{pro}_{n}:\type{\tower{g → t}{t}{e}}$
+\xe
+
+If we try to compute the meaning of a simple sentence such as \textit{Jo loves him}, and lower the result, with this pronominal meaning, it should be obvious
+that what we get is the classical meaning extensionalized.
+
+\ex
+$\eval{Jo loves him$₁$} = λ g . \ml{j} \ml{loves} g₁$
+\xe
+
+How do we shift a QP into a binder? Intuitively, this should involve taking
+something that expects (and returns) a proposition, and returns something that
+expects (and returns) an \textit{assignment sensitive} proposition.\sidenote{One
+advantage of going extensional is therefore a fully categorematic treatment of
+abstraction; there is no need for a syncategorematic rule, such as
+\citeauthor{heimKratzer1998}'s \textsc{Predicate Abstraction}.
+
+An extensional account of assignment sensitivity provides a
+semantic account of binding reconstruction, although I won't go into the details
+here. It also has been argued to
+be necessary to resolve issues in the theory of \textsc{acd} by, e.g., Kennedy (2014).
+}
+
+\ex
+Abstract (def.)\\
+$Λ_{n} m ≔ λ k . λ g . m (λ x . k x g^{[n → x]})$\hfill$Λₙ : \type{\semtower{t}{e} → \semtower{g → t}{e}}$
+\xe
+
+Abstract takes a QP, pulls out its inner value, and returns a scope-taker that (i)
+expects an \textit{assignment-sensitive proposition}, feeds in a modified
+assignment, and then re-abstracts over it.
+
+In tower form:
+
+\ex
+$\Lambda_{n} \left(\semtower{f []}{x}\right) = \semtower{λ g . f ([] g^{[n → x]})}{x}$
+\xe
+
+Now we have everything we need to achieve binding. The computation is pretty
+much isomorphic to what we had in \ac{vfs}.
+
+\newpage
+
+\ex
+Every boy loves his mother.
+\xe
+
+\begin{fullwidth}
+\begin{multicols}{2}
+\ex Composition\\
+\begin{forest}
+  [{\fbox{$λg . ∀y[\ml{boy} y → y \ml{loves} ιz[z \ml{mother} y]]$}}
+  [{$↓$}
+  [{$\semtower{λ g . ∀y[\ml{boy} y → []]}{y \ml{loves} ιz[z \ml{mother} g₁^{[1 → y]}]}$}
+  [{(reduce)}
+  [{$\semtower{λ g . ∀y[\ml{boy} y → ([λ g . []] g^{[1 → y]})]}{y \ml{loves} ιz[z \ml{mother} g₁]}$}
+    [{$\semtower{λ g . ∀y[\ml{boy} y → ([] g^{[1 → y]})]}{y}$} [{every boy$^{Λ₁}$},roof]]
+    [{$\semtower{λ g . []}{λ y . y \ml{loves} ιz[z \ml{mother} g₁]}$} [{loves his$₁$ mother},roof]]
+  ]]]]]
+\end{forest}
+\xe
+\columnbreak
+\ex Types\\
+\begin{forest}
+  [{$\type{g → t}$}
+  [{$\type{\tower{g \rightarrow t}{t}{t}}$}
+    [{$\type{\semtower{g \rightarrow t}{e}}$}]
+    [{$\type{\tower{g \rightarrow t}{t}{e \rightarrow t}}$}]
+  ]]
+\end{forest}
+\xe
+\end{multicols}
+\end{fullwidth}
+
+Let's also check that we don't accidentally feed binding via internal lift.
+Assuming that \textit{lower} is rigidly typed to truth values, lowering the result of this is impossible.
+
+\newpage
+
+\ex
+His$_{x}$ mother loves every boy$^{x}$.
+\xe
+
+\begin{fullwidth}
+
+  \begin{multicols}{2}
+
+\ex~ Composition\\
+\begin{forest}
+  [{\xmark}
+  [{$\semtower{λ g . ∀y[\ml{boy} y → ([] g^{[1 →
+            y]})]}{λ g . ιz[z \ml{mother} g₁] \ml{loves} y}$}
+  [{internal lower}
+  [{$\semtower{λ g . ∀y[\ml{boy} y → ([] g^{[1 →
+            y]})]}{\semtower{λ g . []}{ιz[z \ml{mother} g₁] \ml{loves} y}}$}
+    [{$\semtower{[]}{\semtower{λ g . []}{ιz[z \ml{mother} g₁]}}$} [{his mother$^{↑}$}]]
+    [{$\semtower{λ g . ∀y[\ml{boy} y → ([] g^{[1 →
+            y]})]}{\semtower{[]}{λz . z \ml{loves} y}}$}
+      [{$\semtower{[]}{\semtower{[]}{λ yz . z \ml{loves} y}}$\\loves$^{\uparrow_{2}}$}]
+      [{$\semtower{λ g . ∀y[\ml{boy} y → ([] g^{[1 →
+            y]})]}{\semtower{[]}{y}}$} [{every boy$^{\intLift \circ Λ_{1}}$}]]
+    ]
+  ]]]]
+\end{forest}
+\xe
+
+\columnbreak
+
+\ex~ Types\\
+\begin{forest}
+  [{\xmark}
+  [{$\type{\semtower{g \rightarrow t}{g \rightarrow t}}$}
+  [{internal lower}
+  [{$\type{\semtower{g → t}{\tower{g \rightarrow t}{t}{t}}}$}
+    [{$\type{\semtower{g → t}{\tower{g \rightarrow t}{t}{e}}}$}]
+    [{$\type{\semtower{g \rightarrow t}{\semtower{t}{e \rightarrow t}}}$}
+      [{$\type{\semtower{g \rightarrow t}{\semtower{t}{e \rightarrow e \rightarrow t}}}$}]
+      [{$\type{\semtower{g \rightarrow t}{\semtower{t}{e}}}$}]
+    ]
+  ]]]]
+\end{forest}
+\xe
+
+\end{multicols}
+
+\end{fullwidth}
+
+The primary intuition of \citeauthor{barkerShan2015}'s account can therefore be
+maintained.
+
+\subsection{A-movement}
+
+As we've seen, overt A-movement \textit{bleeds} \ac{wco} whereas overt
+A'-movement \textit{feeds} \ac{wco}.
+
+Concretely, overt A-movement bleeds \ac{wco} only when it feeds scope --
+(\ref{ex:a}) only has a reading on which \textit{every boy} takes scope over the
+raising predicate \textit{likely}.
+
+\ex
+Every boy seems to his mother to be happy.\\
+\phantom{,}\hfill\cmark $∀ > \ml{likely}$; \xmark $\ml{likely} > ∀$\label{ex:a}
+\xe
+
+How do we account for the exceptionality of A-movement wrt
+crossover?\sidenote{As far as I can see, \citet{barkerShan2015} don't have much
+  to say about this.}
+
+What I'd like to suggest here is that A-traces are really a distinct lexical
+item, and denote, essentially, a \ac{vfs} style pronoun.
+
+\ex
+$\ml{trace}_{A} ≔ \semtower{λ x . []}{x}$\hfill$\type{\tower{e → t}{t}{e}}$
+\xe
+
+A-traces are scoped out, and lowered -- A-raised DPs are base-generated in their
+surface position.
+
+Let's see how this derives A-movement bleeding crossover for (\ref{ex:a}).
+
+\newpage
+
+\ex
+Every boy seems to his mother to be happy.
+\xe
+
+\ex Step 1: composition of matrix VP\\
+\begin{forest}
+  [{\fbox{$\semtower{λ g . []}{λ x . \ml{seems-to} (ιz[z \ml{mother} g₁]) (\ml{happy} x)}$}}
+  [{(internal lower)}
+  [{$\semtower{λ g . []}{\semtower{λ x . []}{\ml{seems-to} (ιz[z \ml{mother} g₁]) (\ml{happy} x)}}$}
+    [{$\semtower{λ g . []}{\semtower{[]}{ιz[z \ml{mother} g₁]}}$} [{his mother$^{\intLift}$},roof]]
+    [{$\semtower{[]}{\semtower{λ x . []}{λ z . \ml{seems-to} z (\ml{happy} x)}}$}
+    [{$↑$}
+    [{$\semtower{λ x . []}{λ z . \ml{seems-to} z (\ml{happy} x)}$}
+      [{$\semtower{[]}{λ p . λ z . \ml{seems-to} z p}$\\seems-to$^{↑}$}]
+      [{$\semtower{λ x . []}{\ml{happy} x}$}
+        [{$\semtower{λ x . []}{x}$\\$t_{A}$}]
+        [{$\semtower{[]}{λ x . \ml{happy} x}$}
+          [{to be happy$^↑$},roof]
+        ]
+      ]
+    ]
+  ]]]]]
+\end{forest}
+\xe
+
+\newpage
+
+\ex~
+Step 2: Compose \enquote{A-moved} DP\\
+\begin{forest}
+  [{\fbox{$λg . ∀x[\ml{boy} x → (\ml{seems-to} (ιz[z \ml{mother} g₁^{[1 → x]}]) (\ml{happy} x))]$}}
+  [{$↓$}
+  [{$\semtower{λ g . ∀x[\ml{boy} x → ((λ g . []) g^{[1 → x]})]}{\ml{seems-to} (ιz[z \ml{mother} g₁]) (\ml{happy} x)}$}
+    [{$\semtower{λ g . ∀x[\ml{boy} x → ([] g^{[1 → x]})]}{x}$} [{every boy$^{Λ₁}$},roof]]
+    [{$\semtower{λ g . []}{λ x . \ml{seems-to} (ιz[z \ml{mother} g₁]) (\ml{happy} x)}$} [{seems to his mother $t_{A}$ to be happy},roof]]
+  ]]]
+\end{forest}
+\xe
+
+This approach has a virtue -- it explains why A-moved expressions can scope
+higher than their surface position (A-movement doesn't fix scope).
+
+This is illustrated by the following example.
+
+\ex
+Some boys wants every girl$ˣ$ to seem to her$ₓ$ mother to be happy.\hfill$∀ > ∃$
+\xe
+
+How do we account for the fact that A'-movement \textit{doesn't} bleed
+crossover? We can assume that A'-movers are genuinely interpreted as
+scope-takers, in their base position; on the syntactic side, the phonological
+features of the expression are displaced.\sidenote{See my manuscript
+  \cite{elliott2019movement} for a theory of overt movement to this effect.}
+In general, we expect A-movement to feed A'-movement – if we think of
+A'-movement as scope-taking with a phonological reflex.
+
+\ex
+Which boy seemed to be happy?
+\xe
+
+Interestingly, it also derives the ban on \textit{improper movement} as a matter
+of the semantics (A-movement may not feed A'-movement). Why? This is because an
+$t_{A}$ trace is a lexical item which must saturate an argument position.
+
+\ex
+\ljudge{*}John seems that is intelligent.
+\xe
+
+\section{Inverse linking in continuation semantics}
+
+How can we get the inverse scope reading for the following, while maintaining
+the assumption that DP is a scope island?
+
+\ex
+A boy from every city is attending.\label{ex:inverse}
+\xe
+
+Evidence that DP is (in some sense) a scope island, comes from Larson's
+generalization.\sidenote{See \cite{Sauerlanda} for critical discussion, and
+  \cite{Charlow} for a response.}
+
+\ex
+Two politicians spy on someone from every city.\\
+\phantom{,}\hfill\cmark $\forall > \exists > 2$\\
+\phantom{,}\hfill\cmark $2 > \forall > exists$\\
+\phantom{,}\hfill\xmark $\forall > 2 > exists$
+\xe
+
+
+We'll assume a completely standard semantics for determiners as Generalized
+Quantifiers. The semantics for \textit{every} is given below.
+
+It's a function
+from a predicate to a continuized individual.
+
+\ex
+$\eval{every} = λ r . λ c . ∀ x[r x → c x]$\hfill$\type{(e → t) → \semtower{t}{e}}$
+\xe
+
+How does \textit{every} compose with its restrictor? Well, since its restrictor
+is a syntactically simplex nominal, composition can proceed via function application.
+
+\ex
+Step 1: Compose \textit{every} and its restrictor
+\begin{forest}
+  [{$λ c . ∀ x[\ml{city} x → c x]$\\$\ml{A}$}
+    [{$λ r . λ c . ∀ x[r x → c x]$}]
+    [{$λ y . \ml{city} y$}]
+  ]
+\end{forest}
+\xe
+
+Since \textit{every city} is a scope taker, composition of the PP and containing NP is mediated via \textit{lift} and \ac{sfa}.\footnote{As well as \ac{sfa}, the derivation in (\ref{ex:step2}) makes use of an additional composition rule: the scopal counterpart of \textit{predicate modification}, written here as $\ml{S}_∧$.}
+
+\ex
+Step 2: composition of NP\\
+\begin{forest}
+  [{$λ c . ∀y[\ml{city} y → c (λ x . \ml{boy} x ∧ x \ml{from} y)]$\\$\ml{S}_∧$}
+    [{$λ c . c (λ x . \ml{boy} x)$\\boy$^↑}]
+    [{$\ml{S}$}
+      [{$λ c . c (λ yx . x \ml{from} y)$\\from$^↑$}]
+      [{$λ c . ∀ y[\ml{city} y → c y]} [{every city},roof]]
+    ]
+  ]
+\end{forest}\label{ex:step2}
+\xe
+
+Finally, we need to compose the indefinite determiner with its restrictor. We assume that, much like \textit{every}, \textit{a} is a GQ. Its denotation is given below:
+
+The restrictor of the indefinite is itself associated with a scopal
+\textit{side-effect}, as reflected by its type. The indefinite is therefore unable to
+compose with its complement via \ml{A} or \ml{S}. In order to resolve the type
+mismatch, we must first lift the determiner, at which point composition can
+proceed via \ml{S}.
+
+\ex
+\begin{forest}
+  [{\fbox{$λ c . ∀ y[\ml{city} y → c (λ s . ∃x[\ml{boy} x ∧ x \ml{from} y ∧ s x])]$}\\$\ml{S}$}
+    [{$λ c . c (λ r . λs . ∃x[r x → s x])$\\a$^{↑}$}]
+    [{$λ c . ∀y[\ml{city} y → c (λ x . \ml{boy} x ∧ x \ml{from} y)]$} [{boy from every city},roof]]
+  ]
+\end{forest}
+\xe
+
+At this stage in the derivation, the DP denotes an individual with two layers of scopal side-effects -- the higher corresponding to the universal, and the lower corresponding the existential.
+
+\ex
+$\semtower{∀y[\ml{city} y → []]}{\semtower{∃x[\ml{boy} x ∧ x \ml{from} y ∧ []]}{x}}$
+\xe
+
+\citet{barkerShan2015} (see also \citealt{Charlowc}) typically use
+\textit{internal lower} to collapse a three-story tower. There is,
+however, another way of collapsing a three-story tower \textit{implicit} in our
+existing machinery.
+
+We're now going to define a new operation for lowering a value of $m$ of type
+$\type{K_t (K_t e)}$, called \textit{join} (written $μ$). Joining $m$ is simply an
+instruction to \textit{compose} $m$ with lift:\sidenote{Why does this work? Let's start by de-sugaring the type of $m$: $\type{K_t (K_t e)}$ -- this is an
+abbreviation for the following type:
+
+\ex $m: \type{(((e → t) → t) → t) → t}$\xe
+
+This type is amenable to a distinct sugaring
+in terms of $\type{K_t}$ -- namely $m: \type{K_t (e → t) → t}$.
+
+Now, consider the type of lift: $\type{a → K_t a}$. Since lift is polymorphic,
+$\type{a}$ could be any type. Let's instantiate it as $\type{e → t}$ -- the
+corresponding lift function is of type $\type{(e → t) → K_t (e → t)}$.
+
+Note that
+the output of lift on $\type{e → t}$ is the same as the input to our re-sugaring
+of $\type{K_t (K_t e)}$ into $\type{K_t (e → t) → t}$. This means we can do
+\textit{function composition}. The result of composing $m$ and lift should be a function of
+type $\type{(e → t) → t}$ (i.e. $\type{K_t e}$).}
+
+\ex
+Join (def.)\\
+$m^{μ} ≔ m ∘ (↑)$
+\xe
+
+We can now take the meaning we've computed for \textit{a boy from every city}
+and lower it into an ordinary tower via \textit{join} -- as you can see, join
+takes a three-story tower, and sequences scopal side-effects from top-to-bottom:
+
+\ex
+\begin{forest}
+  [{\fbox{$λ s . ∀y[\ml{city} y → (∃x[\ml{boy} x ∧ x \ml{from} y ∧ s x])]$}}
+  [{$μ$}
+    [{$λ c . ∀ y[\ml{city} y → c (λ s . ∃x[\ml{boy} x ∧ x \ml{from} y ∧ s x])]$}]
+  ]
+  ]
+\end{forest}
+\xe
+
+\ex
+\begin{forest}
+  [{$\type{\semtower{t}{e}}$}
+  [{$μ$}
+  [{$\type{\semtower{t}{\semtower{t}{e}}}$}
+    [{$\type{\semtower{t}{(e → t) → \semtower{t}{e}}}$\\a$^{↑}$}]
+    [{$\type{\semtower{t}{(e → t)}}$\\$\ml{S}_{∧}$}
+      [{$\type{\semtower{t}{(e → t)}}$\\boy$^{↑}$}]
+      [{$\type{\semtower{t}{(e → t)}}$\\$\ml{S}$}
+        [{$\type{\semtower{t}{(e → e → t)}}$\\from$^{↑}$}]
+        [{$\type{\semtower{t}{e}}$\\$\ml{A}$}
+          [{$\type{(e → t) → \semtower{t}{e}}$\\every}]
+          [{$\type{e → t}$\\city}]
+        ]
+      ]
+    ]
+  ]
+  ]
+  ]
+\end{forest}
+\xe
+
+In order to capture Larson's generalization, we conjecture that DPs are a kind
+of scope island, distinct to the \textit{evaluation islands} discussed by
+\citet{Charlowc}:
+
+\ex
+DP type rigidity (def.)\\
+A DP must denote a value of type $\type{K_t e}$ before the derivation can proceed.
+\xe
+
+From this constraint, it follows straightforwardly that, if a quantificational
+determiner has a GQ in its complement, then the two must scope together.
+
+I leave it as an exercise to combine our account of binding in the standard picture with the account of inverse linking outlined here.
 
 \printbibliography
 
