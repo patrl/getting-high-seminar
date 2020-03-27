@@ -1,0 +1,247 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\setcounter{secnumdepth}{3}
+
+\title{P-set 3\thanks{24.979: Topics in
+    semantics\\\noindent\textit{Getting high: Scope, projection, and evaluation order}}}
+
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott\sidenote{\texttt{pdell@mit.edu}} \& Martin Hackl\sidenote{\texttt{hackl@mit.edu}}}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\section{Continuation semantics with assignments}
+
+In class I laid out one way of incorporating the \enquote{standard} theory of
+pronouns into continuation semantics, in such a way that
+\citeauthor{barkerShan2015}'s theory of \ac{wco} is preserved.
+
+We assumed that pronouns (i) contribute an individual locally, (ii) \textit{expect} a
+    proposition, (iii) and \textit{return} an assignment sensitive proposition.
+
+\ex
+Pronoun (def.)\\
+$\ml{pro}ₙ ≔ \semtower{λ g . []}{gₙ}$\hfill$\ml{pro}_{n}:\type{\tower{g → t}{t}{e}}$
+\xe
+
+\begin{tcolorbox}
+\textbf{Exercise 1: warming up}
+\tcblower
+Compute the meaning of the following sentence, assuming the meaning for pronouns
+outlined above. Lower the result. What do you get? N.b. assume that the pronoun
+is \textit{free}.
+
+\ex
+Jo likes him$_{1}$.
+\xe
+
+\vspace{1\baselineskip}
+
+Remember that, in order to accommodate tower types where the expected and return
+types differ, \ac{sfa} has a more general typing (adjacent types must match, and
+cancel out):
+
+\ex
+$\ml{S} : \type{\tower{r}{i}{a \rightarrow b} \rightarrow \tower{i}{e}{a} \rightarrow \tower{r}{e}{b}\righta}$
+\xe
+\vspace{1\baselineskip}
+Lower also has a more general typing:
+
+\ex
+$\downarrow : \type{\tower{a}{t}{t} \rightarrow a}$
+\xe
+\vspace{1\baselineskip}
+The definitions of these operations don't change.
+
+\end{tcolorbox}
+
+On this account, quantifiers must be type-shifted into binders via an operation
+we called \textit{abstract}:\sidenote{This is the categorematic counterpart of
+  \citeauthor{heimKratzer1998}'s \textit{Predicate Abstraction} rule.}
+
+\ex
+Abstract (def.)\\
+$Λ_{n} m ≔ λ k . λ g . m (λ x . k x g^{[n → x]})$\hfill$Λₙ : \type{\semtower{t}{e} → \semtower{g → t}{e}}$
+\xe
+
+\begin{tcolorbox}
+\textbf{Exercise 2: getting hotter}
+\tcblower
+Compute the meaning of the following sentence by abstract-shifting the binder:
+
+\ex
+The teacher gave every student$^{1}$'s mother her$_{1}$ report.
+\xe
+
+\vspace{\baselineskip}
+
+Assume that the \ac{doc} has an \textit{ascending} structure, i.e.:
+
+\ex
+\begin{forest}
+  [{VP}
+  [{V'}
+    [{give}]
+    [{DP}
+       [{DP} [{every student},roof]]
+       [{D'}
+         [{'s}]
+         [{mother}]
+       ]
+    ]
+  ]
+    [{DP} [{her$_{1}$ report},roof]]
+  ]
+\end{forest}
+\xe
+
+See \cite{jankeNeeleman2012} for recent arguments that this structure
+\textit{must} be available, at least some of the time, for the English verb phrase.
+
+\end{tcolorbox}
+
+\begin{tcolorbox}
+\textbf{Exercise 3: Handling multiple pronouns}\\
+\tcblower
+Try to compute and lower the meaning of the following sentence; explain what
+goes wrong (both pronouns are free).
+
+\ex
+He$_{1}$ likes her$_{2}$.
+\xe
+
+\end{tcolorbox}
+
+\section{Going monadic}
+
+In the answer to the previous question, you'll observe that there's a problem
+with the way in which we turn pronouns into scope-takers.\sidenote{Keny
+  Chatain inspired this set of exercises by pointing out this deficiency.} Recall pronouns in the
+standard theory has the following meaning:
+
+\ex Pronouns (standard def.)\\
+$\ml{pro}ₙ ≔ λ g . gₙ$\hfill$\ml{pro}ₙ : \type{g → e}$
+\xe
+
+There's a different way to shift standard pronouns into scope-takers, via a
+function we'll call $⋆$ (star).\sidenote{Star is the \textit{bind} of a
+  \texttt{Reader} monad. In his dissertation, \citet{Charlowc} shows that for a
+  given monad $m$ the bind of that monad can be used to shift an inhabitant of
+  $m$ into a scope-taker. Here, we implicitly make use of the same idea.}
+
+\ex Star (def.)\\
+$\star m  ≔ λ k . λ g . k (m g) g$\hfill$⋆ : \type{(g → a) → \semtower{g \rightarrow b}{a}}$
+\xe
+
+Star-shifting a pronoun gives us the following entry:
+
+\ex
+Star-shifted pronoun\\
+$⋆ \ml{pro}_{n} = λ k . λ g . k gₙ g$\hfill$(⋆ \ml{pro}ₙ):\type{\semtower{g \rightarrow t}{e}}$
+\xe
+
+We can represent this meaning as a tower in
+the following way:
+
+\ex
+Star-shifted pronoun (tower version)\\
+$\ml{pro}_{n} ≔ \semtower{λ g . ([] g)}{g_{n}}$
+\xe
+
+In order to accommodate the result of adopting this entry for the pronoun, we'll
+need a slightly different entry for lower:
+
+\ex
+Lower (revised version)\\
+$m^{̣↓} ≔ m (λ pg . p)$\hfill$\downarrow : \type{\semtower{g \rightarrow t}{t}} \rightarrow g \rightarrow t$
+\xe
+
+\begin{tcolorbox}
+\textbf{Exercise 4}
+\tcblower
+Convince yourself that our basic theory of variable binding remains intact.
+Compute the meaning of the following sentence, assuming the star-shifted def for
+the pronoun and the revised version of lower. We can keep our old version of
+abstract.
+
+\ex
+Every boy$^{2}$ loves his$_{2}$ mother.
+\xe
+
+\vspace{\baselineskip}
+
+Now demonstrate how the star-shifted entry for the pronoun handles multiple
+pronouns in the following example:
+
+\ex
+He$₁$ likes her$₂$.
+\xe
+\end{tcolorbox}
+
+\printbibliography
+
+\end{document}
