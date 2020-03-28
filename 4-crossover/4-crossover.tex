@@ -1,0 +1,142 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\setcounter{secnumdepth}{3}
+
+\title{Crossover ii\thanks{24.979: Topics in
+    semantics\\\noindent\textit{Getting high: Scope, projection, and evaluation order}}}
+
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott\sidenote{\texttt{pdell@mit.edu}} \& Martin Hackl\sidenote{\texttt{hackl@mit.edu}}}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+\usepackage{float}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\section{Dynamic Semantics}
+
+In dynamic semantics (\citealt{heim1982}, \citealt{groenendijk_dynamic_1991})
+sentences denote \textit{relations between assignments} (equivalently: functions
+from assignments, to sets of assignments).
+
+
+
+\begin{figure}
+\caption{Relations between assignments}
+\begin{forest}
+  [{$g$} [{Roger$^{n}$ arrived late.} [{$g^{[n ↦ \ml{roger}]}$}]]]
+\end{forest}
+%
+\begin{forest}
+  [{$g$} [{A linguist$^{n}$ arrived late}
+    [{$g^{[n ↦ \ml{kai}]}$}]
+    [{$g^{[n ↦ \ml{roger}]}$}]
+    [{$g^{[n ↦ \ml{sabine}]}$}]
+    [{$g^{[n ↦ \ml{athulya}]}$}]
+    [{$g^{[n ↦ \ml{martin}]}$}]
+  ]]
+\end{forest}
+\end{figure}
+
+In dynamic semantics then, sentences are of type $\type{(g,g') → t}$
+
+\ex
+$\eval{Roger$^n$ arrived late} = λ g . \set{g^{[n ↦ \ml{r}]} | \ml{arrived-late r}}$\hfill$\type{g → G t}$
+\xe
+
+\ex~
+$\eval{A linguist$^{n}$ arrived late} = λ xgg' . g[n ↦x]g' ∧ \ml{arrived-late} x ∧ \ml{linguist} x}$\\
+\phantom{,}\hfill$\type{g → G t}$
+\xe
+
+Dynamic closure:
+
+\ex
+$m^{↯} ≔ λ g . ∃g' ∈ (m g)$
+\xe
+
+In dynamic semantics, the connectives manipulate dynamic values directly.
+
+\ex Dynamic sequencing (def.)\\
+$m;n ≔ n ∘ m$
+\xe
+
+\ex Dynamic lift (def.)\\
+$f^{↑} ≔ λxg . \set{g | f x}$\hfill$\type{(e → t) → e → T}$
+\xe
+
+\ex Discourse referent introduction (def.)\\
+$f^{Δₙ} ≔ λ xg . \set{g^{[n ↦ x]} | f x}$\hfill$\type{(e → T) → e → T}$
+\xe
+
+\ex Pronouns (def.)\\
+$\ml{pro}_{n} ≔ λ g . gₙ$
+\xw
+
+\printbibliography
+
+
+\end{document}
