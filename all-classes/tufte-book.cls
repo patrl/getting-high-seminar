@@ -1,0 +1,1 @@
+../boilerplate/tufte-book.cls
