@@ -34,6 +34,8 @@
 }
 \makeatother
 
+\usepackage{multicol}
+
 \setcounter{secnumdepth}{3}
 
 \title{Crossover ii\thanks{24.979: Topics in
@@ -76,6 +78,118 @@
 
 \maketitle% this prints the handout title, author, and date
 
+\section{From continuation semantics to dynamic semantics}
+
+At the beginning of the semester, we learned about a theory of scope-taking with
+a built-in left-to-right bias -- \textit{continuation semantics}.
+
+Concretely, due to the way that the composition rule \ac{sfa} was defined,
+evaluation of quantificational effects \textit{mirrors} linear
+order.\sidenote{To cash this out, we needed to say something concrete about the
+  syntax-semantics interface -- concretely, we committed to the ideas that (a)
+  the basic combinatoric operation \textsc{Merge} is asymmetric, and (b) the
+  syntactic and semantic composition proceed in lockstep (direct compositionality).}
+
+As we saw in the last class, an appealing consequence of this linear bias was a
+natural account of \acf{wco} in terms of evaluation order.\sidenote{See
+  especially \cite{shanBarker2006} and \cite[chapters 2 and 4]{barkerShan2015}.}
+
+Recall, a simplified version of the \ac{wco} paradigm: scope can feed binding
+(\ref{ex:wco1}), unless the binder doesn't precede the bound expression (\ref{ex:wco2}).
+
+\ex
+{}[Everyone$^{x}$'s mother] bought them$_{x}$ a bicycle.\label{ex:wco1}
+\xe
+
+\ex~
+Their$_{x}$ mother showered everyone$^{x}$ with gifts.\\
+\textit{cf. a different person showered everyone with gifts.}\label{ex:wco2}
+\xe
+
+The idea, briefly, was to generalize our notion of a scope-taker to make sense
+of the idea that pronouns also \textit{scope}.
+
+In \citeauthor{barkerShan2015}'s system, pronouns take scope in the following
+way: they expect \textit{a proposition}, and they return an \textit{open
+  proposition}.\sidenote{We can helpfully think of an open proposition in this
+  framework as a proposition with anaphoric effects (i.e., environment sensitivity).}
+
+In order for a \ac{qp} to bind a pronoun, it must first be
+\textit{bind-shifted}. A bind-shifted \ac{qp} expects an open proposition, and
+returns a proposition. Successful binding is illustrated in figure \ref{fig:cont1}.
+
+\begin{figure}
+\caption{Successful binding}\label{fig:cont1}
+\begin{forest}
+  [{$\type{t}$}
+  [{$\type{\semtower{t}{e}}$\\$\ml{S}$},edge label={node[midway,left,font=\scriptsize]{$↓$}}
+    [{$\type{\tower{t}{e → t}{e}}$} [{$\type{\semtower{t}{e}}$\\every boy},edge label={node[midway,left,font=\scriptsize]{$B$}}]]
+    [{$\type{\tower{e → t}{t}{e → t}}$\\$\ml{S}$}
+      [{$\type{\semtower{e → t}{e → e → t}}$\\loves}]
+      [{$\type{\tower{e → t}{t}{e}}$} [{his mother},roof]]
+    ]
+  ]]
+\end{forest}
+\end{figure}
+
+Putting mechanisms for inverse scope to one side, \ac{wco} follows
+straightforwardly from this system. Since both pronouns and bind-shifted
+\acp{qp} are scope-takers, for the pronoun to be bound, the \ac{qp} has to be
+evaluated first. Scope can feed binding, but the \ac{qp} must precede the
+pronoun, since \textit{evaluation order mirrors linear order}.\sidenote{One of
+  the virtues of continuation semantics is that it straightforwardly accounts
+  for scope out of \ac{dp} without requiring \textit{movement} out of \ac{dp}.}
+
+Continuation semantics includes mechanisms for subverting the linear bias
+(namely, higher-order continuations), in
+order to account for inverse scope.
+
+With mechanisms for inverse scope in the picture, things become a little less neat. \citet{barkerShan2015} must
+stipulate that \textit{lower} -- the operation via which continuized meaning are
+collapsed into ordinary meanings -- is rigidly typed. If we assume that
+\textit{internal lower} is derived as lifted \textit{lower}, this also has
+consequences for its type:
+
+\pex
+\a $↓ : \type{\tower{a}{t}{t} → a}$
+\a $⇊ : \type{\semtower{b}{\tower{a}{t}{t}} → \semtower{b}{a}}$
+\xe
+
+This move basically guarantees, via a syntactic stipulation, that in order for a
+bind-shifted \ac{qp} to bind a pronoun, it must take scope at the same
+tower-story as the pronoun. If it takes scope on a high level, then the
+resulting meaning cannot ultimately be lowered by a rigidly typed
+\textit{lower}.
+
+An unsuccessful attempt at getting internal lift to feed binding is illustrated
+in figure \ref{fig:cont2}.
+
+\begin{figure}
+\caption{Unsuccessful binding (\ac{wco})}\label{fig:cont2}
+\begin{forest}
+  [{\xmark}
+  [{$\type{\tower{t}{e → t}{e → t}}$}
+  [{$\type{\tower{t}{e → t}{\tower{e → t}{t}{t}}}$\\$\ml{S}$},edge label={node[midway,left,font=\scriptsize]{$⇊$}}
+    [{$\type{\semtower{t}{\tower{e → t}{t}{e}}}$} [{$\type{\tower{e → t}{t}{e}}$\\his mother},edge label={node[midway,left,font=\scriptsize]{$↑$}}]]
+    [{$\type{\tower{t}{e → t}{\semtower{t}{e → t}}}$\\$\ml{S}$}
+      [{$\type{\semtower{t}{\semtower{t}{e → e → t}}}$\\loves$^{↑ ∘ ↑}$}]
+      [{$\type{\tower{t}{e → t}{\semtower{t}{e}}}$} [{every boy},edge label={node[midway,left,font=\scriptsize]{$⇈ ∘ B$}}]]
+    ]
+  ]
+  ]]
+\end{forest}
+\end{figure}
+
+What's crucial here is that both lower and internal lower are rigidly typed.
+
+Just how satisfying is this as an explanation though? If we look at what lower
+actually \textit{does}, there's no intrinsic reason why it should be so rigidly
+typed:
+
+\ex
+$m^{↓} ≔ m id$
+\xe
+
 \section{Dynamic Semantics}
 
 In dynamic semantics (\citealt{heim1982}, \citealt{groenendijk_dynamic_1991})
@@ -87,7 +201,7 @@ from assignments, to sets of assignments).
 \begin{figure}
 \caption{Relations between assignments}
 \begin{forest}
-  [{$g$} [{Roger$^{n}$ arrived late.} [{$g^{[n ↦ \ml{roger}]}$}]]]
+  [{$g$} [{Roger arrived late.} [{$g^{[n ↦ \ml{roger}]}$}]]]
 \end{forest}
 %
 \begin{forest}
@@ -101,40 +215,186 @@ from assignments, to sets of assignments).
 \end{forest}
 \end{figure}
 
-In dynamic semantics then, sentences are of type $\type{(g,g') → t}$
+\textit{Assignments} are functions from variables to individuals; as is
+standard, we'll represent the set of variables as $ℕ$:
+
+\ex Type of assignments (def.)\\
+$\type{g} ≔ \type{n → e}$
+\xe
+
+\citeauthor{chierchia2020} assumes that assignments are \textit{partial}
+functions.\sidenote{See also \citet{rothschildMandelkern2017esslli} for a
+  dynamic semantics using partial assignments.} That is to say, an assignment
+may only be defined for certain indices. The following are all valid assignments:
+
+  \begin{multicols}{3}
+  $$\left[
+      1 ↦ \ml{roger}
+    \right]$$
+  \columnbreak
+  $$\left[\begin{aligned}[c]
+      &1 ↦ \ml{roger}\\
+      &3 ↦ \ml{martin}
+    \end{aligned}\right]$$
+  \columnbreak
+  $$\left[\begin{aligned}[c]
+      &4 ↦ \ml{kai}\\
+      &5 ↦ \ml{athulya}\\
+      &7 ↦ \ml{sabine}\\
+    \end{aligned}\right]$$
+\end{multicols}
+
+In order to characterize a dynamic sentential meaning, we define a type
+constructor $\type{T}$ to abbreviate relations between assignments:
+
+\ex Type of \acp{ccp} (def.)\\
+$\type{T} ≔ \type{g → g → t}$
+\xe
+
+\todo[inline]{Add some example sentential meanings here}
+
+% Here are some example sentence meanings:
+
+% \ex
+% $\eval{Roger arrived late} = λ g . λ g' . g[n ↦ \ml{r}]g' ∧ \ml{arrived-late r}$\sidenote{$g[n ↦ x]g'$
+% is \textit{true}, just in case $g'$ \textit{at most} differs from $g$ with
+% respect to $n$ ($g_{n}$ can be undefined), and $g'_{n} = \ml{r}$.}\hfill$\type{T}$
+% \xe
+
+% \ex~
+% $\eval{A linguist$^{n}$ arrived late} = λ g . λ g' . ∃x[g[n → x]g' ∧ \ml{arrived-late} x]$\hfill$\type{T}$
+% \xe
+
+We can get back an \enquote{ordinary} sentential meaning from a \ac{ccp} by
+existentially closing the output assignment, as defined in (\ref{def:dyclo}).
+
+
+\ex Dynamic closure (def.)\\
+$m^{↓_{g}} ≔ ∃g'[m g g']$\label{def:dyclo}\hfill$\dyclo : \type{T → t}$
+\xe
+
+How do we build up \acp{ccp} compositionally? \citeauthor{chierchia2020} assumes
+that predicates are fundamentally Montagovian (i.e., functions of type
+$\type{e → t}$):
 
 \ex
-$\eval{Roger$^n$ arrived late} = λ g . \set{g^{[n ↦ \ml{r}]} | \ml{arrived-late r}}$\hfill$\type{g → G t}$
+$\eval{swim} ≔ λ x . \ml{swim} x$\hfill$\type{e → t}$
 \xe
 
-\ex~
-$\eval{A linguist$^{n}$ arrived late} = λ xgg' . g[n ↦x]g' ∧ \ml{arrived-late} x ∧ \ml{linguist} x}$\\
-\phantom{,}\hfill$\type{g → G t}$
-\xe
 
-Dynamic closure:
+Predicates are lifted into a dynamic setting by a type-shifter
+\textit{dynamic lift}; d-lift takes a function from an individual to a
+truth-value, and shifts it into a function from an individual to a \ac{ccp} --
+specifically, a dynamic \textit{test}.
 
 \ex
-$m^{↯} ≔ λ g . ∃g' ∈ (m g)$
+Dynamic lift (def.)\\
+$f^{\dlift} ≔ λ x . λ g . λ g' . g = g' ∧ f x$\hfill$\dlift : \type{(e → t) → e
+  → T}$
 \xe
 
-In dynamic semantics, the connectives manipulate dynamic values directly.
+Tests don't do much interesting to input contexts. In orthodox dynamic
+fragments, all of the interesting dynamic action is triggered by arguments --
+specifically, indefinite arguments.
+
+\citeauthor{chierchia2020}'s innovation is to posit a second way of lifting
+predicates into a dynamic setting: \textit{\ac{dr} introduction}.
+
+\ex
+Discourse referent introduction (def.)\\
+$f^{Δ_{n}} ≔ λ x . λ g . λ g' g \stackrel{n/x}{=} g' ∧ f x$\hfill$Δ_{n}: \type{(e → t) → e
+  → T}$
+\xe
+
+
+
+In dynamic semantics, the connectives manipulate \acp{ccp} directly. At the
+heart of the system is the entry for dynamic sequencing/conjunction, given in
+(\ref{def:conj}).\sidenote{$g \stackrel{n/x}{=} g'$ is defined iff $g_{n}$ is
+  \textit{un}defined, and is true just in case $g'$ differs from $g$ at most in
+  what $n$ is mapped to.
+
+\citeauthor{heim1982}'s \textit{novelty condition} is essentially built into the
+rule for \ac{dr} introduction.}
 
 \ex Dynamic sequencing (def.)\\
-$m;n ≔ n ∘ m$
+$m ; n ≔ λg . λ g' . ∃g''[m g g'' ∧ n g'' g']$\hfill$(;): \type{T → T → T}$\label{def:conj}
 \xe
 
-\ex Dynamic lift (def.)\\
-$f^{↑} ≔ λxg . \set{g | f x}$\hfill$\type{(e → t) → e → T}$
+\ex
+Dynamic negation (def.)\\
+$¬ m ≔ λ g . λg' . g = g' ∧ m^{↓_{g}}$\hfill$¬ : \type{T → T}$
 \xe
 
-\ex Discourse referent introduction (def.)\\
-$f^{Δₙ} ≔ λ xg . \set{g^{[n ↦ x]} | f x}$\hfill$\type{(e → T) → e → T}$
+\ex
+Dynamic lift (def.)\\
+$P^{\dlift} ≔ λ x . λ g . λ g' . g = g' ∧ p x$\hfill$\dlift : \type{(e → t) → e
+  → T}$
 \xe
 
-\ex Pronouns (def.)\\
-$\ml{pro}_{n} ≔ λ g . gₙ$
-\xw
+\ex
+Discourse referent introduction (def.)\\
+$P^{\dintro{n}} ≔ λ x . λ g . λ g' g \stackrel{n/x}{=} g' ∧ P x$\hfill$\dintro{n}: \type{(e → t) → e
+  → T}$
+\xe
+
+\ex
+Pronouns (def.)\\
+$\ml{pro}_{n} ≔ λ k . λ g . (k g_{n}) g$\sidenote{
+\citeauthor{chierchia2020} actually posits a syncategorematic rule for composing
+pronouns and dynamic predicates -- instead, I've built what
+\citeauthor{chierchia2020}'s rule does into the meaning of the pronoun.
+}\hfill$\ml{pro}_{n} : \type{(e → T) → T}$
+\xe
+
+\ex
+Someone (def.)\\
+$\ml{someone}_{n} m ≔ λ g . λ g' . ∃x[m g g']$
+\xe
+
+\begin{figure}
+  \centering
+  \caption{Example derivation}
+  \begin{forest}
+    [{$λ gg' . ∃g''[∃x[g \stackrel{1/x}{=} g'' ∧ \ml{walked-in} x] ∧ g'' = g' ∧ \ml{sat-down} g''_1]$}
+    [{$λ gg' . ∃x[g \stackrel{1/x}{=} g' ∧ \ml{walked-in} x]$}
+      [{Someone}]
+      [{$λ gg' . g \stackrel{1/x}{=} g' ∧ \ml{walked-in} x$}
+      [{$t_{x}$}]
+      [{$λ x . λ gg' . g \stackrel{1/x}{=} g' ∧ \ml{walked-in} x$} [{walked in}]]]
+    ]
+    [{...}
+    [{$;$}]
+      [{$λ gg' . g = g' ∧ \ml{sat-down} g_1$}
+        [{$λ k . λ g . k g_1 g$\\he$_1$}]
+        [{$λ y . λ gg' . g = g' ∧ \ml{sat-down} y$} [{sat-down},roof]]
+      ]
+    ]]
+  \end{forest}
+\end{figure}
+
+\subsection{Accessibility}
+
+\section{The problem of existentials}
+
+\section{Rethinking the system}
+
+Conceptual issues:
+
+\begin{itemize}
+
+    \item Much like, e.g., \ac{dmg}, \citeauthor{chierchia2020}'s system
+    implicitly makes a syntactic distinction between two different kinds of
+    variables.\sidenote{See \citeauthor{barkerShan2008}'s
+    (\citeyear{barkerShan2008}) criticism of \ac{dmg} for related discussion.}
+    Can we do better? Continuations provide a way of doing scope-taking without
+    any need for traces, so this issue should (hopefully) dissolve if we shift
+    to a continuation-based theory.
+
+\end{itemize}
+
+\todo[inline]{Putative generalization: only (potentially monadic) individuals
+  introduce discourse referents.}
 
 \printbibliography
 
