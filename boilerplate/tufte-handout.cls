@@ -158,7 +158,9 @@
 \NewDocumentCommand\xmark{}{\ding{55}}%
 
 \NewDocumentCommand\intLift{}{\ensuremath{\upuparrows}}
-
+\NewDocumentCommand\dlift{}{\ensuremath{\Delta}}
+\NewDocumentCommand\dyclo{O{}}{\ensuremath{↓_{#1}}}
+\NewDocumentCommand\dintro{O{}}{\ensuremath{\Delta_{#1}}}
 \NewDocumentCommand\trace{O{}}{\textit{t\textsubscript{#1}}}
 \NewDocumentCommand\bracketStr{O{}m}{[\textsubscript{#1}\,{#2}\,]}
 \NewDocumentCommand\powerset{m}{\ensuremath{𝒫(#1)}}
