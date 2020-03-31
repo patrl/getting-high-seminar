@@ -41,7 +41,7 @@
 \title{Crossover ii\thanks{24.979: Topics in
     semantics\\\noindent\textit{Getting high: Scope, projection, and evaluation order}}}
 
-\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott\sidenote{\texttt{pdell@mit.edu}} \& Martin Hackl\sidenote{\texttt{hackl@mit.edu}}}
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott \& Martin Hackl}
 
 \addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
 
@@ -78,7 +78,16 @@
 
 \maketitle% this prints the handout title, author, and date
 
+\begin{tcolorbox}
+  Some reminders
+  \tcblower
+  If you're a \textbf{registered student}, please send us your project proposal
+  by the end of the week.
+\end{tcolorbox}
+
 \section{From continuation semantics to dynamic semantics}
+
+\subsection{Barker \& Shan: \textsc{wco} as a reflex of evaluation order}
 
 At the beginning of the semester, we learned about a theory of scope-taking with
 a built-in left-to-right bias -- \textit{continuation semantics}.
@@ -184,33 +193,58 @@ What's crucial here is that both lower and internal lower are rigidly typed.
 
 Just how satisfying is this as an explanation though? If we look at what lower
 actually \textit{does}, there's no intrinsic reason why it should be so rigidly
-typed:
+typed.
 
-\ex
-$m^{↓} ≔ m id$
+As shown in (\ref{def:lower}), all that lower does is feed its sole argument the
+identity function. On a maximally polymorphic definition, therefore, the
+argument need only be of type $\type{(a → a) → b}$.
+
+
+\ex Lower (maximally polymorphic ver.)\\
+$m^{↓} ≔ m id$\label{def:lower}
 \xe
+
+A maximally polymorphic lower could save the \ac{wco}-violating derivation in
+figure \ref{fig:cont2}.
+
+Based on what lower \textit{does}, there's no strong \textit{semantic}
+motivation for making it rigidly typed. Therefore, despite the initial
+conceptual appeal of \citeauthor{barkerShan2015}'s system, its success
+ultimately rests on what looks like a syntactic stipulation.
+
+\subsection{Chierchia: \textsc{wco} as a reflex of the dynamics of anaphora}
+
+\citet{chierchia2020} develops a theory of \ac{wco} based on \textit{dynamic
+  semantics}.
+
+Much like continuation semantics, dynamic semantics is a semantic theory with a
+\enquote{built-in} left-to-right bias.
 
 \section{Dynamic Semantics}
 
-In dynamic semantics (\citealt{heim1982}, \citealt{groenendijk_dynamic_1991})
+\subsection{A Heimian fragment}
+
+In dynamic semantics (\citealt{heim1982}, \citealt{groenendijk_dynamic_1991}, \citealt{chierchia_dynamics_1995})
 sentences denote \textit{relations between assignments} (equivalently: functions
 from assignments, to sets of assignments).
 
-
+\acp{dp} introduce \acp{dr}, modeled as variables; indefinites, unlike definites
+induce \textit{indeterminacy}, concerning the identity of the \ac{dr}. This is
+illustrated schematically in figure \ref{fig:schema}.
 
 \begin{figure}
-\caption{Relations between assignments}
+\caption{Relations between assignments}\label{fig:schema}
 \begin{forest}
-  [{$g$} [{Roger arrived late.} [{$g^{[n ↦ \ml{roger}]}$}]]]
+  [{$ω$} [{Roger$^{n}$ arrived late.} [{$ω^{[n ↦ \ml{roger}]}$}]]]
 \end{forest}
 %
 \begin{forest}
-  [{$g$} [{A linguist$^{n}$ arrived late}
-    [{$g^{[n ↦ \ml{kai}]}$}]
-    [{$g^{[n ↦ \ml{roger}]}$}]
-    [{$g^{[n ↦ \ml{sabine}]}$}]
-    [{$g^{[n ↦ \ml{athulya}]}$}]
-    [{$g^{[n ↦ \ml{martin}]}$}]
+  [{$ω$} [{A linguist$^{n}$ arrived late}
+    [{$ω^{[n ↦ \ml{kai}]}$}]
+    [{$ω^{[n ↦ \ml{roger}]}$}]
+    [{$ω^{[n ↦ \ml{sabine}]}$}]
+    [{$ω^{[n ↦ \ml{athulya}]}$}]
+    [{$ω^{[n ↦ \ml{martin}]}$}]
   ]]
 \end{forest}
 \end{figure}
@@ -218,8 +252,8 @@ from assignments, to sets of assignments).
 \textit{Assignments} are functions from variables to individuals; as is
 standard, we'll represent the set of variables as $ℕ$:
 
-\ex Type of assignments (def.)\\
-$\type{g} ≔ \type{n → e}$
+\ex Type of assignments\\
+$\type{o} ≔ \type{n → e}$
 \xe
 
 \citeauthor{chierchia2020} assumes that assignments are \textit{partial}
@@ -247,8 +281,8 @@ may only be defined for certain indices. The following are all valid assignments
 In order to characterize a dynamic sentential meaning, we define a type
 constructor $\type{T}$ to abbreviate relations between assignments:
 
-\ex Type of \acp{ccp} (def.)\\
-$\type{T} ≔ \type{g → g → t}$
+\ex Type of \acp{ccp}\\
+$\type{T} ≔ \type{o → o → t}$
 \xe
 
 \todo[inline]{Add some example sentential meanings here}
@@ -270,7 +304,7 @@ existentially closing the output assignment, as defined in (\ref{def:dyclo}).
 
 
 \ex Dynamic closure (def.)\\
-$m^{↓_{g}} ≔ ∃g'[m g g']$\label{def:dyclo}\hfill$\dyclo : \type{T → t}$
+$m^{↓}} ≔ λ ω . ∃ω'[m ω ω']$\label{def:dyclo}\hfill$\dyclo : \type{T → t}$
 \xe
 
 How do we build up \acp{ccp} compositionally? \citeauthor{chierchia2020} assumes
@@ -282,6 +316,7 @@ $\eval{swim} ≔ λ x . \ml{swim} x$\hfill$\type{e → t}$
 \xe
 
 
+
 Predicates are lifted into a dynamic setting by a type-shifter
 \textit{dynamic lift}; d-lift takes a function from an individual to a
 truth-value, and shifts it into a function from an individual to a \ac{ccp} --
@@ -289,20 +324,106 @@ specifically, a dynamic \textit{test}.
 
 \ex
 Dynamic lift (def.)\\
-$f^{\dlift} ≔ λ x . λ g . λ g' . g = g' ∧ f x$\hfill$\dlift : \type{(e → t) → e
+$f^{\dlift} ≔ λ x . λ ω . λ ω' . ω = ω' ∧ f x$\hfill$\dlift : \type{(e → t) → e
   → T}$
 \xe
 
-Tests don't do much interesting to input contexts. In orthodox dynamic
+Tests don't do anything interesting to input contexts. In orthodox dynamic
 fragments, all of the interesting dynamic action is triggered by arguments --
-specifically, indefinite arguments.
+specifically, pronouns and indefinites.
+
+
+A pronoun indexed $n$ expects a dynamic predicate $k$ as its input, and returns
+a \ac{ccp} -- a function from an input assignment $ω$ to the result of feeding
+$ω_{n}$ into $k$, \textit{re-}saturated with $ω$.\sidenote{The type signature of
+a pronoun betrays the fact that, in this dynamic grammar, pronouns are
+\textit{scope-takers}, and in fact, we can abbreviate a pronominal meaning using
+tower notation:
+
+\ex
+Pronouns (tower def.)\\
+$\ml{pro}_{n} ≔ \semtower{λ ω . ([] ω)}{ω_{n}}$
+\xe
+
+Interestingly, this is what we get if we apply the \textit{bind} of the
+\texttt{Reader} monad to the static entry for a pronoun.
+
+\ex Pronoun (static def.)\\
+$\ml{pro}_{n} ≔ λω . ω_{n}$\\
+\phantom{,}\hfill$\type{o → e}$
+\xe
+
+\ex~ Bind of \texttt{Reader} (def.)\\
+$m^{⋆} ≔ λ k . λ ω . k (m ω) ω$\\
+\phantom{,}\hfill$\type{(o → a) → (a → o → b) → o → b}$
+\xe
+}
+
+\ex
+Pronouns (def.)\\
+$\ml{pro}_{n} ≔ λ k . λ ω . k ω_{n} ω$\sidenote{
+\citeauthor{chierchia2020} actually posits a syncategorematic rule for composing
+pronouns and dynamic predicates -- instead, I've built what
+\citeauthor{chierchia2020}'s rule does into the meaning of the pronoun.
+}\hfill$\ml{pro}_{n} : \type{(e → T) → T}$
+\xe
+
+Pronouns now may compose with d-lifted predicates via \ac{fa}, as illustrated
+in figure \ref{fig:pro}:
+
+\begin{figure}
+\caption{Pronouns in a dynamic fragment\\\enquote{He$_{3}$ swims}}\label{fig:pro}
+\begin{forest}
+  [{$λωω' . ω = ω' ∧ \ml{swim} ω_{3}$},fill=yellow
+    [{$λ k . λ ω . k ω_{3} ω$\\he$_{n}$}]
+    [{$λ x . λ ωω' . ω = ω' ∧ \ml{swim} x$} [{swim},edge label={node[midway,left,font=\scriptsize]{$\dlift$}}]]
+  ]
+\end{forest}
+\end{figure}
+
+The result is a dynamic \textit{test}, that saturates the argument of
+\textit{swim} with whatever the input assignment $ω$ maps to pronominal index
+$3$ to.
+
+In an orthodox dynamic fragment (\citealt{heim1982,groenendijk_dynamic_1991}), indefinites introduce
+\acp{dr}.\sidenote{\citeauthor{chierchia2020} will ultimately reject this
+  assumption, but it will be useful to consider his claims in light of the
+  standard theory.}\sidenote{$ω \stackrel{n/x}{=} ω'$ is defined iff $ω_{n}$ is
+  \textit{un}defined, and is true just in case $ω'$ differs from $ω$ at most in
+  what $n$ is mapped to.
+
+\citeauthor{heim1982}'s \textit{novelty condition} is essentially built into the
+rule for \ac{dr} introduction.}
+
+\ex
+Indefinites (Heimian def.)\\
+$\ml{someone}_{n} ≔ λ k . λ ωω' . ∃x,w''[ω \stackrel{n/x}{=} ω'' ∧ k x ω'' ω']$\\
+\phantom{,}\hfill$\ml{someone}_{n} \type{(e → T) → T}$
+\xe
+
+In figure \ref{fig:indef}, we show how a Heimian indefinite composes in a
+dynamic fragment. The result maps each input assignment $ω$ to (the
+characteristic function of) a \textit{set} of assignments $ω'$, s.t., $ω'_{n}$
+is a swimmer.
+
+\begin{figure}
+\caption{Heimian indefinites in a dynamic fragment\\\enquote{Someone$_{7}$ swims}}\label{fig:indef}
+\begin{forest}
+  [{$λ ωω' . ∃x[ω \stackrel{7/x}{=} ω' ∧ \ml{swim} x]$},fill=yellow
+  [{$λωω' . ∃x,w''[ω \stackrel{7/x}{=} ω'' ∧ ω'' = ω' ∧ \ml{swim} x]$},edge label={node[midway,left,font=\scriptsize]{equiv}}
+    [{$λ k . λ ωω' . ∃x,w''[ω \stackrel{7/x}{=} ω'' ∧ k x ω'' ω']$\\someone$_{7}$}]
+    [{$λ x . λ ωω' . ω = ω' ∧ \ml{swim} x$} [{swim},edge label={node[midway,left,font=\scriptsize]{$\dlift$}}]]
+  ]]
+\end{forest}
+\end{figure}
+
 
 \citeauthor{chierchia2020}'s innovation is to posit a second way of lifting
 predicates into a dynamic setting: \textit{\ac{dr} introduction}.
 
 \ex
 Discourse referent introduction (def.)\\
-$f^{Δ_{n}} ≔ λ x . λ g . λ g' g \stackrel{n/x}{=} g' ∧ f x$\hfill$Δ_{n}: \type{(e → t) → e
+$f^{Δ_{n}} ≔ λ x . λ ω . λ ω' ω \stackrel{n/x}{=} ω' ∧ f x$\hfill$Δ_{n}: \type{(e → t) → e
   → T}$
 \xe
 
@@ -310,70 +431,83 @@ $f^{Δ_{n}} ≔ λ x . λ g . λ g' g \stackrel{n/x}{=} g' ∧ f x$\hfill$�
 
 In dynamic semantics, the connectives manipulate \acp{ccp} directly. At the
 heart of the system is the entry for dynamic sequencing/conjunction, given in
-(\ref{def:conj}).\sidenote{$g \stackrel{n/x}{=} g'$ is defined iff $g_{n}$ is
-  \textit{un}defined, and is true just in case $g'$ differs from $g$ at most in
-  what $n$ is mapped to.
-
-\citeauthor{heim1982}'s \textit{novelty condition} is essentially built into the
-rule for \ac{dr} introduction.}
+(\ref{def:conj}).
 
 \ex Dynamic sequencing (def.)\\
-$m ; n ≔ λg . λ g' . ∃g''[m g g'' ∧ n g'' g']$\hfill$(;): \type{T → T → T}$\label{def:conj}
+$m ; n ≔ λω . λ ω' . ∃ω''[m ω ω'' ∧ n ω'' ω']$\hfill$(;): \type{T → T → T}$\label{def:conj}
 \xe
 
 \ex
 Dynamic negation (def.)\\
-$¬ m ≔ λ g . λg' . g = g' ∧ m^{↓_{g}}$\hfill$¬ : \type{T → T}$
+$¬ m ≔ λ ω . λω' . ω = ω' ∧ m^{↓} ω$\hfill$¬ : \type{T → T}$
 \xe
 
 \ex
 Dynamic lift (def.)\\
-$P^{\dlift} ≔ λ x . λ g . λ g' . g = g' ∧ p x$\hfill$\dlift : \type{(e → t) → e
+$P^{\dlift} ≔ λ x . λ ω . λ ω' . ω = ω' ∧ p x$\hfill$\dlift : \type{(e → t) → e
   → T}$
 \xe
 
 \ex
 Discourse referent introduction (def.)\\
-$P^{\dintro{n}} ≔ λ x . λ g . λ g' g \stackrel{n/x}{=} g' ∧ P x$\hfill$\dintro{n}: \type{(e → t) → e
+$P^{\dintro{n}} ≔ λ x . λ ω . λ ω' ω \stackrel{n/x}{=} ω' ∧ P x$\hfill$\dintro{n}: \type{(e → t) → e
   → T}$
 \xe
 
-\ex
-Pronouns (def.)\\
-$\ml{pro}_{n} ≔ λ k . λ g . (k g_{n}) g$\sidenote{
-\citeauthor{chierchia2020} actually posits a syncategorematic rule for composing
-pronouns and dynamic predicates -- instead, I've built what
-\citeauthor{chierchia2020}'s rule does into the meaning of the pronoun.
-}\hfill$\ml{pro}_{n} : \type{(e → T) → T}$
-\xe
+% \ex
+% Pronouns (def.)\\
+% $\ml{pro}_{n} ≔ λ k . λ ω . (k ω_{n}) ω$\sidenote{
+% \citeauthor{chierchia2020} actually posits a syncategorematic rule for composing
+% pronouns and dynamic predicates -- instead, I've built what
+% \citeauthor{chierchia2020}'s rule does into the meaning of the pronoun.
+% }\hfill$\ml{pro}_{n} : \type{(e → T) → T}$
+% \xe
+
+\todo[inline]{Remember to say something about how sneaky Chierchia is about variables.}
 
 \ex
 Someone (def.)\\
-$\ml{someone}_{n} m ≔ λ g . λ g' . ∃x[m g g']$
+$\ml{someone}_{n} m ≔ λ ω . λ ω' . ∃x[m ω ω']$\hfill$\type{\ml{someone}_{n}: T → T}$
 \xe
 
 \begin{figure}
   \centering
   \caption{Example derivation}
   \begin{forest}
-    [{$λ gg' . ∃g''[∃x[g \stackrel{1/x}{=} g'' ∧ \ml{walked-in} x] ∧ g'' = g' ∧ \ml{sat-down} g''_1]$}
-    [{$λ gg' . ∃x[g \stackrel{1/x}{=} g' ∧ \ml{walked-in} x]$}
-      [{Someone}]
-      [{$λ gg' . g \stackrel{1/x}{=} g' ∧ \ml{walked-in} x$}
+    [{$λ ωω' . ∃ω''[∃x[ω \stackrel{1/x}{=} ω'' ∧ \ml{walked-in} x] ∧ ω'' = ω' ∧ \ml{sat-down} ω''_1]$}
+    [{$λ ωω' . ∃x[ω \stackrel{1/x}{=} ω' ∧ \ml{walked-in} x]$}
+      [{someone}]
+      [{$λ ωω' . ω \stackrel{1/x}{=} ω' ∧ \ml{walked-in} x$}
       [{$t_{x}$}]
-      [{$λ x . λ gg' . g \stackrel{1/x}{=} g' ∧ \ml{walked-in} x$} [{walked in}]]]
+      [{$λ x . λ ωω' . ω \stackrel{1/x}{=} ω' ∧ \ml{walked-in} x$} [{walked in}]]]
     ]
     [{...}
     [{$;$}]
-      [{$λ gg' . g = g' ∧ \ml{sat-down} g_1$}
-        [{$λ k . λ g . k g_1 g$\\he$_1$}]
-        [{$λ y . λ gg' . g = g' ∧ \ml{sat-down} y$} [{sat-down},roof]]
+      [{$λ ωω' . ω = ω' ∧ \ml{sat-down} ω_1$}
+        [{$λ k . λ ω . k ω_1 ω$\\he$_1$}]
+        [{$λ y . λ ωω' . ω = ω' ∧ \ml{sat-down} y$} [{sat-down},roof]]
       ]
     ]]
   \end{forest}
 \end{figure}
 
 \subsection{Accessibility}
+
+\subsection{From dynamic semantics to event semantics}
+
+Traditions in event semantics:
+
+Neo-Davidsonian (\citealt{castaneda1967,parsons_events_1990}):
+
+\ex
+$\eval{love} ≔ λ e . \ml{love} e$\hfill$\type{v → t}$
+\xe
+
+Thematic role functions (see also \citealt{elliottDiss}):
+
+\ex
+$\ml{THEME} ≔ λ f . λ x . λ e . \ml{theme} e = x ∧ f e$\hfill$\type{(v → t) → e → v → t}$
+\xe
 
 \section{The problem of existentials}
 
@@ -393,8 +527,45 @@ Conceptual issues:
 
 \end{itemize}
 
-\todo[inline]{Putative generalization: only (potentially monadic) individuals
-  introduce discourse referents.}
+\subsection{A more general dynamic system}
+
+\citet{charlow2019static} (see also \citealt{Charlowc}) generalizes orthodox
+dynamic semantics. We'll adopt his system here.
+
+\textit{Dynamic} $a$s are functions from an input assignment $g$, to a set of
+$a$s paired with output assignments $g'$.
+
+\ex
+$\type{D a} ≔ g → \set{(a,g)}$
+\xe
+
+\ex Unit (def.)\\
+$a^{η} ≔ λ g . \set{(a,g)}$
+\xe
+
+\todo[inline]{Redo definition of bind}
+
+\ex Bind (def.)\\
+$m^{⋆} ≔ λ k . λ g . \bigcup\limits_{(x,h) ∈ m g}\set{k x h}$\hfill$⋆: \type{D a → (a → D b) → D b}$
+\xe
+
+\ex
+$\ml{pro}_{n} ≔ λ g . \set{(g_{n},g)}$\hfill$\type{D e}$
+\xe
+
+\ex
+$\ml{some boy}_{n} ≔ λ g . \set{(x,g) | \ml{boy} x}$\hfill$\type{D e}$
+\xe
+
+\ex
+$m^{Δ_{n}} ≔ λ g . \bigcup\limits_{(x,h) ∈ m g}\set{(x,h^{[n → x]})}$\hfill$\type{D e → D e}$
+\xe
+
+\ex
+$\ml{Q} ≔ λ k . λ g . \set{(Q (λ x . (k x)^{↓_{g}})),g)}$\hfill$\ml{everyone}:\type{\semtower{D t}{e}}$
+\xe
+
+
 
 \printbibliography
 
