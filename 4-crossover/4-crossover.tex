@@ -15,6 +15,8 @@
 \input{acronyms}
 \renewcommand*{\acsfont}[1]{\textsc{#1}}
 
+\usepackage[font=footnotesize]{caption}
+
 \makeatletter
 % Paragraph indentation and separation for normal text
 \renewcommand{\@tufte@reset@par}{%
@@ -85,7 +87,7 @@
   by the end of the week.
 \end{tcolorbox}
 
-\section{From continuation semantics to dynamic semantics}
+\section{From continuations to dynamics}
 
 \subsection{Barker \& Shan: \textsc{wco} as a reflex of evaluation order}
 
@@ -159,10 +161,15 @@ collapsed into ordinary meanings -- is rigidly typed. If we assume that
 \textit{internal lower} is derived as lifted \textit{lower}, this also has
 consequences for its type:
 
-\pex
-\a $↓ : \type{\tower{a}{t}{t} → a}$
-\a $⇊ : \type{\semtower{b}{\tower{a}{t}{t}} → \semtower{b}{a}}$
+\begin{multicols}{2}
+\ex
+$↓ : \type{\tower{a}{t}{t} → a}$
 \xe
+\columnbreak
+\ex
+$⇊ : \type{\semtower{b}{\tower{a}{t}{t}} → \semtower{b}{a}}$
+\xe
+\end{multicols}
 
 This move basically guarantees, via a syntactic stipulation, that in order for a
 bind-shifted \ac{qp} to bind a pronoun, it must take scope at the same
@@ -217,20 +224,66 @@ ultimately rests on what looks like a syntactic stipulation.
 \citet{chierchia2020} develops a theory of \ac{wco} based on \textit{dynamic
   semantics}.
 
-Much like continuation semantics, dynamic semantics is a semantic theory with a
+Much like continuation semantics, \ac{ds} is a semantic theory with a
 \enquote{built-in} left-to-right bias.
 
-\section{Dynamic Semantics}
+\section{Dynamic semantics}
+
+\todo[inline]{Add more references below}
+
+\ac{ds} is one of the most empirically successful theories of anaphora
+(\citealt{heim1982,groenendijk_dynamic_1991,dekker1994}, a.o.) and
+presupposition projection (\citealt{heim1983,beaver_presupposition_2001}, a.o.).
+It has also been extended to a variety of other phenomena, including epistemic
+modality, exhaustification (\citealt{elliott-twosouls}),
+and more.
+
+Crowning achievements of \ac{ds} include analyses of the following
+phenomena:\sidenote{The (b) examples are included to briefly show that the
+  phenomena under consideration exhibit a \textit{left-to-right asymmetry}, thus
+motivating a dynamic treatment.}
+
+\begin{itemize}
+
+    \item Cross-sentential anaphora.
+
+    \pex
+    \a A man$^{1}$ walked in. He$_{1}$ sat down.
+    \a\ljudge{*}He$_{1}$ sat down. A man$_{1}$ walked in.
+    \xe
+
+    \item Donkey anaphora.
+
+    \pex
+    \a Every farmer who owns a donkey$^{3}$ treasures it$_{3}$.
+    \a\ljudge{?}Every farmer who owns it$_{3}$ treasures a donkey$^{3}$.
+    \xe
+
+  \item Presupposition projection.
+
+    \pex
+    \a{}[Ka visited Rome last summer]$^{α}$,\\
+    and [she visited Rome again]$_{α}$
+    this summer.
+    \a\ljudge{\#}{}[Ka visited Rome again]$_{α}$,\\
+    and [she visited Rome last summer]$^{α}$.
+    \xe
+
+\end{itemize}
 
 \subsection{A Heimian fragment}
 
-In dynamic semantics (\citealt{heim1982}, \citealt{groenendijk_dynamic_1991}, \citealt{chierchia_dynamics_1995})
+In \ac{ds} (\citealt{heim1982}, \citealt{groenendijk_dynamic_1991}, \citealt{chierchia_dynamics_1995})
 sentences denote \textit{relations between assignments} (equivalently: functions
 from assignments, to sets of assignments).
 
 \acp{dp} introduce \acp{dr}, modeled as variables; indefinites, unlike definites
 induce \textit{indeterminacy}, concerning the identity of the \ac{dr}. This is
-illustrated schematically in figure \ref{fig:schema}.
+illustrated schematically in figure \ref{fig:schema}.\sidenote[][-15ex]{One way of
+  thinking about this: definites induce a \textit{functional} relation between
+  assignments -- every input assignment is mapped to a unique output assignment,
+whereas indefinites induce a \textit{non-functional} relation between
+assignments -- each input assignment can mapped to one or more output assignments.}
 
 \begin{figure}
 \caption{Relations between assignments}\label{fig:schema}
@@ -250,7 +303,9 @@ illustrated schematically in figure \ref{fig:schema}.
 \end{figure}
 
 \textit{Assignments} are functions from variables to individuals; as is
-standard, we'll represent the set of variables as $ℕ$:
+standard, we'll represent the set of variables as $ℕ$:\sidenote{We'll use
+  $\type{o}$ as the type of assignments to distinguish between assignments used
+  in a static setting.}
 
 \ex Type of assignments\\
 $\type{o} ≔ \type{n → e}$
@@ -258,7 +313,7 @@ $\type{o} ≔ \type{n → e}$
 
 \citeauthor{chierchia2020} assumes that assignments are \textit{partial}
 functions.\sidenote{See also \citet{rothschildMandelkern2017esslli} for a
-  dynamic semantics using partial assignments.} That is to say, an assignment
+  \ac{ds} using partial assignments.} That is to say, an assignment
 may only be defined for certain indices. The following are all valid assignments:
 
   \begin{multicols}{3}
@@ -417,6 +472,103 @@ is a swimmer.
 \end{forest}
 \end{figure}
 
+A famous design feature of \ac{ds} is an account of cross-sentential
+binding, as in the following famous examples:
+
+\pex
+\a Someone$^{1}$ walked in and he$_{1}$ sat down.\label{ex:seq1}
+\a Someone$^{1}$ walked in. he$_{1}$ sat down.\label{ex:seq2}
+\xe
+
+In \ac{ds}, conjunction -- as in (\ref{ex:seq1}) -- is treated as a
+special case of \textit{discourse sequencing} (\ref{ex:seq2}).
+
+Discourse sequencing is an operation on \acp{ccp}:
+
+\ex Dynamic sequencing (def.)\\
+$m ; n ≔ λω . λ ω' . ∃ω''[m ω ω'' ∧ n ω'' ω']$\hfill$(;): \type{T → T → T}$\label{def:conj}
+\xe
+
+An illustration of how cross-sentential anaphora works in a Heimian fragment is
+given in figure \ref{fig:anaph}: sequencing the \acp{ccp} gives rise to a
+\ac{ccp} that relates $ω$ and $ω'$ just in case $ω_{4}$ is undefined and and
+$ω'_{4}$ walked in and sat down.
+
+\begin{figure}
+\caption{Cross-sentential anaphora in a Heimian fragment}\label{fig:anaph}
+\begin{forest}
+  [{$λ ωω' . ∃ω''[(∃x[ω \stackrel{4/x}{=} ω'' ∧ \ml{walked-in} x]) ∧ (ω'' = ω' ∧ \ml{sat-down} ω''_{4})]$},fill=yellow,name=landing
+  site
+    [{$λ ωω' . ∃x[ω \stackrel{4/x}{=} ω' ∧ \ml{walked-in} x]$},draw=red [{Someone$^{4}$ walked in},roof]]
+    [{...}
+      [{$λ n . λ m . λωω' . ∃ω''[m ω ω'' ∧ n ω'' ω']$\\$;$}]
+      [{$λωω' . ω = ω' ∧ \ml{sat-down} ω_{3}$},name=trace,draw=red [{he$_{4}$ sat down},roof]]
+    ]
+  ]
+\end{forest}
+\end{figure}
+
+Why is \ac{ds} promising as a starting point for a theory of \ac{wco}? Consider the contrast below, reminiscent of \ac{wco}:
+
+\pex
+\a Someone$^{4}$ walked in and he sat down.
+\a\ljudge{*}He$_{4}$ walked in and someone$^{4}$ sat down.\label{ex:cat2}
+\xe
+
+Just so long as \textit{someone} takes scope within its containing sentence,
+\ac{ds} captures this contrast, by virtue of the left-to-right bias
+built into the definition of discourse sequencing.
+
+If we try to compute the \ac{ccp} for (\ref{ex:cat2}), the result is guaranteed
+to be undefined. This is because, if the input assignment $ω$ is defined for
+$4$, it can't also be \textit{undefined} for $4$, as is required by the meaning
+contributed by the indefinite.
+
+\ex
+$λ ωω' . ∃ω''[ω = ω'' ∧ \ml{sat-down} ω_{4} ∧ (∃x[ω'' \stackrel{4/x}{=} ω' ∧ \ml{walked-in} x])]$
+\xe
+
+\ac{ds} doesn't by itself however capture \ac{wco} -- this is because,
+independently, we need a mechanism that allows indefinites to \textit{take
+  scope}; indefinites introduce discourse referents at their
+scope site. We can therefore compute a bound reading for the following example,
+by scoping the indefinite over the pronoun:\sidenote{For reasons that will
+  become clear here, we're being a bit sneaky concerning how the scoped
+  indefinite binds its trace.}
+
+\begin{figure}
+  \caption{Violating \ac{wco} in a Heimian fragment\\\enquote{He$_{4}$ wants to
+      meet someone$^{4}$}}
+  \begin{forest}
+  [{$λ ωω' . ∃x[ω \stackrel{4/x}{=} ω' ∧ ω'_{4} \ml{want} (ω_{4} \ml{meet} x)]$},fill=yellow
+    [{someone$_{4}$},name=intermediate]
+    [{$λ x . λ ωω' . ω = ω' ∧ ω_{4} \ml{want} (ω_{4} \ml{meet} x)$}
+    [{$λ x$}]
+    [{$λ ωω' . ω = ω' ∧ ω_{4} \ml{want} (ω_{4} \ml{meet} x)$}
+      [{he$_{4}$}]
+      [{$λ y . λωω' . ω = ω' ∧ y \ml{want} (y \ml{meet} x)$} [{$λ y . y$ wants to meet $x$},edge label={node[midway,left,font=\scriptsize]{$Δ$}},name=trace]]
+    ]
+  ]]
+  {
+    \draw[semithick, dashed, ->] ([xshift=4em]trace.south) to[out=south,in=south] (intermediate); % e
+  }
+  \end{forest}
+\end{figure}
+
+Intuitively, a problematic feature of \ac{ds} in this regard is that it ties
+together \ac{dr} introduction with quantificational scope.
+
+
+\subsection{The Dynamic Prediction Principle}
+
+At the heart of \citeauthor{chierchia2020} account of \ac{wco} is an apparently
+minor modification to orthodox dynamics, with far reaching consequences: the
+\acf{dpp}, stated in (\ref{def:dpp}).
+
+\ex
+The \acf{dpp}\\
+\acp{dr} can only be introduced by predicates.\hfill (\citealt[p.\,32]{chierchia2020})\label{def:dpp}
+\xe
 
 \citeauthor{chierchia2020}'s innovation is to posit a second way of lifting
 predicates into a dynamic setting: \textit{\ac{dr} introduction}.
@@ -432,10 +584,6 @@ $f^{Δ_{n}} ≔ λ x . λ ω . λ ω' ω \stackrel{n/x}{=} ω' ∧ f x$\hfi
 In dynamic semantics, the connectives manipulate \acp{ccp} directly. At the
 heart of the system is the entry for dynamic sequencing/conjunction, given in
 (\ref{def:conj}).
-
-\ex Dynamic sequencing (def.)\\
-$m ; n ≔ λω . λ ω' . ∃ω''[m ω ω'' ∧ n ω'' ω']$\hfill$(;): \type{T → T → T}$\label{def:conj}
-\xe
 
 \ex
 Dynamic negation (def.)\\
