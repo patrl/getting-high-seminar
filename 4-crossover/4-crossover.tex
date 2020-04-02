@@ -245,21 +245,16 @@ motivating a dynamic treatment.}
 
 \begin{itemize}
 
-    \item Cross-sentential anaphora.
+  \item Presupposition projection.\sidenote{Approaches to dynamic semantics are
+    split as to whether they collapse presupposition satisfaction and anaphora
+    resolution (see, e.g., \citealt{vanDerSandt1992}) or not
+    (\citealt{heim1983}).
 
-    \pex
-    \a A man$^{1}$ walked in. He$_{1}$ sat down.
-    \a\ljudge{*}He$_{1}$ sat down. A man$_{1}$ walked in.
-    \xe
-
-    \item Donkey anaphora.
-
-    \pex
-    \a Every farmer who owns a donkey$^{3}$ treasures it$_{3}$.
-    \a\ljudge{?}Every farmer who owns it$_{3}$ treasures a donkey$^{3}$.
-    \xe
-
-  \item Presupposition projection.
+    The dynamic semantics ultimately adopted by \citeauthor{chierchia2020}
+    follows the latter tradition. This won't be so important for the purposes of
+    this class, but will be relevant when we talk about presupposition, starting
+    from next week!
+    }
 
     \pex
     \a{}[Ka visited Rome last summer]$^{α}$,\\
@@ -269,12 +264,56 @@ motivating a dynamic treatment.}
     and [she visited Rome last summer]$^{α}$.
     \xe
 
+    \item Donkey anaphora.
+
+    \pex
+    \a Every farmer who owns a donkey$^{3}$ treasures it$_{3}$.
+    \a\ljudge{?}Every farmer who owns it$_{3}$ treasures a donkey$^{3}$.
+    \xe
+
+    \item Cross-sentential anaphora.
+
+    \pex\label{ex:dy}
+    \a A man$^{1}$ walked in. He$_{1}$ sat down.\label{ex:dy1}
+    \a\ljudge{*}He$_{1}$ sat down. A man$_{1}$ walked in.\label{ex:dy2}
+    \xe
+
+ \end{itemize}
+
+    Dwelling on cross-sentential anaphora, the contrast in (\ref{ex:dy}) is
+    clearly reminiscent of a \ac{wco} effect.
+
+    As we'll see, orthodox dynamic
+    semantics doesn't by itself explain \ac{wco}, once quantificational scope is in the picture (see
+    \citealt{charlow2019static} for discussion of this point), but
+    \citeauthor{chierchia2020}'s basic intuition is to build a theory of
+    \ac{wco} based on this contrast.
+
+    In the next section, we'll introduce dynamic semantics by constructing an
+    orthodox fragment that can account for cross-sentential anaphora. We'll move
+    on to show how it fails to capture \ac{wco}, before moving on to
+    \citeauthor{chierchia2020}'s modification.
+
 \end{itemize}
 
 \subsection{A Heimian fragment}
 
-In \ac{ds} (\citealt{heim1982}, \citealt{groenendijk_dynamic_1991}, \citealt{chierchia_dynamics_1995})
-sentences denote \textit{relations between assignments} (equivalently: functions
+Sentential meanings in \ac{ds} (\citealt{heim1982}, \citealt{groenendijk_dynamic_1991},
+\citealt{chierchia_dynamics_1995}), have two essential components:
+
+\begin{itemize}
+
+    \item An input-output asymmetry -- sentences denote \textit{instructions} to
+    change the input context (see especially \citealt{heim1982}).
+
+    \item Indeterminacy -- certain expressions may induce an
+    \textit{indeterminate} output.
+
+\end{itemize}
+
+
+
+To model this formally, many theories of \ac{ds} model sentence meanings as \textit{relations between assignments} (equivalently: functions
 from assignments, to sets of assignments).
 
 \acp{dp} introduce \acp{dr}, modeled as variables; indefinites, unlike definites
@@ -350,8 +389,7 @@ $\type{T} ≔ \type{o → o → t}$
 % respect to $n$ ($g_{n}$ can be undefined), and $g'_{n} = \ml{r}$.}\hfill$\type{T}$
 % \xe
 
-% \ex~
-% $\eval{A linguist$^{n}$ arrived late} = λ g . λ g' . ∃x[g[n → x]g' ∧ \ml{arrived-late} x]$\hfill$\type{T}$
+% \exe% $\eval{A linguist$^{n}$ arrived late} = λ g . λ g' . ∃x[g[n → x]g' ∧ \ml{arrived-late} x]$\hfill$\type{T}$
 % \xe
 
 We can get back an \enquote{ordinary} sentential meaning from a \ac{ccp} by
@@ -375,13 +413,39 @@ $\eval{swim} ≔ λ x . \ml{swim} x$\hfill$\type{e → t}$
 Predicates are lifted into a dynamic setting by a type-shifter
 \textit{dynamic lift}; d-lift takes a function from an individual to a
 truth-value, and shifts it into a function from an individual to a \ac{ccp} --
-specifically, a dynamic \textit{test}.
+specifically, a dynamic \textit{test}.\sidenote{
+A different way of generalizing this to $n-$place predicates is by giving $Δ$ the following definition:
+
+\ex
+$m^{Δ} ≔ λ k . λ ωω' . ω = ω' ∧ m k$\\
+$Δ: \type{((a → t) → t) → (a → t) → t}$
+\xe
+
+\Citeauthor{chierchia2020}'s d-lift can be derived as follows, using the (by now
+very familiar) continuation semantics operations:
+
+\ex
+$λ x . (x^{↑} \ml{S} f^{Δ ∘ ↑})^{↓}$
+\xe
+}
 
 \ex
 Dynamic lift (def.)\\
 $f^{\dlift} ≔ λ x . λ ω . λ ω' . ω = ω' ∧ f x$\hfill$\dlift : \type{(e → t) → e
   → T}$
 \xe
+
+\begin{tcolorbox}
+\textbf{Exercise}
+\tcblower
+\citeauthor{chierchia2020} defines dynamic lift in such a way that it only can
+apply to one-place predicates. This is not insignificant -- see the discussion
+of event semantics later on. It is however trivial to generalize to d-lift to
+$n$-place predicates.
+
+Generalize \textit{dynamic lift} to $n$-place predicates by giving a recursive
+definition a la \cite{parteeRooth}.
+\end{tcolorbox}
 
 Tests don't do anything interesting to input contexts. In orthodox dynamic
 fragments, all of the interesting dynamic action is triggered by arguments --
@@ -508,7 +572,7 @@ $ω'_{4}$ walked in and sat down.
 \end{forest}
 \end{figure}
 
-Why is \ac{ds} promising as a starting point for a theory of \ac{wco}? Consider the contrast below, reminiscent of \ac{wco}:
+Why is \ac{ds} promising as a starting point for a theory of \ac{wco}? Recall the contrast below, reminiscent of \ac{wco}:
 
 \pex
 \a Someone$^{4}$ walked in and he sat down.
@@ -571,79 +635,199 @@ The \acf{dpp}\\
 \xe
 
 \citeauthor{chierchia2020}'s innovation is to posit a second way of lifting
-predicates into a dynamic setting: \textit{\ac{dr} introduction}.
+predicates into a dynamic setting: \textit{\ac{dr}-lifting}.\sidenote{If
+  you try to generalize \ac{dr}-lift to $n$-place predicates, you'll
+  find that it can't be done in quite the same way as for d-lift. As an
+  exercise, try to figure out why this.}
 
 \ex
-Discourse referent introduction (def.)\\
+\ac{dr}-lift (def.)\\
 $f^{Δ_{n}} ≔ λ x . λ ω . λ ω' ω \stackrel{n/x}{=} ω' ∧ f x$\hfill$Δ_{n}: \type{(e → t) → e
   → T}$
 \xe
 
+Introducing \acp{dr} then, is no longer the job of \textit{indefinites}, but
+rather the job of a \ac{dr}-lifted predicate.
 
-
-In dynamic semantics, the connectives manipulate \acp{ccp} directly. At the
-heart of the system is the entry for dynamic sequencing/conjunction, given in
-(\ref{def:conj}).
-
-\ex
-Dynamic negation (def.)\\
-$¬ m ≔ λ ω . λω' . ω = ω' ∧ m^{↓} ω$\hfill$¬ : \type{T → T}$
-\xe
+What do indefinites do then? For \citeauthor{chierchia2020}, they're just
+type-lifted first-order quantifiers.\sidenote{Looking at the definition in
+  (\ref{def:someone}), you may be wondering how \textit{someone} binds its
+  trace. \citeauthor{chierchia2020} does something rather sneaky here, which
+  will be important later. For now, assume that it just works.}
 
 \ex
-Dynamic lift (def.)\\
-$P^{\dlift} ≔ λ x . λ ω . λ ω' . ω = ω' ∧ p x$\hfill$\dlift : \type{(e → t) → e
-  → T}$
+Dynamic existential quantification (def.)\\
+$\ml{someone}_{n} m ≔ λωω' . ∃x_{n}[m ω ω']$\hfill$\type{\ml{someone}_{n}: \type{T → T}}$\label{def:someone}
 \xe
 
-\ex
-Discourse referent introduction (def.)\\
-$P^{\dintro{n}} ≔ λ x . λ ω . λ ω' ω \stackrel{n/x}{=} ω' ∧ P x$\hfill$\dintro{n}: \type{(e → t) → e
-  → T}$
-\xe
-
-% \ex
-% Pronouns (def.)\\
-% $\ml{pro}_{n} ≔ λ k . λ ω . (k ω_{n}) ω$\sidenote{
-% \citeauthor{chierchia2020} actually posits a syncategorematic rule for composing
-% pronouns and dynamic predicates -- instead, I've built what
-% \citeauthor{chierchia2020}'s rule does into the meaning of the pronoun.
-% }\hfill$\ml{pro}_{n} : \type{(e → T) → T}$
-% \xe
-
-\todo[inline]{Remember to say something about how sneaky Chierchia is about variables.}
-
-\ex
-Someone (def.)\\
-$\ml{someone}_{n} m ≔ λ ω . λ ω' . ∃x[m ω ω']$\hfill$\type{\ml{someone}_{n}: T → T}$
-\xe
+\textit{Someone} saturates the argument that a \ac{dr} was introduced relative
+to, and cross-sentential anaphora proceeds as usual.
 
 \begin{figure}
   \centering
   \caption{Example derivation}
   \begin{forest}
-    [{$λ ωω' . ∃ω''[∃x[ω \stackrel{1/x}{=} ω'' ∧ \ml{walked-in} x] ∧ ω'' = ω' ∧ \ml{sat-down} ω''_1]$}
-    [{$λ ωω' . ∃x[ω \stackrel{1/x}{=} ω' ∧ \ml{walked-in} x]$}
-      [{someone}]
-      [{$λ ωω' . ω \stackrel{1/x}{=} ω' ∧ \ml{walked-in} x$}
-      [{$t_{x}$}]
-      [{$λ x . λ ωω' . ω \stackrel{1/x}{=} ω' ∧ \ml{walked-in} x$} [{walked in}]]]
-    ]
+    [{$λ ωω' . ∃ω''[∃x[ω \stackrel{1/x}{=} ω'' ∧ \ml{walked-in} x] ∧ ω'' = ω' ∧ \ml{sat-down} ω''_1]$},fill=yellow
+    [{$λ ωω' . ∃x[ω \stackrel{1/x}{=} ω' ∧ \ml{walked-in} x]$},draw=red
+      [{someone$_{2}$}]
+      [{$λ ωω' . ω \stackrel{1/x}{=} ω' ∧ \ml{walked-in} x_{2}$}
+      [{$t_{2}$}]
+      [{$λ x . λ ωω' . ω \stackrel{1/x}{=} ω' ∧ \ml{walked-in} x$} [{walked in},edge label={node[midway,left,font=\scriptsize]{$Δ_{1}$}}]]]]
     [{...}
     [{$;$}]
-      [{$λ ωω' . ω = ω' ∧ \ml{sat-down} ω_1$}
+      [{$λ ωω' . ω = ω' ∧ \ml{sat-down} ω_1$},draw=red
         [{$λ k . λ ω . k ω_1 ω$\\he$_1$}]
-        [{$λ y . λ ωω' . ω = ω' ∧ \ml{sat-down} y$} [{sat-down},roof]]
+        [{$λ y . λ ωω' . ω = ω' ∧ \ml{sat-down} y$} [{sat-down},edge label={node[midway,left,font=\scriptsize]{$Δ$}}]]
       ]
     ]]
   \end{forest}
 \end{figure}
 
+So far, we've constructed a system which replicates the basic results of
+orthodox dynamic semantics, but with a different compositional regime.
+
 \subsection{Accessibility}
 
-\subsection{From dynamic semantics to event semantics}
+
+In the previous section, we only gave definitions for \textit{dynamic
+  conjunction/discourse sequencing} and the static first order existential.
+
+\citeauthor{chierchia2020} adopts the standard dynamic definitions for the other
+logical operators.
+
+Negation is taken to be \textit{externally
+  static}; any \acp{dr} introduced in the scope of negation are
+subsequently wiped out.
+
+\ex
+Dynamic negation (def.)\\
+$¬ m ≔ λ ω . λω' . ω = ω' ∧ ¬ (m^{↓} ω)$\hfill$¬ : \type{T → T}$
+\xe
+
+Externally static negation predicts the impossibility of binding in the following:
+
+\ex
+\ljudge{*}It's not the case that anyone$^{1}$ walked in. He$_{1}$ sat down.
+\xe
+
+To see why, first consider the prejacent of negation, with \ac{dr}-lift applied
+to the predicate:\sidenote{We simplify here and assume that \ac{npi}
+  \textit{any} is just an existential licensed in the scope of negation.}
+
+\ex
+$\eval{anyone walked in} = λ ωω' . ∃x[ω \stackrel{1/x}{=} ω' ∧ \ml{walked-in} x]$\label{first-conj}
+\xe
+
+Applying dynamic negation to the above \ac{ccp} \textit{existentially closes}
+the output assignment, thereby rendering it dynamically inert. The resulting
+\ac{ccp} is a dynamic test, and asserts that there is no way of extending the
+input assignment s.t. $1$ is mapped to someone who walked in (in other words,
+nobody walked in).
+
+\ex
+$¬ (\ref{first-conj}) = λ ωω' . ω = ω' ∧ ¬ ∃ω'',x[ω \stackrel{1/x}{=} ω'' ∧ \ml{walked-in} x]$
+\xe
+
+Sequencing this \ac{ccp} with the second conjunct will clearly not give rise to anaphora.
+
+The remainder of the logical operations can be defined via first-order
+equivalent via dynamic conjunction, negation, and existential quantification.
+All are defined as operations on \acp{ccp}.
+
+\ex Dynamic implication (def.)\\
+$m → n ≔ ¬ (m ; ¬ n)$\hfill$(→) : \type{T → T → T}$
+\xe
+
+\ex~ Dynamic disjunction (def.)\\
+$m ∨ n ≔ ¬ (¬ m ; ¬ n)$\hfill$(∨): \type{T → T → T}$
+\xe
+
+\ex~ Dynamic universal quantifier (def.)\\
+$\ml{everyone}_{n} m ≔ ¬ ∃x_{n} (¬ m)$\hfill$\type{T → T}$
+\xe
+
+Famously, this way of dynamicizing the logical connectives gives rise to the
+following accessibility hierarchy in complex sentences:
+
+\ex Accessibility (def.)\\
+A is \textit{accessible} to B if a \ac{dr} active in A can covary with a pronoun
+in B.
+\xe
+
+    Accessibility in conjunctive sentences: [A and B]\sub{S}
+
+    \begin{itemize}
+
+        \item A is accessible to B (but not vice versa).
+
+        \item B is accessible to whatever is conjoined with S.
+
+    \end{itemize}
+
+        \ex
+        A man$^{1}$ walked in, and he$_{1}$ sat down. He$_{1}$ stood up again
+        soon after.
+        \xe
+
+
+    Accessibility in conditional sentences: [if A then B]\sub{S}
+
+    \begin{itemize}
+
+        \item A is accessible to B (but not vice versa).
+
+        \item A, B are \textit{not} accessible to what is conjoined with S.\sidenote{In dynamic semantics, conditional sentences are
+        internally dynamic, but externally static.}
+
+    \end{itemize}
+
+            \ex
+        \ljudge{\#}If someone$^{1}$ won the lottery, they$_{1}$ became rich. I
+        shook their$_{1}$ hand.
+        \xe
+
+
+    Accessibility in negative sentences: [not A]\sub{S}
+
+    \begin{itemize}
+
+        \item Nothing in A is accessible to what is conjoined with S.
+
+    \end{itemize}
+
+            \ex
+        \ljudge{*}It's not the case that anyone$^{1}$ sat down. He$_{1}$ walked in.
+        \xe
+
+    Accessibility in disjunctive sentences: [A or B]\sub{S}
+
+    \begin{itemize}
+
+        \item A is not accessible to B, nor is B to A.
+
+        \item Neither A not B is accessible to what is conjoined with S.\sidenote{Dynamic disjunction is both internally static and
+        externally static.}
+
+    \end{itemize}
+
+            \ex
+        \ljudge{\#}Either Mary has a new dog$^{1}$, or I petted it$_{1}$.
+        \xe
+
+
+\subsection{Enter events}
+
+So far, we've constructed a fragment that only accommodates one-place
+predicates. This is actually by design -- \citeauthor{chierchia2020} argues that
+such a system has a natural bed-fellow in neo-Davisonian event semantics.
 
 Traditions in event semantics:
+
+Davidsonian:
+
+\ex
+$\eval{love} ≔ λ exy . \ml{exp} e = y ∧ \ml{th} e = x ∧ \ml{love} e$\hfill$\type{v → e → e → t}$
+\xe
 
 Neo-Davidsonian (\citealt{castaneda1967,parsons_events_1990}):
 
@@ -651,13 +835,136 @@ Neo-Davidsonian (\citealt{castaneda1967,parsons_events_1990}):
 $\eval{love} ≔ λ e . \ml{love} e$\hfill$\type{v → t}$
 \xe
 
-Thematic role functions (see also \citealt{elliottDiss}):
+According to the neo-Davidsonian approach, all arguments are severed, and
+instead introduced by thematic role heads (the compositional regime adopted here
+is after \citealt{champollion_interaction_2015}):\sidenote{See, e.g. \citealt{ahn2016} and
+\citealt{elliottDiss} for independent evidence for this position from different domains.}
 
 \ex
-$\ml{THEME} ≔ λ f . λ x . λ e . \ml{theme} e = x ∧ f e$\hfill$\type{(v → t) → e → v → t}$
+$\ml{THEME} ≔ λ x . λ e . \ml{th} e = x$\hfill$\type{e → v → t}$
 \xe
 
-\section{The problem of existentials}
+Abstracting away from dynamics for a moment, the composition of a simple
+sentence in a neo-Davidsonian setting can proceed via \ac{pm}:
+
+\begin{figure}
+\centering
+\caption{composition in a neo-Davidsonian event semantics}
+\begin{forest}
+    [{$λ e . \ml{exp} e = \ml{john} ∧ \ml{th} e = ιx[\ml{cat} x] ∧ \ml{love} e$\\\ac{pm}},fill=yellow
+    [{$λ e . \ml{exp} e = \ml{john}$}
+      [{$\ml{EXP}$}]
+      [{DP\\John}]
+    ]
+        [{$λ xe . \ml{th} e = ιx[\ml{cat} x] ∧ \ml{love} e$\\\ac{pm}}
+        [{$λ e . \ml{th} e = ιx[\ml{cat} x]$}
+          [{$\ml{THEME}$}]
+          [{DP} [{the cat},roof]]
+        ]
+          [{$λ e . \ml{love} e$\\love}]
+      ]
+    ]
+\end{forest}
+\end{figure}
+
+Note that, since verbs denote one place predicates, they can be \ac{dr}-lifted.
+
+Since the event argument of a verb is (by stipulation) existentially closed,
+this accounts for the possibility of eventive \acp{dr}, as in the following
+example:
+
+\ex
+It rained$^{4}$. It$_{4}$ was heavy.
+\xe
+
+We can assume the following \ac{lf}:
+
+\begin{figure}
+  \centering
+  \caption{Eventive \acp{dr}}
+  \begin{forest}
+    [{$λ ωω' . ∃ω''[(∃e[ω \stackrel{4/e}{=} ω'' ∧ \ml{rain} e]) ∧ ω'' = ω' ∧ \ml{heavy} ω_{4}]$},fill=yellow
+    [{$λωω . ∃e[ω \stackrel{4/e}{=} ω' ∧ \ml{rain} e]$},draw=red
+      [{$∃$}]
+      [{$λ eωω' . ω \stackrel{4/e}{=} ω' ∧ \ml{rain} e$} [{rain},edge label={node[midway,left,font=\scriptsize]{$Δ_{4}$}}]]
+    ]
+      [{...}
+        [{$;$}]
+        [{$λ ωω' . ω = ω' ∧ \ml{heavy} ω_{4}$},draw=red [{it was heavy},roof]]
+      ]
+    ]
+  \end{forest}
+\end{figure}
+
+The discussion in the paper is quite confusing at this point, but
+\citeauthor{chierchia2020} seems to assume that \ac{dr}-lift extends
+straightforwardly to thematic argument-introducing heads. This is in fact not
+the case -- we have to generalize \ac{dr}-lift to predicates of type
+$\type{e → v → t}$.\sidenote{As far as I can see, the compositional details of
+  the system as laid out by \citeauthor{chierchia2020} at this point are
+  incoherent, but easily fixed.}
+
+\ex Thematic \ac{dr}-lift (def.)\\
+$f^{Δ_{n}} ≔ λ x . λ e . λωω' . ω \stackrel{n/x}{=} ω' ∧ f x e$\hfill$Δ_{n}:\type{(e → v → t) → e → v → T}$
+\xe
+
+We furthermore must assume that \textit{dynamic} \ac{pm} is a freely available
+semantic composition rule.
+
+\ex Dynamic \ac{pm} (def.): $\eval{\begin{aligned}[c]
+    \begin{forest}
+    [
+      [{$m_\type{a → T}$}]
+      [{$n_\type{a → T}$}]
+    ]
+    \end{forest}
+  \end{aligned}} ≔ λ x_{\type{a}} . m x ; n x$
+\xe
+
+If we return to our simple example, we can now apply \ac{dr}-lift every step of
+the way, as in figure \ref{ex:inter}:
+
+\begin{figure}
+\centering
+\caption{Dynamic neo-Davidsonian event semantics}\label{ex:inter}
+\begin{forest}
+  [{$λ e . \begin{aligned}[t]
+      &(λωω' . ω \stackrel{3/j}{=} ω' ∧ \ml{exp} e = j)\\
+      &;(λωω' . ω \stackrel{2/ιx[\ml{cat} x ω_{3}]}{=} ω' ∧ \ml{th} e = ιx[\ml{cat} x ω_{3}])\\
+      &;(λωω' . ω \stackrel{1/e}{=} ω' ∧ \ml{love} e)\end{aligned}$\\d-\ac{pm}},fill=yellow
+    [{$λ e . λωω' . ω \stackrel{3/j}{=} ω' ∧ \ml{exp} e = j$},draw=red
+      [{...} [{$\ml{EXP}$},edge label={node[midway,left,font=\scriptsize]{$Δ_{3}$}}]]
+      [{DP\\John}]
+    ]
+        [{d-\ac{pm}}
+        [{$λ e . λωω' . ω \stackrel{2/ιx[\ml{cat} x ω_{3}]}{=} ω' ∧ \ml{th} e = ιx[\ml{cat} x ω_{3}]$},draw=red
+          [{...} [{$\ml{THEME}$},edge label={node[midway,left,font=\scriptsize]{$Δ_{2}$}}]]
+          [{DP} [{his$_{3}$ cat},roof]]
+        ]
+          [{$λ e . λωω' . ω \stackrel{1/e}{=} ω' ∧ \ml{love} e$},draw=red [{love},edge label={node[midway,left,font=\scriptsize]{$Δ_{1}$}}]]
+      ]
+    ]
+\end{forest}
+\end{figure}
+
+What this essentially buys us is a sentence-internal accessibility hierarchy --
+the subject and object are accessible to the verb, but not nice versa, and the
+subject is accessible to the object, but not vice versa.
+
+This can be leveraged in order to account for the basic cases of \ac{wco}:
+
+\todo[inline]{Show exactly how this works:w
+}
+
+\subsection{Binding into adjuncts}
+
+\subsection{Bare plurals}
+
+\todo[inline]{Finish this section}
+
+\section{Problems}
+
+\subsection{The problem of existentials}
 
 \section{Rethinking the system}
 
