@@ -80,33 +80,66 @@
 
 \maketitle% this prints the handout title, author, and date
 
-\begin{tcolorbox}
-  Some reminders
+\begin{tcolorbox}{\textbf{Tentative revised schedule}}
   \tcblower
-  If you're a \textbf{registered student}, please send us your project proposal
-  by the end of the week.
+
+  From next week, we'll move on to presupposition:
+
+  \begin{itemize}
+
+      \item April 9: Martin on Haddock's puzzle.
+
+      \item April 16: Martin \textsc{tba}
+
+      \item April 23: Patrick on projection as scope.
+
+      \item April 30: Student presentations.
+
+      \item May 7: Student presentations.
+
+  \end{itemize}
+
+  N.b. we skipped class in the first week of March, as I was away at a
+  conference. This still needs to be rescheduled -- we'll be in touch about
+  possible dates.
+
 \end{tcolorbox}
 
-\section{From continuations to dynamics}
+\begin{tcolorbox}
+  \textbf{Projects}
+  \tcblower
+  \textbf{Registered students:} thanks for submitting your project proposals. If
+  you haven't already done so, please get in touch with either me, Martin (or
+  both of us!) to arrange a time to talk through your proposal.
+\end{tcolorbox}
 
-\subsection{Barker \& Shan: \textsc{wco} as a reflex of evaluation order}
+\section{Last time -- Barker \& Shan: \textsc{wco} as a reflex of evaluation order}
 
 At the beginning of the semester, we learned about a theory of scope-taking with
 a built-in left-to-right bias -- \textit{continuation semantics}.
 
 Concretely, due to the way that the composition rule \ac{sfa} was defined,
 evaluation of quantificational effects \textit{mirrors} linear
-order.\sidenote{To cash this out, we needed to say something concrete about the
+order.\sidenote[][-7\baselineskip]{To cash this out, we needed to say something concrete about the
   syntax-semantics interface -- concretely, we committed to the ideas that (a)
   the basic combinatoric operation \textsc{Merge} is asymmetric, and (b) the
-  syntactic and semantic composition proceed in lockstep (direct compositionality).}
+  syntactic and semantic composition proceed in lockstep (direct
+  compositionality; \citealt{jacobson1999,jacobson_compositional_2014}).}
+
+\ex~
+\acf{sfa} (def.)\\
+$\semtower{f []}{x} \ml{S} \semtower{g []}{y} ≔
+\semtower{f [g []]}{x \ml{A} y}$
+\xe
 
 As we saw in the last class, an appealing consequence of this linear bias was a
 natural account of \acf{wco} in terms of evaluation order.\sidenote{See
   especially \cite{shanBarker2006} and \cite[chapters 2 and 4]{barkerShan2015}.}
 
 Recall, a simplified version of the \ac{wco} paradigm: scope can feed binding
-(\ref{ex:wco1}), unless the binder doesn't precede the bound expression (\ref{ex:wco2}).
+(\ref{ex:wco1}), unless the binder doesn't precede the bound expression
+(\ref{ex:wco2}).\sidenote{Throughout, i'll use superscript indices to indicate
+  the binder, and subscript indices to indicate the bound expression(s).}
 
 \ex
 {}[Everyone$^{x}$'s mother] bought them$_{x}$ a bicycle.\label{ex:wco1}
@@ -159,16 +192,12 @@ With mechanisms for inverse scope in the picture, things become a little less ne
 stipulate that \textit{lower} -- the operation via which continuized meaning are
 collapsed into ordinary meanings -- is rigidly typed. If we assume that
 \textit{internal lower} is derived as lifted \textit{lower}, this also has
-consequences for its type:
+consequences for the type of internal lower:
 
 \begin{multicols}{2}
-\ex
-$↓ : \type{\tower{a}{t}{t} → a}$
-\xe
+$$↓ : \type{\tower{a}{t}{t} → a}$$
 \columnbreak
-\ex
-$⇊ : \type{\semtower{b}{\tower{a}{t}{t}} → \semtower{b}{a}}$
-\xe
+$$⇊ : \type{\semtower{b}{\tower{a}{t}{t}} → \semtower{b}{a}}$$
 \end{multicols}
 
 This move basically guarantees, via a syntactic stipulation, that in order for a
@@ -180,21 +209,23 @@ resulting meaning cannot ultimately be lowered by a rigidly typed
 An unsuccessful attempt at getting internal lift to feed binding is illustrated
 in figure \ref{fig:cont2}.
 
-\begin{figure}
+\begin{marginfigure}
 \caption{Unsuccessful binding (\ac{wco})}\label{fig:cont2}
+\begin{footnotesize}
 \begin{forest}
   [{\xmark}
-  [{$\type{\tower{t}{e → t}{e → t}}$}
+  [{$\type{\tower{t}{e → t}{e → t}}$},fill=yellow
   [{$\type{\tower{t}{e → t}{\tower{e → t}{t}{t}}}$\\$\ml{S}$},edge label={node[midway,left,font=\scriptsize]{$⇊$}}
-    [{$\type{\semtower{t}{\tower{e → t}{t}{e}}}$} [{$\type{\tower{e → t}{t}{e}}$\\his mother},edge label={node[midway,left,font=\scriptsize]{$↑$}}]]
+    [{$\type{\semtower{t}{\tower{e → t}{t}{e}}}$},draw=red [{$\type{\tower{e → t}{t}{e}}$\\his mother},edge label={node[midway,left,font=\scriptsize]{$↑$}}]]
     [{$\type{\tower{t}{e → t}{\semtower{t}{e → t}}}$\\$\ml{S}$}
       [{$\type{\semtower{t}{\semtower{t}{e → e → t}}}$\\loves$^{↑ ∘ ↑}$}]
-      [{$\type{\tower{t}{e → t}{\semtower{t}{e}}}$} [{every boy},edge label={node[midway,left,font=\scriptsize]{$⇈ ∘ B$}}]]
+      [{$\type{\tower{t}{e → t}{\semtower{t}{e}}}$},draw=red [{every boy},edge label={node[midway,left,font=\scriptsize]{$⇈ ∘ B$}}]]
     ]
   ]
   ]]
 \end{forest}
-\end{figure}
+\end{footnotesize}
+\end{marginfigure}
 
 What's crucial here is that both lower and internal lower are rigidly typed.
 
@@ -219,7 +250,15 @@ motivation for making it rigidly typed. Therefore, despite the initial
 conceptual appeal of \citeauthor{barkerShan2015}'s system, its success
 ultimately rests on what looks like a syntactic stipulation.
 
-\subsection{Chierchia: \textsc{wco} as a reflex of the dynamics of anaphora}
+Maybe we can do better. One recent attempt to derive \ac{wco} from independently
+motivated semantic mechanisms is \citeauthor{chierchia2020}'s \textit{dynamic}
+account of \ac{wco}.
+
+\citeauthor{chierchia2020}'s account bears a family resemblance to that of
+\citeauthor{barkerShan2015}. It too attempts to derive \ac{wco} from a semantic theory
+with a built-in left-to-right bias.
+
+\section{Chierchia: \textsc{wco} as a reflex of the dynamics of anaphora}
 
 \citet{chierchia2020} develops a theory of \ac{wco} based on \textit{dynamic
   semantics}.
@@ -227,16 +266,13 @@ ultimately rests on what looks like a syntactic stipulation.
 Much like continuation semantics, \ac{ds} is a semantic theory with a
 \enquote{built-in} left-to-right bias.
 
-\section{Dynamic semantics}
-
-\todo[inline]{Add more references below}
+\subsection{Dynamic semantics}
 
 \ac{ds} is one of the most empirically successful theories of anaphora
 (\citealt{heim1982,groenendijk_dynamic_1991,dekker1994}, a.o.) and
 presupposition projection (\citealt{heim1983,beaver_presupposition_2001}, a.o.).
 It has also been extended to a variety of other phenomena, including epistemic
-modality, exhaustification (\citealt{elliott-twosouls}),
-and more.
+modality, exhaustification, and more.
 
 Crowning achievements of \ac{ds} include analyses of the following
 phenomena:\sidenote{The (b) examples are included to briefly show that the
@@ -307,14 +343,19 @@ Sentential meanings in \ac{ds} (\citealt{heim1982}, \citealt{groenendijk_dynamic
     change the input context (see especially \citealt{heim1982}).
 
     \item Indeterminacy -- certain expressions may induce an
-    \textit{indeterminate} output.
+    \textit{indeterminate} output; an input can potentially be mapped to multiple outputs.
 
 \end{itemize}
 
 
 
 To model this formally, many theories of \ac{ds} model sentence meanings as \textit{relations between assignments} (equivalently: functions
-from assignments, to sets of assignments).
+from assignments, to sets of assignments).\sidenote[][-10\baselineskip]{In actual fact, worlds need
+  to enter the picture too -- \citet{heim1982} models sentence meanings as
+  relations between \textit{assignment-world pairs}. This is independently
+  necessary in order to account for the presupposition projection facts. Since
+  we'll only be looking at the dynamic account of anaphora resolution, it will
+  be harmless to ignore this aspect of the theory.}
 
 \acp{dp} introduce \acp{dr}, modeled as variables; indefinites, unlike definites
 induce \textit{indeterminacy}, concerning the identity of the \ac{dr}. This is
@@ -379,26 +420,56 @@ constructor $\type{T}$ to abbreviate relations between assignments:
 $\type{T} ≔ \type{o → o → t}$
 \xe
 
-\todo[inline]{Add some example sentential meanings here}
+Here are some example sentence meanings:
 
-% Here are some example sentence meanings:
+Definites induce deterministic updates.
 
-% \ex
-% $\eval{Roger arrived late} = λ g . λ g' . g[n ↦ \ml{r}]g' ∧ \ml{arrived-late r}$\sidenote{$g[n ↦ x]g'$
-% is \textit{true}, just in case $g'$ \textit{at most} differs from $g$ with
-% respect to $n$ ($g_{n}$ can be undefined), and $g'_{n} = \ml{r}$.}\hfill$\type{T}$
-% \xe
+\ex
+$\eval{Roger$^1$ arrived late} = λ ωω' . ω \stackrel{1/\ml{roger}}{=} ω' ∧ \ml{arrived-late roger}$\sidenote[][-15\baselineskip]{$ω \stackrel{n/x}{=} ω'$ is defined iff $ω_{n}$ is
+  \textit{un}defined, and is true just in case $ω'$ differs from $ω$ at most in
+  what $n$ is mapped to.
 
-% \exe% $\eval{A linguist$^{n}$ arrived late} = λ g . λ g' . ∃x[g[n → x]g' ∧ \ml{arrived-late} x]$\hfill$\type{T}$
-% \xe
+
+\citeauthor{heim1982}'s \textit{novelty condition} is essentially built into the
+rule for \ac{dr} introduction.}\hfill$\type{T}$
+\xe
+
+  \begin{marginfigure}
+    \centering
+    \caption{Deterministic update}
+    \begin{forest}
+  [{$ω$} [{Roger$^{1}$ arrived late.} [{$ω^{[1 ↦ \ml{roger}]}$}]]]
+\end{forest}
+  \end{marginfigure}
+
+Indefinites induce non-deterministic updates:
+
+\ex $\eval{A linguist$^{1}$ arrived late} = λ ωω' . ∃x[ω \stackrel{1/x}{=} ω' ∧ \ml{arrived-late} x]$\hfill$\type{T}$
+\xe
+
+\begin{marginfigure}
+\centering
+\caption{Non-deterministic update}
+\begin{forest}
+  [{$ω$} [{A linguist$^{1}$ arrived late}
+    [{$ω^{[1 ↦ \ml{kai}]}$}]
+    [{$ω^{[1 ↦ \ml{roger}]}$}]
+    [{$ω^{[1 ↦ \ml{sabine}]}$}]
+  ]]
+\end{forest}
+\end{marginfigure}
 
 We can get back an \enquote{ordinary} sentential meaning from a \ac{ccp} by
 existentially closing the output assignment, as defined in (\ref{def:dyclo}).
 
 
 \ex Dynamic closure (def.)\\
-$m^{↓}} ≔ λ ω . ∃ω'[m ω ω']$\label{def:dyclo}\hfill$\dyclo : \type{T → t}$
+$m^{↓}} ≔ λ ω . ∃ω'[m ω ω']$\label{def:dyclo}\hfill$\dyclo : \type{T → o → t}$
 \xe
+
+If we apply dynamic closure to a non-deterministic update, we get classical,
+existential truth-conditions; it will return true for any input assignment $ω$
+just in case \textit{a linguist arrived late}.
 
 How do we build up \acp{ccp} compositionally? \citeauthor{chierchia2020} assumes
 that predicates are fundamentally Montagovian (i.e., functions of type
@@ -413,7 +484,7 @@ $\eval{swim} ≔ λ x . \ml{swim} x$\hfill$\type{e → t}$
 Predicates are lifted into a dynamic setting by a type-shifter
 \textit{dynamic lift}; d-lift takes a function from an individual to a
 truth-value, and shifts it into a function from an individual to a \ac{ccp} --
-specifically, a dynamic \textit{test}.\sidenote{
+specifically, a dynamic \textit{test}.\sidenote[][-7\baselineskip]{
 A different way of generalizing this to $n-$place predicates is by giving $Δ$ the following definition:
 
 \ex
@@ -447,14 +518,18 @@ Generalize \textit{dynamic lift} to $n$-place predicates by giving a recursive
 definition a la \cite{parteeRooth}.
 \end{tcolorbox}
 
-Tests don't do anything interesting to input contexts. In orthodox dynamic
+Tests don't do anything interesting to input contexts. If we d-lift
+\textit{swims} and apply it to \textit{John} we'll get back a test that relates
+the input context $ω$ to itself, iff \textit{John swims} is true.
+
+In orthodox dynamic
 fragments, all of the interesting dynamic action is triggered by arguments --
 specifically, pronouns and indefinites.
 
 
 A pronoun indexed $n$ expects a dynamic predicate $k$ as its input, and returns
 a \ac{ccp} -- a function from an input assignment $ω$ to the result of feeding
-$ω_{n}$ into $k$, \textit{re-}saturated with $ω$.\sidenote{The type signature of
+$ω_{n}$ into $k$, \textit{re-}saturated with $ω$.\sidenote[][-15\baselineskip]{The type signature of
 a pronoun betrays the fact that, in this dynamic grammar, pronouns are
 \textit{scope-takers}, and in fact, we can abbreviate a pronominal meaning using
 tower notation:
@@ -507,12 +582,7 @@ $3$ to.
 In an orthodox dynamic fragment (\citealt{heim1982,groenendijk_dynamic_1991}), indefinites introduce
 \acp{dr}.\sidenote{\citeauthor{chierchia2020} will ultimately reject this
   assumption, but it will be useful to consider his claims in light of the
-  standard theory.}\sidenote{$ω \stackrel{n/x}{=} ω'$ is defined iff $ω_{n}$ is
-  \textit{un}defined, and is true just in case $ω'$ differs from $ω$ at most in
-  what $n$ is mapped to.
-
-\citeauthor{heim1982}'s \textit{novelty condition} is essentially built into the
-rule for \ac{dr} introduction.}
+  standard theory.}
 
 \ex
 Indefinites (Heimian def.)\\
@@ -566,7 +636,7 @@ $ω'_{4}$ walked in and sat down.
     [{$λ ωω' . ∃x[ω \stackrel{4/x}{=} ω' ∧ \ml{walked-in} x]$},draw=red [{Someone$^{4}$ walked in},roof]]
     [{...}
       [{$λ n . λ m . λωω' . ∃ω''[m ω ω'' ∧ n ω'' ω']$\\$;$}]
-      [{$λωω' . ω = ω' ∧ \ml{sat-down} ω_{3}$},name=trace,draw=red [{he$_{4}$ sat down},roof]]
+      [{$λωω' . ω = ω' ∧ \ml{sat-down} ω_{4}$},name=trace,draw=red [{he$_{4}$ sat down},roof]]
     ]
   ]
 \end{forest}
@@ -596,9 +666,7 @@ $λ ωω' . ∃ω''[ω = ω'' ∧ \ml{sat-down} ω_{4} ∧ (∃x[ω'' \stackr
 independently, we need a mechanism that allows indefinites to \textit{take
   scope}; indefinites introduce discourse referents at their
 scope site. We can therefore compute a bound reading for the following example,
-by scoping the indefinite over the pronoun:\sidenote{For reasons that will
-  become clear here, we're being a bit sneaky concerning how the scoped
-  indefinite binds its trace.}
+by scoping the indefinite over the pronoun:
 
 \begin{figure}
   \caption{Violating \ac{wco} in a Heimian fragment\\\enquote{He$_{4}$ wants to
@@ -704,7 +772,17 @@ Dynamic negation (def.)\\
 $¬ m ≔ λ ω . λω' . ω = ω' ∧ ¬ (m^{↓} ω)$\hfill$¬ : \type{T → T}$
 \xe
 
-Externally static negation predicts the impossibility of binding in the following:
+Externally static negation predicts the impossibility of binding in the
+following:\sidenote{
+  You might wonder about what we predict for a sentence such as the following,
+  where the indefinite takes wide scope over negation:
+
+  \ex
+  It's not true that someone walked in.\\He sat down.
+  \xe
+
+  This will be important later.
+}
 
 \ex
 \ljudge{*}It's not the case that anyone$^{1}$ walked in. He$_{1}$ sat down.
@@ -819,9 +897,14 @@ in B.
 
 So far, we've constructed a fragment that only accommodates one-place
 predicates. This is actually by design -- \citeauthor{chierchia2020} argues that
-such a system has a natural bed-fellow in neo-Davisonian event semantics.
+such a system has a natural bed-fellow in neo-Davisonian event
+semantics.\sidenote{
+We'll take the type of an event to be $\type{v}$.
+}
 
-Traditions in event semantics:
+Traditions in event semantics:\sidenote{Not discussed here is the hybrid
+  approach due to \cite{kratzer_severing_1996}, where only the external argument
+is introduced by a distinct thematic head.}
 
 Davidsonian:
 
@@ -839,6 +922,9 @@ According to the neo-Davidsonian approach, all arguments are severed, and
 instead introduced by thematic role heads (the compositional regime adopted here
 is after \citealt{champollion_interaction_2015}):\sidenote{See, e.g. \citealt{ahn2016} and
 \citealt{elliottDiss} for independent evidence for this position from different domains.}
+
+Thematic role heads take individuals and return properties of events --
+$\ml{THEME}$ returns a function from $x$ to events of which $x$ is the \textit{theme}.
 
 \ex
 $\ml{THEME} ≔ λ x . λ e . \ml{th} e = x$\hfill$\type{e → v → t}$
@@ -909,7 +995,8 @@ $f^{Δ_{n}} ≔ λ x . λ e . λωω' . ω \stackrel{n/x}{=} ω' ∧ f x�
 \xe
 
 We furthermore must assume that \textit{dynamic} \ac{pm} is a freely available
-semantic composition rule.
+semantic composition rule -- dynamic \ac{pm} is just like ordinary \ac{pm}, only
+instead of conjoining the inner propositional value, we do dynamic sequencing.
 
 \ex Dynamic \ac{pm} (def.): $\eval{\begin{aligned}[c]
     \begin{forest}
@@ -951,74 +1038,338 @@ What this essentially buys us is a sentence-internal accessibility hierarchy --
 the subject and object are accessible to the verb, but not nice versa, and the
 subject is accessible to the object, but not vice versa.
 
-This can be leveraged in order to account for the basic cases of \ac{wco}:
+This can be leveraged in order to account for the basic cases of \ac{wco}.
+Successful Q-binding is illustrated in figure \ref{fig:succ}; the subject is
+accessible to the object, so the trace of the \ac{qp} comes to dynamically bind
+the pronoun by \ac{dr}-shifting the thematic role head.
 
-\todo[inline]{Show exactly how this works:w
-}
+\begin{figure}
+  \centering
+  \caption{Successful Q-binding: \enquote{Everyone loves his cat}.}\label{fig:succ}
+\begin{forest}
+  [{$∀_{x} ∃_{e} \begin{aligned}[t]
+      &(λωω' . ω \stackrel{3/x}{=} ω' ∧ \ml{exp} e = x)\\
+      &;(λωω' . ω = ω' ∧ \ml{th} e = ιy[\ml{cat} y ω_{3}])\\
+      &;(λωω' . ω = ω' ∧ \ml{love} e)\end{aligned}$},fill=yellow
+  [{\ac{fa}}
+  [{$∀x$\\everyone$_{x}$}]
+  [{\ac{fa}}
+  [{$∃_{e}$}]
+  [{d-\ac{pm}}
+    [{$λ e . λωω' . ω \stackrel{3/x}{=} ω' ∧ \ml{exp} e = x$},draw=red
+      [{...} [{$\ml{EXP}$},edge label={node[midway,left,font=\scriptsize]{$Δ_{3}$}}]]
+      [{DP\\$t_x$}]
+    ]
+        [{d-\ac{pm}}
+        [{$λ e . λωω' . ω = ω' ∧ \ml{th} e = ιy[\ml{cat} y ω_{3}]$},draw=red
+          [{...} [{$\ml{THEME}$},edge label={node[midway,left,font=\scriptsize]{$Δ$}}]]
+          [{DP} [{his$_{3}$ cat},roof]]
+        ]
+          [{$λ e . λωω' . ω = ω' ∧ \ml{love} e$},draw=red [{love},edge label={node[midway,left,font=\scriptsize]{$Δ$}}]]
+      ]
+    ]]]]
+\end{forest}
+\end{figure}
+
+Unsuccessful Q-binding is illustrated in figure \ref{fig:unsucc} -- since the object is \textit{not} accessible to the subject, discourse binding of the pronoun by the trace of the \ac{qp} fails.
+
+\begin{figure}
+  \centering
+  \caption{Successful Q-binding: \enquote{Everyone loves his cat}.}\label{fig:unsucc}
+\begin{forest}
+  [{$∀_{x} ∃_{e} \begin{aligned}[t]
+      &(λωω' . ω = ω' ∧ \ml{exp} e = ιy[\ml{cat} y ω_{3}])\\
+      &;(λωω' . ω \stackrel{3/x}{=} ω' ∧ \ml{th} e = x)\\
+      &;(λωω' . ω = ω' ∧ \ml{love} e)\end{aligned}$},fill=yellow
+  [{\ac{fa}}
+  [{$∀x$\\everyone$_{x}$}]
+  [{\ac{fa}}
+  [{$∃_{e}$}]
+  [{d-\ac{pm}}
+    [{$λ e . λωω' . ω = ω' ∧ \ml{exp} e = ιy[\ml{cat} y ω_{3}]$},draw=red
+      [{...} [{$\ml{EXP}$},edge label={node[midway,left,font=\scriptsize]{$Δ$}}]]
+      [{DP} [{his$_{3}$ cat},roof]]
+    ]
+        [{d-\ac{pm}}
+        [{$λ e . λωω' . ω \stackrel{3/x}{=} ω' ∧ \ml{th} e = x$},draw=red
+          [{...} [{$\ml{THEME}$},edge label={node[midway,left,font=\scriptsize]{$Δ_3$}}]]
+          [{DP} [{$t_x$},roof]]
+        ]
+          [{$λ e . λωω' . ω = ω' ∧ \ml{love} e$},draw=red [{love},edge label={node[midway,left,font=\scriptsize]{$Δ$}}]]
+      ]
+    ]]]]
+\end{forest}
+\end{figure}
+
+One thing we should be explicit about now -- just how \textit{do} quantifiers
+bind their traces? In the paper, it's assumed that the meta-language is
+something like first order logic -- traces of quantifiers denote \textit{first
+  order} variables, and therefore as long as a trace is co-indexed with a
+quantifier, it is bound -- traces of \acp{qp} are indirectly bound.
+
+\citeauthor{chierchia2020} therefore assumes a completely different system of
+indexation and binding specific to \acp{qp}. If we wanted to translate
+\citeauthor{chierchia2020}'s approach into a theory in which binding is more
+direct, we'd need to redefine the \ac{ccp} type constructor as follows:
+
+\ex
+$\type{T ≔ o → o → g → t}$
+\xe
+
+The need to distinguish between first order variables and genuine pronouns has
+precedents in the dynamic literature\sidenote{\cite{dekker1994}}, but this is
+arguably a conceptually unappealing aspect of the proposal.\sidenote{See
+  \citeauthor{barkerShan2008}'s criticism of \ac{dmg} for relevant discussion.}
 
 \subsection{Binding into adjuncts}
 
-\subsection{Bare plurals}
+\citeauthor{chierchia2020} argues that, an advantage of incorporating events
+into the system, is that his theory straightforwardly accounts for binding into
+adjuncts\sidenote{At least, adverbial adjuncts that are interpreted as event
+  modifiers -- see \cite{parsons_events_1990}.}
 
-\todo[inline]{Finish this section}
+In event semantics, adverbials are simply interpreted as properties of events,
+and are incorporated into the sentence via d-\ac{pm}, below existential closure.
+
+\ex
+$\eval{against John's will} = λ e . e \ml{against} \ml{will j}$\hfill$\type{v → t}$
+\xe
+
+Since, the adverbial is a monadic predicate, it can of course be d-lifted:
+
+\ex
+$\eval{against John's will}^{Δ} = λ e . λωω' . ω = ω' ∧ e \ml{against} \ml{will j}$\hfill$\type{v → T}$
+\xe
+
+Since adverbials are adjoined to the right typically, the system predicts that
+\textit{objects are accessible to right-adjoined adverbials}. We can now account
+for the following example straightforwardly:
+
+\ex
+John loves everyone against their will.
+\xe
+
+\begin{figure}
+  \centering
+  \caption{Binding into adjuncts}
+  \begin{forest}
+    [{$\type{T}$}
+      [{$∀_{x}$\\everyone$_{x}$}]
+      [{$\type{T}$}
+        [{$∃_{e}$}]
+        [{$\type{v → T}$}
+        [{$\type{v → T}$}
+          [{$\type{e → v → T}$} [{$\ml{EXP}$},edge label={node[midway,left,font=\scriptsize]{$Δ$}}]]
+          [{DP\\John}]
+        ]
+        [{$\type{v → T}$}
+        [{$\type{v → T}$}
+        [{$\type{v → T}$}
+          [{$\type{e → v → T}$},tikz={\node [draw=red,dashed,inner sep=0,fit
+         to=tree]{};} [{$\ml{THEME}$},edge label={node[midway,left,font=\scriptsize]{$Δ_{3}$}}]]
+          [{$t_{x}$}]
+        ]
+           [{$\type{v → T}$} [{loves},edge label={node[midway,left,font=\scriptsize]{$Δ$}}]]
+        ]
+          [{$\type{v → T}$},tikz={\node [draw=red,dashed,inner sep=0,fit
+         to=tree]{};} [{against its$_{3}$ will},roof]]
+        ]
+        ]
+      ]
+    ]
+  \end{forest}
+\end{figure}
 
 \section{Problems}
 
+\subsection{A-movement}
+
+A-movement bleeds \ac{wco}:
+
+\ex
+Every boy$_{x}^{1}$ seems to his$_{1}$ mother [$t_{x}$ to be happy].
+\xe
+
+Furthermore, A-movement out of an externally static environment feeds dynamic
+binding:
+
+\ex
+Someone didn't leave. He sat down.
+\xe
+
+This leads to an unavoidable weakening of the \ac{dpp}:
+
+\pex
+The \acf{dpp} (refined ver.)\\
+\acp{dr} can only be introduced by:
+\a A-positions
+\a predicates.
+\xe
+
+Theoretically, this means that the operation of \ac{dr}-lifting must be licensed
+at derived predicates created by A-movement. This doesn't seem particularly
+enlightening or explanatory.
+
 \subsection{The problem of existentials}
 
-\section{Rethinking the system}
+Since \ac{dr}-introduction is performed by \textit{predicates} rather than arguments,
+\citeauthor{chierchia2020} makes a bad prediction: Scoping an indefinite out of
+an \textit{externally static} environment should fail to feed
+binding.\sidenote{It's not necessary to use a specific indefinite to illustrate
+  this point, but it does make the wide-scope reading more salient.}
 
-Conceptual issues:
-
-\begin{itemize}
-
-    \item Much like, e.g., \ac{dmg}, \citeauthor{chierchia2020}'s system
-    implicitly makes a syntactic distinction between two different kinds of
-    variables.\sidenote{See \citeauthor{barkerShan2008}'s
-    (\citeyear{barkerShan2008}) criticism of \ac{dmg} for related discussion.}
-    Can we do better? Continuations provide a way of doing scope-taking without
-    any need for traces, so this issue should (hopefully) dissolve if we shift
-    to a continuation-based theory.
-
-\end{itemize}
-
-\subsection{A more general dynamic system}
-
-\citet{charlow2019static} (see also \citealt{Charlowc}) generalizes orthodox
-dynamic semantics. We'll adopt his system here.
-
-\textit{Dynamic} $a$s are functions from an input assignment $g$, to a set of
-$a$s paired with output assignments $g'$.
+This is clearly a bad prediction, as illustrated by (\ref{ex:indef})
 
 \ex
-$\type{D a} ≔ g → \set{(a,g)}$
+It's not the case that [\fbox{a certain boy}$^{1}$ sat down]. He$_{1}$ left
+hours ago.\label{ex:indef}
 \xe
 
-\ex Unit (def.)\\
-$a^{η} ≔ λ g . \set{(a,g)}$
-\xe
+To see \textit{why} \citeauthor{chierchia2020} makes this prediction, it's
+enough to consider the simple event-free fragment from the beginning.
 
-\todo[inline]{Redo definition of bind}
-
-\ex Bind (def.)\\
-$m^{⋆} ≔ λ k . λ g . \bigcup\limits_{(x,h) ∈ m g}\set{k x h}$\hfill$⋆: \type{D a → (a → D b) → D b}$
-\xe
+First, consider the meaning of the prejacent of negation, with a \ac{dr}-shifted
+predicate relative to $1$. This introduces a \ac{dr} corresponding to the trace
+of the quantifier.
 
 \ex
-$\ml{pro}_{n} ≔ λ g . \set{(g_{n},g)}$\hfill$\type{D e}$
+$\eval{$t_x$ sat down} = λωω' . \stackrel{1/x}{=} ω' ∧ \ml{sat-down} x$\label{step1}
 \xe
 
-\ex
-$\ml{some boy}_{n} ≔ λ g . \set{(x,g) | \ml{boy} x}$\hfill$\type{D e}$
-\xe
+Applying dynamic negation to the prejacent closes off the discourse referent:
 
 \ex
-$m^{Δ_{n}} ≔ λ g . \bigcup\limits_{(x,h) ∈ m g}\set{(x,h^{[n → x]})}$\hfill$\type{D e → D e}$
+$¬ (\ref{step1}) = λ ωω' . ω = ω' ∧ ¬ ∃ω''[ω \stackrel{1/x}{=} ω'' ∧ \ml{sat-down} x]$\label{step2}
 \xe
 
+Now, binding the trace with an existential quantifier fails to re-introduce the
+\ac{dr} that was wiped out by dynamic negation.
+
 \ex
-$\ml{Q} ≔ λ k . λ g . \set{(Q (λ x . (k x)^{↓_{g}})),g)}$\hfill$\ml{everyone}:\type{\semtower{D t}{e}}$
+$∃_{x} (\ref{step2}) = λ ωω' . ω = ω' ∧ ∃x[¬ ∃ω''[ω \stackrel{1/x}{=} ω'' ∧ \ml{sat-down} x]]$\label{step3}
 \xe
+
+\citeauthor{chierchia2020} concludes that (a) we should treat indefinites as
+\textit{choice-functional variables}, and furthermore than (b) existential
+closure of a choice-functional variable introduces a \ac{dr}. This is clearly a
+weakening of the \ac{dpp}.
+
+\pex
+The \acf{dpp} (refined ver.)\\
+\acp{dr} can only be introduced by:
+\a A-positions
+\a predicates.
+\a existential closure of choice-functional variables.
+\xe
+
+The refined version of the theory predicts that \textit{indefinite scope feeds \ac{dr}-introduction}.
+
+Note that this predicts that \textit{wide-scope} indefinites should obviate
+\ac{wco}. \citeauthor{chierchia2020} argues that this is a good prediction based
+on the following contrasts. As has been observed before, \textit{specific
+  indefinites can obviate \ac{wco}}.
+
+\pex
+\a\ljudge{*}His$_{1}$ father hates a boy$^{1}$.
+\a\ljudge{?}His$_{1}$ father hates $\set{\text{a boy I know}^{1} | \text{a certain
+    boy}^{1} | \text{a friend of mine}^{1}}$
+\xe
+
+Unfortunately, this tying together of \ac{dr} introduction and \ac{wco}
+obviation is going to lead to a fatal flaw in \citeauthor{chierchia2020}'s
+theory. Anything that can introduce a \ac{dr} by scoping out of an externally
+static environment must introduce a \ac{dr} at its \textit{scope site}; anything
+that does so is predicted to obviate \ac{wco}.
+
+\textit{wh}-expressions can introduce \acp{dr}:
+
+\ex
+Who$^{1}$ walked in? and, did they$_{1}$ sit down?
+\xe
+
+Furthermore, \textit{wh}-moving out of an externally static environment feed
+\ac{dr} introduction:
+
+\ex
+Who$^{1}_{x}$ does nobody like $t_{x}$? and, where are they$_{1}$?
+\xe
+
+Even wh-in-situ can scope out of an externally static environment, feeding
+\ac{dr} introduction:
+
+\ex
+Which boy$^{1}_{y}$ $t_{y}$ bought none of his friends which book$^{2}$?\\
+and, why did he$_{1}$ hate it$_{2}$ so much?
+\xe
+
+By \citeauthor{chierchia2020}'s logic it follows that \textit{wh}-expressions
+\textit{must} introduce \acp{dr} at their scope site, and this predicts that
+\textit{wh}-scope should obviate \ac{wco}. This loses one of the core cases of
+\ac{wco} -- \textit{wh}-movement can certainly \textit{not} obviate \ac{wco}.
+
+\ex
+\ljudge{*}Which boy$^{1}_{x}$ does his$_{1}$ father hate $t_{x}$?
+\xe
+
+\ex~
+\ljudge{*}Which book$^{1}_{x}$ did John give none of it$_{1}$s fans $t_{x}$?
+\xe
+
+
+
+% \section{Rethinking the system}
+
+% Conceptual issues:
+
+% \begin{itemize}
+
+%     \item Much like, e.g., \ac{dmg}, \citeauthor{chierchia2020}'s system
+%     implicitly makes a syntactic distinction between two different kinds of
+%     variables.\sidenote{See \citeauthor{barkerShan2008}'s
+%     (\citeyear{barkerShan2008}) criticism of \ac{dmg} for related discussion.}
+%     Can we do better? Continuations provide a way of doing scope-taking without
+%     any need for traces, so this issue should (hopefully) dissolve if we shift
+%     to a continuation-based theory.
+
+% \end{itemize}
+
+% \subsection{A more general dynamic system}
+
+% \citet{charlow2019static} (see also \citealt{Charlowc}) generalizes orthodox
+% dynamic semantics. We'll adopt his system here.
+
+% \textit{Dynamic} $a$s are functions from an input assignment $g$, to a set of
+% $a$s paired with output assignments $g'$.
+
+% \ex
+% $\type{D a} ≔ g → \set{(a,g)}$
+% \xe
+
+% \ex Unit (def.)\\
+% $a^{η} ≔ λ g . \set{(a,g)}$
+% \xe
+
+% \todo[inline]{Redo definition of bind}
+
+% \ex Bind (def.)\\
+% $m^{⋆} ≔ λ k . λ g . \bigcup\limits_{(x,h) ∈ m g}\set{k x h}$\hfill$⋆: \type{D a → (a → D b) → D b}$
+% \xe
+
+% \ex
+% $\ml{pro}_{n} ≔ λ g . \set{(g_{n},g)}$\hfill$\type{D e}$
+% \xe
+
+% \ex
+% $\ml{some boy}_{n} ≔ λ g . \set{(x,g) | \ml{boy} x}$\hfill$\type{D e}$
+% \xe
+
+% \ex
+% $m^{Δ_{n}} ≔ λ g . \bigcup\limits_{(x,h) ∈ m g}\set{(x,h^{[n → x]})}$\hfill$\type{D e → D e}$
+% \xe
+
+% \ex
+% $\ml{Q} ≔ λ k . λ g . \set{(Q (λ x . (k x)^{↓_{g}})),g)}$\hfill$\ml{everyone}:\type{\semtower{D t}{e}}$
+% \xe
 
 
 
