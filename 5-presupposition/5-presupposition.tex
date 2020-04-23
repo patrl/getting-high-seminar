@@ -1,0 +1,708 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+\usepackage[font=footnotesize]{caption}
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\NewDocumentCommand\apl{}{\ensuremath{\odot}}
+\NewDocumentCommand\aplp{}{\ensuremath{\circledast}}
+\NewDocumentCommand\pure{m}{\ensuremath{{#1}^{ρ}}}
+\NewDocumentCommand\ap{}{\ensuremath{\mathbin{\circledast}}}
+\NewDocumentCommand\pfa{}{\ensuremath{\mathbin{\stackrel{\apl}{\ml{A}}}}}
+\NewDocumentCommand\pfap{}{\ensuremath{\mathbin{\stackrel{\aplp}{\ml{A}}}}}
+\NewDocumentCommand\conjd{}{\ensuremath{\mathbin{\&}}}
+
+\usepackage{multicol}
+
+\setcounter{secnumdepth}{3}
+
+\title{Presupposition as a scopal phenomenon\thanks{24.979: Topics in
+    semantics\\\noindent\textit{Getting high: Scope, projection, and evaluation order}}}
+
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott \& Martin Hackl}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+\usepackage{float}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\begin{tcolorbox}
+\textbf{Schedule}
+\tcblower
+
+\textbf{Homework:} read chapter 4 of Gutzmann's 2019 book \textit{The grammar of expressivity}. You can find a pdf on the materials section of the class page.
+
+\begin{description}
+
+    \item[April 30] Presupposition cont.; expressives and scope-taking.
+
+    \item[May 7] Expressives cont.; student presentation.
+
+    \item[Rescheduled class] Student presentations.
+
+\end{description}
+
+\end{tcolorbox}
+
+\section{The proviso problem}
+
+A number of otherwise successful theories of presupposition projection, including the \enquote{satisfaction theory}\sidenote{\cite{heim1983}} suffer from a well-known deficiency known as the \textit{proviso problem}.\sidenote{The proviso problem was first brought to light by \cite{geurts1996}.}
+
+Speakers judge that a sentence of the form \textit{if $p$ then $q_{\pi}$} presupposes $\pi$ -- in other words, presuppositions project from the consequent of a conditional. This is illustrated in example (\ref{ex:proviso1}):
+
+\ex
+If Theo has a brother, he'll bring his wetsuit.\label{ex:proviso1}\\
+$⇝$ \textit{Theo has a wetsuit}
+\xe
+
+The satisfaction theory, on the other hand, predicts that (\ref{ex:proviso1}) presupposes the following: \textit{If Theo has a brother, then he has a wetsuit}.
+
+Various attempts have been made to meet the challenge posed by the proviso problem, while retaining a theory of presupposition projection broadly in line with the satisfaction theory, which is otherwise rather successful.
+
+For example, it accounts for the fact that a sentence of the form \textit{if $p$ then $q_{π}$} is \textit{presuppositionless} just in case the antecedent entails $\pi$. This is illustrated in (\ref{ex:proviso2}).
+
+\ex
+If Theo has a wetsuit, he'll bring his wetsuit.\label{ex:proviso2}\\
+\textit{presuppositionless}
+\xe
+
+One move that has been attempted in the literature is to suggest that the semantic presupposition of (\ref{ex:proviso1}) is indeed the weaker, conditional presupposition \textit{if Theo has a brother, then he has a wetsuit}, but, since this is not a plausible thing for the speaker to presuppose, it is strengthened through some pragmatic process to something stronger. Namely, \textit{Theo has a wetsuit}.
+
+\todo[inline]{Talk about Mandelkern's arguments against this move here.}
+
+\citeauthor{grove2019}'s strategy in this paper is as follows:
+
+\begin{itemize}
+
+    \item Start out with a compositional fragment with the resources for dealing with intensionality and alternatives, building on \citet{Charlowc,charlow2019}.
+
+    \item Extend this grammar with the resources to deal with presupposition, using trivalence.
+
+    \todo[inline]{Complete this list}
+
+\end{itemize}
+
+\section{A fragment with alternatives}
+
+In formal semantics, the standard Stalnakerian assumption is that sentences denote sets of possible worlds.
+
+To illustrate, a sentence such as \enquote{a dolphin swam} would be assigned the following denotation:
+
+\ex
+$\set{w | ∃x[\ml{dolphin}_{w} x ∧ \ml{swam}_{w} x]}$\label{ex:set1}
+\xe
+
+Throughout the paper, \citeauthor{grove2019} frequently takes advantage of the fact that we can think of \textit{characteristic functions}, as representing sets. We can take (\ref{ex:set1}) to be syntactic sugar for the following function, of type $\type{s → t}$.\sidenote{$\type{s}$ is the type of worlds; $\type{t}$ the type of (bivalent) truth values.}
+
+\ex
+$λ w . ∃x[\ml{dolphin}_{w} x ∧ \ml{swam}_{w} ×]$\hfill$\type{s → t}$\label{ex:func1}
+\xe
+
+We can think of (\ref{ex:func1}) as a function that takes a world $w$, and:
+
+\begin{itemize}
+
+  \item returns $⊤$ if $w$ is in (\ref{ex:set1}),
+
+  \item and $⊥$, if $w$ is not in (\ref{ex:set1}).\sidenote{Following \cite{grove2019}, we'll write the inhabitants of $\type{t}$ (namely \textbf{true} and \textbf{false}) as $⊤$ and $⊥$.}
+
+\end{itemize}
+
+For reasons that will become clear, \citeauthor{grove2019} adopts a theory which introduces a slight twist on the Stalnakerian formula -- rather than sets of possible worlds, sentences will be taken to denote sets of \textit{pairs} of worlds and truth values.
+
+\ex
+$\set{⟨w,(\ml{swam}_{w} x)⟩| \ml{dolphin}_{w} x}$\label{ex:pairs}
+\xe
+
+The meaning in (\ref{ex:pairs}) will map $⟨w,⊤⟩$ to $⊤$ iff a dolphin swam in $w$, and $⟨w,⊥⟩$ to $⊤$ iff a dolphin didn't swim in $w$.
+
+Let's say that we have four worlds: in $w_{f}$, flipper but not ecco swam, in $f_{e}$, ecco but not flipper swam, in $w_{fe}$ both dolphins swam, and in $w_{∅}$ no dolphin swam. The extension of (\ref{ex:pairs}) will be the following set of pairs:
+
+$$\eval{a dolphin swam} = \Set{\begin{aligned}[c]
+    &⟨w_{f},⊤⟩,⟨w_{f},⊥⟩\\
+    &⟨w_{e},⊤⟩,⟨w_{e},⊥⟩\\
+    &⟨w_{fe},⊤⟩,\\
+    &⟨w_{∅},⊥⟩\end{aligned}}$$
+
+We can think of sentences with indefinites as inducing \textit{indeterminacy} -- the sentence \enquote{a dolphin} swam has an indeterminate truth value at $w$, depending on which dolphin in $w$ we have in mind.
+
+Just as before, we can think of a set of pairs as syntactic sugar for a curried characteristic function, as in (\ref{ex:curried}).
+
+\ex
+$λ wt . ∃x[\ml{dolphin}_{w} x ∧ t = \ml{swam}_{w} x]$\hfill$\type{s → t → t}$\label{ex:curried}
+\xe
+
+How do we derive these sentential meanings compositionally? Following \citeauthor{charlow2019}, \citeauthor{grove2019} assumes that indefinites introduce alternatives:
+
+\ex
+$\eval{a dolphin} ≔ \set{⟨w,x⟩|\ml{dolphin}_{w} x}$\hfill$\type{s → e → t}$\label{ex:indef}
+\xe
+
+Taking the four worlds we had before, the extension of (\ref{ex:indef}) would be as follows:
+
+$$
+\Set{\begin{aligned}[c]
+    &⟨w_{f},\ml{flipper}⟩,⟨w_{f},\ml{ecco}⟩\\
+    &⟨w_{e},\ml{flipper}⟩,⟨w_{e},\ml{ecco}⟩\\
+    &⟨w_{fe},\ml{flipper}⟩,⟨w_{fe},\ml{ecco}⟩\\
+    &⟨w_{∅},\ml{flipper}⟩,⟨w_{∅},\ml{ecco}⟩\\
+  \end{aligned}}
+$$
+
+Predicates, on the other hand, are assumed to denote sets of world-predicate pairs. The following entry simply pairs every world $w$ with the predicate that is true of an $x$ is $x$ swam in $w$.
+
+\ex
+$\eval{swam} ≔ \set{⟨w,(λ x . \ml{swam}_{w} x)⟩}$\hfill$\type{s → (e → t) → t}$
+\xe
+
+We can compose indefinites and predicates by doing an intensionalized version of \acf{pfa}.\sidenote{In function talk, intensional \acs{pfa}, which we'll \textit{ap}. This is defined as follows:
+
+  \ex
+  $\begin{aligned}[t]
+    &m \pfa n\\
+    &≔ λ wp . ∃x,y[m w x ∧ n w y ∧ p = x \ml{A} y]
+    \end{aligned}$
+  \xe
+
+  N.b. that, in defining $\pfa$, I depart slightly from \citeauthor{grove2019} who explicitly defines forwards and backwards versions. Under the formulation here, the forwards and backwards variants are implicit in overloaded $\ml{A}$.}
+
+\ex Ap (def.)\\
+$m \pfa n ≔ \set{⟨w,x \ml{A} y⟩|⟨w,x⟩ ∈ m ∧ ⟨w,y⟩ ∈ n}$\\
+\phantom{,}\hfill$\type{(s → (a → b) → t) → (s → a → t) → s → b → t}$\\
+\phantom{,}\hfill$\type{(s → a → t) →(s → (a → b) → t) →  s → b → t}$
+\xe
+
+Now we can compose indefinites and predicates via $\pfa$.
+
+\begin{figure}
+  \centering
+  \caption{Alternative-semantic composition via $\pfa$}
+  \begin{forest}
+    [{$\set{⟨w,(\ml{swam}_{w} x)⟩|\ml{dolphin}_{w} x}$\\$\pfa$}
+      [{$\set{⟨w,x⟩|\ml{dolphin}_{w} x}$} [{a dolphin},roof]]
+      [{$\set{⟨w,(λ x . \ml{swam}_{w} x)⟩}$\\swam}]
+    ]
+  \end{forest}
+\end{figure}
+
+Not all expressions introduce alternatives -- concretely, we need a way of lifting a type \type{e} argument into something that can compose with a predicate via intensional \ac{pfa}.
+
+We can do this via a polymorphic, intensional variant of \citeauthor{partee1986}'s \textsc{ident} type shifter, which we'll call \textit{pure}.
+
+\ex Pure (def.)\\
+$\pure{a} ≔ \set{⟨w,a⟩}$
+\xe
+
+Now we can compose a sentence such as \textit{ecco swam}:
+
+\begin{figure}
+  \centering
+  \caption{Alternative-semantic composition via ap and pure}
+  \begin{forest}
+    [{$\set{⟨w,(\ml{swam}_{w} \ml{ecco})⟩}$\\$\pfa$}
+      [{$\set{⟨w,\ml{ecco}⟩}$\\$\pure{\text{Ecco}}$}]
+      [{$\set{⟨w,(λ x . \ml{swam}_{w} x)⟩}$\\swam}]
+    ]
+  \end{forest}
+\end{figure}
+
+This meaning pairs each world with either $⊤$ or $⊥$ depending on whether Ecco swam in that world.
+
+$$
+\eval{Ecco swam} = \Set{\begin{aligned}
+    &⟨w_{f},⊥⟩\\
+    &⟨w_{e},⊤⟩\\
+    &⟨w_{fe},⊤⟩\\
+    &⟨w_{\emptyset},⊥⟩
+  \end{aligned}}
+$$
+
+Something about the compositional schema we're using here should be familiar from our discussion of continuations. We have, so far, the following ingredients:
+
+\begin{itemize}
+
+    \item A way of describing meanings that encode both intensionality and indeterminacy -- namely, the enriched type-space $\type{s → a → t}$ (where $\type{a}$ is an ordinary, extensional type).
+
+  \item A way of doing function application in our enriched type-space -- namely, intensional \ac{pfa} (or \textit{ap}).
+
+    \item A way of lifting a \enquote{normal} meaning into our enriched type-space -- namely, \textit{pure}.
+
+\end{itemize}
+
+This will, hopefully, remind you of how we framed continuation semantics: we had (i) a type constructor $\type{K}$, characterizing the enriched type-space of \textit{scopal} meanings, (ii) \acs{sfa} for doing function application in the enriched type-space, and (iii) Montague Lift for shifting something normal into a trivially scopal meaning.
+
+This construct is known as an \textit{applicative functor} in the functional programming/category theory literature (\citealt{mcbridePaterson2008}).
+
+Following \citeauthor{grove2019}, we can be more explicit about the applicative functor underlying the fragment we've constructed so far. The enriched type-space we're dealing with is characterized by the type constructor defined in (\ref{def:constr}).
+
+
+\ex
+$\type{⊙ a ≔ s → a → t}$\label{def:constr}
+\xe
+
+Pure, defined in (\ref{def:pure}), is a method for lifting a value into a trivial inhabitant of $\odot$. Ap, defined in (\ref{def:ap}), is a method for doing \acs{fa} in the space characterized by $\odot$. Here, we're giving explicit definitions of these operations, rather than using set talk.
+
+\pex
+\a $\pure{a} ≔ λ wx . x = a$\hfill$\type{a → \odot a}$\label{def:pure}
+\a $m \pfa n ≔ λ wp . ∃x,y[m w x ∧ n w y ∧ p = x \ml{A} y]$\\
+\phantom{,}\hfill$\type{\odot (a → b) → \odot a → \odot b}$\\
+\phantom{,}\hfill$\type{\odot a → \odot (a → b) → \odot b}$\label{def:ap}
+\xe
+
+\todo[inline]{Something about how Julian assumes weak Kleene}
+
+\section{Upgrading the fragment to accommodate presupposition}
+
+\subsection{Adding trivalence}
+
+In order to analyze presuppositions, we'll shift to a trivalent setting. Alongside the familiar truth values $\type{⊤}$ and $⊥$, we'll introduce a new truth value -- $\#$.
+
+To model this formally, we'll define a new sum type $\type{t_{\#}}$, the inhabitants of which are the three trivalent truth values. We can think of $\#$ as representing a state of uncertainty regarding the truth of a sentence.
+
+$$
+\begin{aligned}[t]
+&⊤:\type{t_{\#}}\\
+&⊥:\type{t_{\#}}\\
+&\#:\type{t_{\#}}
+\end{aligned}
+$$
+
+In order to talk about meaning components which may give rise to undefinedness, \citeauthor{grove2019} makes use of Beaver's $δ$-operator -- this takes an bivalent truth value, and maps $⊤$ to itself, and $⊥$ to $\#$.
+
+\ex
+Beaver's $δ$-operator (def.)\\
+$p^{δ} = \begin{cases}
+  ⊤ &p = ⊤\\
+  \# &p = ⊥
+  \end{cases}$\hfill$δ:\type{t → t_{\#}}$
+\xe
+
+To briefly illustrate, the following predicate will return $\#$ if its argument is a non-dolphin in $w$:
+
+\ex
+$λ x . δ (\ml{dolphin}_{w} x)$
+\xe
+
+In order to simplify the proposal for presupposition projection, \citeauthor{grove2019} assumes a weak Kleene semantics for the metalanguage logical connectives:\sidenote{Importantly, Weak Kleene is \textit{not} taken to characterize the meaning of natural language \textit{and}, \textit{if..then..}, etc.}
+
+\begin{figure}
+\centering
+\caption{Weak Kleene}
+$\begin{array}{c|ccc}
+∧ & ⊤ & ⊥ & \# \\
+\hline
+⊤ & ⊤ & ⊥ & \# \\
+⊥ & ⊥ & ⊥ & \# \\
+\# & \# & \# & \#
+ \end{array}
+ \qquad
+ \begin{array}{c|ccc}
+→ & ⊤ & ⊥ & \# \\
+\hline
+⊤ & ⊤ & ⊥ & \# \\
+⊥ & ⊤ & ⊤ & \# \\
+\# & \# & \# & \#
+ \end{array}
+ \qquad
+ \begin{array}{c|c}
+→ & \\
+\hline
+⊤ & ⊥\\
+⊥ & ⊤\\
+\# & \#
+\end{array}
+ $
+\end{figure}
+
+Weak Kleene just means that undefinedness \textit{always} projects.
+
+Finally, it will be helpful to give a trivalent semantics for the metalanguage existential quantifier. As stated, this semantics gives rise to \textit{existential projection}. In other words, a formula of the form $∃x[p x ∧ δ(q x)]$ is defined iff at least one $x$ is a $q$.
+
+\begin{figure}
+  \centering
+  \caption{Semantics for existentially quantified formulae}
+  $\begin{array}{c|c}
+     \Set{\eval[g']{ϕ} | g[x]g'} & \eval*[g]{⌜∃x ϕ⌝}\\
+     \hline
+     \set{⊤} & ⊤\\
+     \set{⊥} & ⊥\\
+     \set{\#} & \#\\
+     \set{⊤,⊥} & ⊤\\
+     \set{⊤,\#} & ⊤\\
+     \set{⊥,\#} & ⊥\\
+     \set{⊤,⊥,\#} & ⊤
+     \end{array}$
+\end{figure}
+
+\subsection{Upgrading the applicative functor}
+
+We can now upgrade our old applicative functor $\odot$ into one that can handle not just intensionality and indeterminacy, but also (potential) undefinedness. We'll write this new applicative functor as $\aplp$.
+
+The type constructor is much the same as our old type constructor, only, instead of returning a bivalent truth-value, it returns a trivalent truth-value:
+
+\ex
+$\type{\aplp a ≔ s → a → t_{\#}}$\label{def:appl}
+\xe
+
+Here, set talk breaks down, but we can talk as if (\ref{def:appl}) characterizes a set of world-value pairs for which membership can be \textbf{true}, \textbf{false}, or \textbf{undefined}.
+
+We can now also redefine pure and ap such that they can handle inhabitants of this newly enriched type space:
+
+\pex
+\a $\pure{a} ≔ λ wx . δ (x = a)$\hfill$\type{a → \aplp a}$
+\a $m \pfap n ≔ λ wp . ∃x,y[m w x ∧ n w y ∧ δ (p = x \ml{A} y)]$\\
+\phantom{,}\hfill$\type{\aplp (a → b) → \aplp a → \aplp b}$\\
+\phantom{,}\hfill$\type{\aplp a → \aplp (a → b) → \aplp b}$
+\xe
+
+We now have all of the resources we need to illustrate a simple case of presupposition projection with a definite description.
+
+\subsection{Presupposition projection with definites}
+
+In our current compositional setting, an indefinite such as \enquote{a dolphin} takes a world $w$ and an individual $x$, and:
+
+\begin{itemize}
+
+  \item returns $⊤$ if $x$ is a dolphin in $w$, and
+
+  \item $⊥$ if $x$ is not a dolphin in $w$.
+
+\end{itemize}
+
+\ex
+$\eval{a dolphin} ≔ λ wx . \ml{dolphin}_{w} x$\hfill$\type{\aplp e}$
+\xe
+
+In our new, trivalent setting, definites such as \enquote{the dolphin} will take a world $w$, an individual $x$, and:
+\begin{itemize}
+
+  \item return $⊤$ if $x$ is a dolphin in $w$, and
+
+  \item return $\#$ if $x$ is not a dolphin in $w$.
+
+\end{itemize}
+
+
+\ex
+$\eval{the dolphin} ≔ λwx . δ (\ml{dolphin}_{w} x)$\hfill$\type{\aplp\,e}$
+\xe
+
+We can still use set notation, but the parallel is obscured somewhat -- the result of right-hand side of the set comprehension can be either true, false, or \textit{undefined}:
+
+\ex
+$\eval{the dolphin} ≔ \set{⟨w,x⟩|δ (\ml{dolphin}_{w} x)}$\hfill\textit{set talk}
+\xe
+
+When we compose the definite description with an ordinary one-place predicate, the result is a function which takes a world $w$ and a (bivalent) truth value $t$, and returns:
+
+\begin{description}
+
+  \item[true] if there is a dolphin who swims in $w$, and $t =⊤$.
+
+  \item[false] if there is a dolphin who doesn't swim in $w$, and $t = ⊥$.
+
+  \item[undefined] if there are no dolphins in $w$.
+
+\end{description}
+
+\begin{figure}
+\centering
+\caption{Composition with a definite description}
+\begin{forest}
+  [{$\set{⟨w,\ml{swam}_{w} x⟩|δ (\ml{dolphin}_{w} x)}$\\$\pfap$}
+    [{$\set{⟨w,x⟩|δ (\ml{dolphin}_{w} x)}$} [{the dolphin},roof]]
+    [{$\set{⟨w,(λ x . \ml{swam}_{w} x)⟩}$\\swam}]
+  ]
+\end{forest}
+\end{figure}
+
+We can still think of the resulting meaning as characterizing a set of world-truth-value pairs, only now, membership in the set may be true, false, or undefined.
+
+We can identify the semantic presupposition of a sentence $ϕ$ as the following set:
+
+\ex The semantic presupposition of $\phi$\\
+$\set{w|∃t[(\eval*{\phi} ⟨w,t⟩ = ⊤) ∨ (\eval*{\phi} ⟨w,t⟩ = ⊥)]}$
+\xe
+
+This accurately tells us that the semantic presupposition of \enquote{the dolphin swam} is the set of worlds in which there is some dolphin -- only such worlds paired with a truth value $t$ are mapped to $⊤$ or $⊥$.
+
+We've derived the basic presupposition projection properties of definites. The next stage is to develop a theory according to which presuppositions can be \textit{filtered} in certain environments -- this will net us the basic results of a satisfaction theory of presupposition.
+
+\subsection{Basic presupposition projection}
+
+In order to account for presupposition, we need a \enquote{short-circuited} version of logical conjunction, defined in (\ref{def:conj2}).
+
+\begin{figure}
+  \centering
+  \caption{Short-circuited conjunction}\label{def:conj2}
+$\begin{array}{c|ccc}
+\& & ⊤ & ⊥ & \# \\
+\hline
+⊤ & ⊤ & ⊥ & \# \\
+⊥ & ⊥ & ⊥ & ⊥ \\
+\# & \# & \# & \#
+ \end{array}$
+\end{figure}
+
+This short-circuited connective is much like ordinary logical conjunction -- the difference being that if the first conjunct is \textbf{false}, $\&$ returns \textbf{false}, regardless of the value of the second conjunct.\sidenote{This is the so-called \enquote{middle Kleene} semantics for conjunction. \citet{george2014} shows that the middle Kleene entries for the truth-functional connectives can be derived from their bivalent entries via a general algorithm; the semantics in (\ref{def:conj2}) need not be stipulated.}
+
+If were to imagine that $\&$ characterizes the inferences associated with English \textit{and}, this would predict that the following sentence should be judged \textit{false}, rather than undefined (although, to emphasise, we're not taking $\&$ not characterize the meaning of \textit{and}).
+
+\ex
+Trump isn't president and the king of France is bald.
+\xe
+
+We can now define \textit{discourse sequencing/dynamic conjunction} in terms of \&.
+
+\ex Discourse sequencing (def.)\\
+$ϕ + ψ ≔ \set{⟨w,t⟩|ϕ ⟨w,⊤⟩ \conjd ψ ⟨w,t⟩}$\hfill$\type{(+): \aplp t → \aplp t → \aplp t}$
+\xe
+
+When we update $ϕ$ with $ψ$, we take the subset of $ψ$ containing worlds in which $ϕ$ is true.
+
+Let's now illustrate how this emulates the basic predictions of the satisfaction theory of presupposition projection, by taking a concrete example.
+
+\ex
+A dolphin swam. The dolphin was fast.
+\xe
+
+We know what each conjunct should denote already:
+
+\pex
+\a $\set{⟨w,\ml{swam}_{w} x⟩|\ml{dolphin}_{w} x}$\hfill$\type{\aplp t}$
+\a $\set{⟨w,\ml{fast}_{w} x⟩|δ (\ml{dolphin}_{w} x)}$\hfill$\type{\aplp t}$
+\xe
+
+\begin{figure}
+\centering
+\caption{Presupposition filtration in a conjunctive sentence}
+\begin{forest}
+[{$\set{⟨w,(\ml{fast}_{w} y)⟩|∃x[\ml{dolphin}_{w} x ∧ \ml{swam}_{w} x] \conjd δ (\ml{dolphin}_{w} y)}$}
+  [{$λ p . \set{⟨w,t⟩|∃x[\ml{dolphin}_{w} x ∧ \ml{swam}_{w} x] \conjd p ⟨w,t⟩}$}
+    [{$\set{⟨w,\ml{swam}_{w} x⟩|\ml{dolphin}_{w} x}$} [{a dolphin swam},roof]]
+    [{$+$}]
+]
+  [{$\set{⟨w,\ml{fast}_{w} x⟩|δ (\ml{dolphin}_{w} x)}$} [{the dolphin was fast},roof]]
+]
+\end{forest}
+\end{figure}
+
+Remember, we characterize the semantic presupposition of a sentence $\phi$ as:
+
+$$\set{w|∃t[(\eval*{\phi} ⟨w,t⟩ = ⊤) ∨ (\eval*{\phi} ⟨w,t⟩ = ⊥)]}$$
+
+The world truth value pairs which, fed into the conjunctive meaning return either $⊤$ or $⊥$, are those worlds in which either (a) there is no dolphin that swam, or (b) there is a dolphin that swam, and is fast.
+
+As noted by \citeauthor{grove2019} -- nothing guarantees that, if the conjunctive sentence is true, the dolphin that verifies the first conjunct is the same as the dolphin that verifies the second conjunct.\sidenote{This is an instantiation of the \textit{binding problem} for presupposition (\citealt{karttunenPeters1979}).}
+
+This will be solved in a version of the final analysis enriched with assignments.
+
+\subsection{Encountering the proviso problem}
+
+In order to illustrate the proviso problem, we first need to give a semantics for sentential negation.
+
+\ex Sentential negation (def.)\\
+$\ml{not} ϕ ≔ \set{⟨w,⊤⟩|¬ (ϕ ⟨w,⊤⟩)}$
+\xe
+
+Given a proposition with presuppositions $ϕ_{π}$, $\ml{not} ϕ$ is a new proposition, such that:
+
+\begin{itemize}
+
+  \item For any world $w$, $⟨w,⊤⟩ ∈ \ml{not} ϕ$ just in case $ϕ ⟨w,⊤⟩ = ⊥$.
+
+    \item If $ϕ ⟨w,⊤⟩ = \#$, then $(\ml{not} ϕ) ⟨w,⊤⟩ = \#$ and $(\ml{not} ϕ) ⟨w,⊥⟩ = \#$
+
+\end{itemize}
+
+The consequence is that sentential negation closes off the scope of an indefinite by preventing alternatives from percolating up. To illustrate:
+
+\begin{figure}
+\centering
+\caption{Sentential negation closes off indeterminacy}
+\begin{forest}
+  [{$\set{⟨w,⊤⟩| ¬ (⟨w,⊤⟩ ∈ \set{w,\ml{swam}_{w} x | \ml{dolphin}_{w} x})}$}
+    [{$λ p . \set{⟨w,⊤⟩|¬ (p ⟨w,⊤⟩)}$\\not}]
+    [{$\set{⟨w,\ml{swam}_{w} x⟩|\ml{dolphin}_{w} x}$} [{a dolphin swam},roof]]
+  ]
+\end{forest}
+\end{figure}
+
+Let's say that we have four worlds: in $w_{f}$, flipper but not ecco swam, in $f_{e}$, ecco but not flipper swam, in $w_{fe}$ both dolphins swam, and in $w_{∅}$ no dolphin swam. The extension of \enquote{A dolphin swam} will be the following set of pairs:
+
+$$\Set{\begin{aligned}[c]
+    &⟨w_{f},⊤⟩,⟨w_{f},⊥⟩\\
+    &⟨w_{e},⊤⟩,⟨w_{e},⊥⟩\\
+    &⟨w_{fe},⊤⟩,\\
+    &⟨w_{∅},⊥⟩\end{aligned}}$$
+
+The extension for \enquote{A dolphin didn't swim} is the following set of pairs:
+
+$$\Set{
+    ⟨w_{∅},⊤⟩}$$
+
+Since there are no presuppositions, the resulting function maps every other world truth-value pair to $⊥$.
+
+If we have a definite description in the scope of sentential negation, however, the semantic presupposition of the complement is inherited by the negative sentence:
+
+\begin{figure}
+  \centering
+  \caption{Sentential negation allows undefinedness to project}
+\begin{forest}
+  [{$\set{⟨w,⊤⟩| ¬ (⟨w,⊤⟩ ∈ \set{w,\ml{swam}_{w} x | δ (\ml{dolphin}_{w} x)})}$}
+    [{$λ p . \set{⟨w,⊤⟩|¬ (p ⟨w,⊤⟩)}$\\not}]
+    [{$\set{⟨w,\ml{swam}_{w} x⟩|δ (\ml{dolphin}_{w} x)}$} [{a dolphin swam},roof]]
+  ]
+\end{forest}
+\end{figure}
+
+This is because, if there are no dolphins in $w$, membership of $⟨w,⊤⟩$ in the complement will be undefined, and metalanguage $¬$ preserves undefinedness (weak Kleene).
+
+We can use this entry for sentential negation to give an entry for the conditional operator:
+
+\ex Conditional operator (def.)\\
+$\ml{if} ϕ ψ ≔ \ml{not} (ϕ + \ml{not} ψ)$
+\xe
+
+$\ml{if} ϕ ψ$ will turn out true, roughly, if updating $ψ$ with the negation of $ϕ$ turns out false.
+
+Only worlds in which the truth of $ϕ$ guarantees the truth of $ψ$ will remain.
+
+Let's see what this entry for the conditional operator predicts for our original sentence used to illustrate the proviso problem:
+
+\ex
+If Theo has a brother, he'll bring his wetsuit.
+\xe
+
+\begin{figure*}
+  \centering
+  \caption{The proviso problem emerges}
+  \begin{forest}
+    [{$\set{⟨w,⊤⟩|⟨w,⊤⟩ ∉ \set{⟨w',⊤⟩|\ml{has-brother}_{w'} \ml{Theo} \conjd ⟨w',⊤⟩ ∉ \set{⟨w'',\ml{Theo bring}_{w''} x|δ (\ml{wetsuit}_{w''} x)⟩}}}$}
+    [{$\ml{not} (\set{⟨w,\ml{has-brother}_{w} \ml{Theo}⟩} + \ml{not} \set{⟨w,\ml{Theo bring}_{w} x⟩|δ (\ml{wetsuit}_{w} x)})$}
+    [{$λp . \ml{not} (\set{⟨w,\ml{has-brother}_{w} \ml{Theo}⟩} + \ml{not} p)$}
+      [{if}]
+      [{$\set{⟨w,\ml{has-brother}_{w} \ml{Theo}⟩}$} [{Theo has a brother},roof]]
+    ]
+      [{$\set{⟨w,\ml{Theo bring}_{w} x⟩|δ (\ml{wetsuit}_{w} x)}$} [{he'll bring his wetsuit},roof]]
+    ]]
+  \end{forest}
+\end{figure*}
+
+We can more clearly see what the presupposition on the resulting meaning is if we translate the resulting set back into function talk:
+
+\ex
+$λ wt . ¬ (\ml{has-brother}_{w} \ml{Theo} \& ¬ (∃x[δ (\ml{wetsuit}_{w} x) ∧ \ml{Theo bring}_{w} x]) ∧ t = ⊤)$
+\xe
+
+Since $¬$ preserves undefinedness, the presupposition of the second conjunct of \& is that Theo has a wetsuit.
+
+The first conjunct asserts that Theo has a brother. By dint on the semantics of \&, the presupposition of the second conjunct will only be evaluated in those worlds in which \textit{Theo has a brother} is true.
+
+The definedness condition of the whole sentence is therefore: \textit{Theo has a wetsuit if he has a brother}.
+
+Zooming out, what properties of this fragment are such that the proviso problem arises, and what might we want to tweak in order to avoid it?
+
+In general, the reasons are the following:
+
+\begin{itemize}
+
+    \item The meaning of the conditional operator is stated in terms of discourse sequencing, the definition of which is motivated by the filtering we observed in conjunctive sentences.
+
+    \item The presupposition of \textit{his wetsuit} is evaluated within the context of the consequent of the conditional.
+
+\end{itemize}
+
+As we'll see \citeauthor{grove2019} will seek a way out of this bind by tinkering with the second property of the system -- he'll argue that the evaluation of a presupposition can be delayed, via the same mechanisms responsible for delayed evaluation in a more familiar domain -- namely, scope.
+
+\todo[inline]{Semantics for the conditional}
+
+\section{Shifting perspective: a grammar with scope-taking}
+
+\ex Join (def.)\\
+$μ m ≔ \set{⟨w,x⟩|∃n[⟨w,n⟩ ∈ m ∧ ⟨w,x⟩ ∈ n]}$\hfill$\type{μ:\aplp (\aplp a) → \aplp a}$
+\xe
+
+Here, $m$ is a set of world-set pairs. Both the main set on the contained paired sets potentially have definedness conditions on membership.
+
+$μ$ takees $m$, and gives back a set containing all members of the paired sets in $m$ which preserve the world with which they are paired.
+
+Let's see now how to convert a definite description into a scope-taker. Let's first take the meaning of \textit{the dolphin}:
+
+$\eval{the dolphin} ≔ \set{⟨w,x⟩|δ (\ml{dolphin}_{w} x)}$\hfill$\type{\aplp e}$
+
+In order to lift this into a scope-taker, we apply $ρ$ to the contained individual value:
+
+\ex
+$\set{⟨w,\set{⟨w',x⟩}⟩|δ (\ml{dolphin}_{w} x)}$\hfill$\type{\aplp (\aplp e)}$
+\xe
+
+\todo[inline]{Show how everything needs to be doubly lifted in order for the derivation to proceed}
+
+\subsection{Using continuations and monadic bind}
+
+\printbibliography
+
+\end{document}

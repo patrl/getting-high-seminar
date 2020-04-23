@@ -78,8 +78,36 @@
 \maketitle% this prints the handout title, author, and date
 
 \ex
-$\ml{someone} ≔ \type{\semtower{t}{e}}$
+$\ml{someone} ≔ λ k . ∃x[k x]$\hfill$\type{(e → t) → t}$
 \xe
+
+Let's try the obvious way of lifting an existential quantifier into a dynamic setting:
+
+\ex
+$\ml{someone}^{↑} ≔ λ k . λ ωω' . ∃x[k x ω ω']$\hfill$\type{(e → T) → T}$
+\xe
+
+Now let's apply Gennaro's \ac{dr}-lift function to a one-place predicate:
+
+\ex
+$\ml{swim}^{Δ_{n}} ≔ λ x . λωω' . ω \stackrel{n/x}{=} ω' ∧ \ml{swim} x$\hfill$\type{e → T}$
+\xe
+
+Applying the lifted quantifier to the lifted predicate gives us something sensible, namely an indeterministic update:
+
+\ex
+$λωω' . ∃x[ω \stackrel{n/x}{=}ω' ∧ \ml{swim} x]$\hfill$\type{T}$
+\xe
+
+What about if we try the same thing with a universal? Observe that, if the
+cardinality of the domain is greater than 1, the result is an inconsistent update.
+
+\ex
+$λωω' . ∀x[ω \stackrel{n/x}{=}ω' ∧ \ml{swim} x]$\hfill$\type{T}$
+\xe
+
+This seems reminiscent of \citeauthor{demirok2019}'s explanation for why
+indefinites but not universals take exceptional scope.
 
 \printbibliography
 
