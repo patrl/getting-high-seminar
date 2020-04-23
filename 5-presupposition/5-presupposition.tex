@@ -39,6 +39,7 @@
 \NewDocumentCommand\apl{}{\ensuremath{\odot}}
 \NewDocumentCommand\aplp{}{\ensuremath{\circledast}}
 \NewDocumentCommand\pure{m}{\ensuremath{{#1}^{ρ}}}
+\NewDocumentCommand\intlift{m}{\ensuremath{{#1}^{⇈_{\aplp}}}}
 \NewDocumentCommand\ap{}{\ensuremath{\mathbin{\circledast}}}
 \NewDocumentCommand\pfa{}{\ensuremath{\mathbin{\stackrel{\apl}{\ml{A}}}}}
 \NewDocumentCommand\pfap{}{\ensuremath{\mathbin{\stackrel{\aplp}{\ml{A}}}}}
@@ -48,7 +49,7 @@
 
 \setcounter{secnumdepth}{3}
 
-\title{Presupposition as a scopal phenomenon\thanks{24.979: Topics in
+\title{Resolving the proviso problem via scope\thanks{24.979: Topics in
     semantics\\\noindent\textit{Getting high: Scope, projection, and evaluation order}}}
 
 \author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott \& Martin Hackl}
@@ -106,31 +107,187 @@
 
 \end{tcolorbox}
 
-\section{The proviso problem}
+\section{Satisfaction and its discontents}
 
-A number of otherwise successful theories of presupposition projection, including the \enquote{satisfaction theory}\sidenote{\cite{heim1983}} suffer from a well-known deficiency known as the \textit{proviso problem}.\sidenote{The proviso problem was first brought to light by \cite{geurts1996}.}
+One of the most successful theories of presupposition projection, is the \enquote{satisfaction theory}.\sidenote{\cite{heim1983}}
 
-Speakers judge that a sentence of the form \textit{if $p$ then $q_{\pi}$} presupposes $\pi$ -- in other words, presuppositions project from the consequent of a conditional. This is illustrated in example (\ref{ex:proviso1}):
-
-\ex
-If Theo has a brother, he'll bring his wetsuit.\label{ex:proviso1}\\
-$⇝$ \textit{Theo has a wetsuit}
-\xe
-
-The satisfaction theory, on the other hand, predicts that (\ref{ex:proviso1}) presupposes the following: \textit{If Theo has a brother, then he has a wetsuit}.
-
-Various attempts have been made to meet the challenge posed by the proviso problem, while retaining a theory of presupposition projection broadly in line with the satisfaction theory, which is otherwise rather successful.
-
-For example, it accounts for the fact that a sentence of the form \textit{if $p$ then $q_{π}$} is \textit{presuppositionless} just in case the antecedent entails $\pi$. This is illustrated in (\ref{ex:proviso2}).
+The satisfaction theory suffers from a well-known deficiency known as the \textit{proviso problem}.\sidenote{The proviso problem was first brought to light by \cite{geurts1996}.}
 
 \ex
-If Theo has a wetsuit, he'll bring his wetsuit.\label{ex:proviso2}\\
-\textit{presuppositionless}
+If $p$ then \(q_{\pi}\)\hfill\(⇝ \ml{if }p\ml{ then }π\)
 \xe
 
-One move that has been attempted in the literature is to suggest that the semantic presupposition of (\ref{ex:proviso1}) is indeed the weaker, conditional presupposition \textit{if Theo has a brother, then he has a wetsuit}, but, since this is not a plausible thing for the speaker to presuppose, it is strengthened through some pragmatic process to something stronger. Namely, \textit{Theo has a wetsuit}.
+\ex~
+$p$ and \(q_{\pi}\)\hfill\(⇝ \ml{if }p\ml{ then }π\)
+\xe
 
-\todo[inline]{Talk about Mandelkern's arguments against this move here.}
+There's doesn't match up with what we tend to accommodate. Imagine an utterance of the following:
+
+\ex
+\label{ccp}If Theo hates sonnets, then so does his wife.\hfill\citep{geurts1996}
+\xe
+
+In an out-of-the-blue context, we would tend to accommodate (\ref{corr}), not the weaker (\ref{bad}) predicted by, e.g., the satisfaction theory:
+
+\ex\label{corr}Theo has a wife\xe
+
+\ex~\label{bad}If Theory hates sonnets then Theo has a wife\xe
+
+The implicit assumption here is that, if the presupposition of a sentence \(p_{\pi}\) isn't entailed by a given context \(c\), we first update \(c\) with \(\pi\).
+
+In other words, we first winnow out worlds from the context where Theo hates sonnets but doesn't have a wife.
+
+Although we'll only talk about the satisfaction theory here for the sake of exposition, this isn't the only theory that facts the proviso problem. The multidimensional theory has the same problem (\citealt{karttunenPeters1979}), as does the trivalent approach (\citealt{george2007,george2008,fox2013}).
+
+\begin{tcolorbox}
+  The \textit{proviso problem} is a problem about \textit{accommodation}
+  \tcblower
+  The satisfaction theory predicts that if the weaker, conditional statement is part of the common ground, then accommodation will be unnecessary. This seems correct.
+
+  \ex
+  We've figured out, that if the butler called in sick on Monday, then someone killed Smith. Furthermore, if the butler called in sick on Monday, it was the butler who killed Smith!\\
+  \cmark We haven't yet figured out whether or not Smith is still alive.
+  \xe
+
+  \vspace{1ex}
+
+  It's only when we have to accommodate that the proviso problem becomes apparent.
+
+  \ex
+  We've figured out, that is the butler called in sick on Monday, then it was the butler who killed Smith.\\
+  \xmark We haven't yet figured out whether or not Smith is still alive.
+  \xe
+
+  \vspace{1ex}
+
+  So the question is, how do we keep the good predictions of the satisfaction theory, without making bad predictions wrt what is accommodated.
+
+  \vspace{1ex}
+
+  (examples from \citealt{mandelkern2016})
+
+\end{tcolorbox}
+
+The proviso problem is a problem for other connectives too:
+
+\ex
+If [Theo hates sonnets and his wife hates sonnets], we shouldn't get Theo a book of sonnets.\\
+\(⇝\) \textit{Theo has a wife}
+\xe
+
+\ex~
+Either Theo doesn't hate sonnets, or he and his wife both hate sonnets.\\
+\(⇝\) \textit{Theo has a wife}
+\xe
+
+To complicate matters further, sometimes the conditional presupposition seems to make \textit{good} predictions for accommodation:
+
+\ex
+If Theo is a scuba-diver, he'll bring his wetsuit on vacation.
+\xe
+
+\ex~
+If France is a monarchy, then the king of France is in hiding.
+\xe
+
+A possibly related problem is that the dynamic theory predicts weak projection for triggers embedded under attitude verbs, i.e., (\ref{alyx}) is predicted to presuppose that \textit{Alex believes that Robyn used to smoke}
+
+\ex\label{alyx}Alex believes that Robyn stopped smoking.
+\xe
+
+This is motivated by local satisfaction, since the following sentence is presuppositionless:
+
+\ex
+If Alex believes that Robyn used to smoke, then he believes that she stopped.
+\xe
+
+Nevertheless, what is accommodated when (\ref{alyx}) is uttered in an out of the blue context is plausibly \textit{that Robyn used to smoke}
+
+\ex
+Alex believes that Robyn stopped smoking, \# but I have no idea if she used to smoke.
+\xe
+
+\subsection{A pragmatic response to the proviso problem}
+
+
+A disparity between prediction presuppositions and what is accommodated is not necessarily an \textit{insurmountable} problem. Here is the basic idea behind a pragmatic explanation:
+
+\ex
+\textit{Strengthening}:\\
+For pragmatic reasons, we sometimes accommodate strictly more than is presupposed.
+\xe
+
+Here is one way of spelling this out (from Mandelkern 2017):
+
+\pex
+\textit{Plausibility}:\\
+\a When S asserts \text{if \(p\) then \(q_{\pi}\)}, her listener compares the relative plausibility of:\\
+i. S is presupposing \(p ⊃ π\)\\
+ii. S is presupposing \(π\)
+\a S will conclude in favour of (i) iff she has a pragmatic reason to think (it's common ground that) (i) is more plausible than (ii).
+\xe
+
+This seems to make straightforwardly bad predictions. The following example is from \citet{mandelkern2016}:
+
+\ex
+?? John was limping earlier; I don't know why. Maybe he has a stress fracture. I don't know if he plays any sports, but if he has a stress fracture, then he'll stop running cross-country now.
+\xe
+
+Given the context -- the speaker doesn't know if John plays sports -- the conditional presupposition predicted by the satisfaction theory: \textit{if John has a stress fracture, he used to run cross-country}, is much more plausible than the unconditional presupposition.
+
+This example, tellingly, becomes OK if we alter the contextual set-up:
+
+\ex
+John was limping earlier; I don't know why. Maybe he has a stress fracture. If he has a stress fracture, then he'll stop running cross-country now.
+\xe
+
+Some more problems for a pragmatic account:
+
+\subsubsection{Objection from assertion}
+
+When we assert \enquote{if \(p\) the \(q\)}, why don't we always strengthen to \(q\) if \(q\) is more plausible?
+
+We need to say something here, e.g., if you knew \(q\), you should have asserted \(q\) (wait for the pragmatics block!).
+
+Whatever our account is, it \textit{shouldn't} apply to presupposed content.
+
+\subsubsection{Objection from anaphora}
+
+Guerts (1996); attributed to van der Sandt:
+
+\pex
+\a\label{one}John has a wife; she is a lawyer.
+\a\label{one2}??John is married; she is a lawyer.
+\xe
+
+Proviso cases pattern with (\ref{one}) not (\ref{one2}):
+
+\ex
+If Theo hates sonnets, his wife does too. She definitely likes elegies though.
+\xe
+
+\subsubsection{Objection from factives}
+
+\ex
+Walter knows that if Theo hates sonnets, he has a wife.\\
+\phantom{,}\hfill\textit{presupposes: if Theo hates sonnets, then he has a wife}
+\xe
+
+Since this presupposition is identical to that of \enquote{If Theo hates sonnets, then his wife does too}, why is the latter strengthened and this one not?
+
+\subsubsection{Objection from cancellation}
+
+If strengthening is pragmatic, it should be cancellable.
+
+\ex
+If the problem was difficult, then it wasn't Morton who solved it. But as a matter of fact the problem wasn't solved at all.
+\xe
+
+\pex~
+\textit{We don't know whether Jimbo was murdered or has run away from home. We need to examine his room.}
+\a If there are bloodstains in the room, then Jimbo was murdered, and Jimbo's murderer did a sloppy job
+\a\ljudge{\#}If there are bloodstains in the room, then Susie's murderer's did a sloppy job.
+\xe
 
 \citeauthor{grove2019}'s strategy in this paper is as follows:
 
@@ -681,27 +838,82 @@ As we'll see \citeauthor{grove2019} will seek a way out of this bind by tinkerin
 
 \section{Shifting perspective: a grammar with scope-taking}
 
+In order make sense of the idea of presuppositional scope, we need to extend our fragment with a new operation: \textit{join}:
+
 \ex Join (def.)\\
 $μ m ≔ \set{⟨w,x⟩|∃n[⟨w,n⟩ ∈ m ∧ ⟨w,x⟩ ∈ n]}$\hfill$\type{μ:\aplp (\aplp a) → \aplp a}$
 \xe
 
-Here, $m$ is a set of world-set pairs. Both the main set on the contained paired sets potentially have definedness conditions on membership.
+ Here, $m$ is a set of world-set pairs -- join tells us how to take a set of world-set pairs, and \enquote{flatten it} into a set of world-value pairs.
+
+ Both the main set and the paired sets may, in principle, have definedness conditions on membership.
 
 $μ$ takees $m$, and gives back a set containing all members of the paired sets in $m$ which preserve the world with which they are paired.
 
-Let's see now how to convert a definite description into a scope-taker. Let's first take the meaning of \textit{the dolphin}:
+Now, let's see how we convert a definite description into a scope taker.
 
 $\eval{the dolphin} ≔ \set{⟨w,x⟩|δ (\ml{dolphin}_{w} x)}$\hfill$\type{\aplp e}$
 
-In order to lift this into a scope-taker, we apply $ρ$ to the contained individual value:
+In order to lift this into a scope-taker, we apply $ρ$ to the contained individual value. We can define an operation, which we'll call \textit{internal lift} which does just this.
 
-\ex
-$\set{⟨w,\set{⟨w',x⟩}⟩|δ (\ml{dolphin}_{w} x)}$\hfill$\type{\aplp (\aplp e)}$
+\ex Internal lift (def.)\\
+$\intlift{m} ≔ \set{⟨w,\pure{x}⟩|⟨w,x⟩ ∈ m}$\hfill$⇈_{\aplp} : \type{\aplp a → \aplp (\aplp a)}$
 \xe
 
-\todo[inline]{Show how everything needs to be doubly lifted in order for the derivation to proceed}
+Applying internal lift to \textit{the dolphin} gives back a higher-order member of the enriched type-space, where the definedness condition on membership is on the outer layer of the set:
 
-\subsection{Using continuations and monadic bind}
+\ex
+$\eval[⇈_{\aplp}]{the dolphin} = \set{⟨w,\set{⟨w',x⟩}⟩|δ (\ml{dolphin}_{w} x)}$\hfill$\type{\aplp (\aplp a)}$
+\xe
+
+In order to compose this with a predicate, the predicate must be lifted via $ρ$.
+
+We also need a way of doing function application in a \textit{higher-order} enriched type-space. This is defined in the obvious way below:
+
+\ex
+$m \pfap_{2} n ≔ λ wp . ∃x,y[m w x ∧ n w y ∧ δ (p = x \pfap y)]$\\
+\phantom{,}\hfill$\type{\aplp (\aplp\,(a → b)) → \aplp\,(\aplp a) → \aplp\,(\aplp b)}$\\
+\phantom{,}\hfill$\type{\aplp\,(\aplp a) → \aplp (\aplp\,(a → b)) →  \aplp\,(\aplp b)}$
+\xe
+
+The role of join will be to evaluate the scope of the presupposition trigger. This is illustrated for a trivial example below, in which the presupposition associated with \textit{the dolphin} vacuously takes scope, and is evaluated at the root level.
+
+\begin{figure}
+  \centering
+  \caption{Vacuously scoping a uniqueness presupposition}
+  \begin{forest}
+    [{$\set{⟨w,\ml{swam}_{w} x⟩|δ (\ml{dolphin}_{w} x)}$}
+    [{$\set{⟨w,\set{⟨w',\ml{swam}_{w} x⟩}⟩|δ (\ml{dolphin}_{w} x)}$\\$\aplp_{2}$}
+      [{$\set{⟨w,\set{⟨w',x⟩}⟩|δ (\ml{dolphin}_{w} x)}$} [{$\intlift{\text{the dolphin}}$},roof]]
+      [{$\set{⟨w,\set{⟨w',(λ x . \ml{swam}_{w} x)⟩}⟩}$} [{swam$^{ρ}$}]]
+    ]]
+  \end{forest}
+\end{figure}
+
+With this mechanism in hand, however, a presupposition can scope out of an environment in which it would otherwise be filtered.
+
+Now, back to our proviso problem case. We can generate the unconditional presupposition just by applying internal lift to \textit{his wetsuit}, and evaluating via \textit{join} at the root node.
+
+\begin{figure*}
+\centering
+\caption{Resolving the proviso problem via scoping out}
+\begin{forest}
+  [{$\set{⟨w,\ml{not} (\set{⟨w',\ml{has-brother}_{w'} \ml{Theo}⟩} + \ml{not} \set{⟨w'',\ml{Theo bring}_{w''} x⟩})⟩|δ (\ml{wetsuit}_{w} x)}$}
+  [{$\set{⟨w,(λ p . \ml{not} (\set{⟨w',\ml{has-brother}_{w'} \ml{Theo}⟩} + \ml{not} p)⟩⟩}$}
+    [{$λ p . \ml{not} (\set{⟨w,\ml{has-brother}_{w} \ml{Theo}⟩} + \ml{not} p)$} [{if Theo has a brother}]]
+  ]
+  [{$\set{⟨w,\set{⟨w',\ml{Theo bring}_{w'} x⟩}⟩ | δ (\ml{wetsuit}_{w} x)}$}
+    [{Theo$^{ρ ∘ ρ}$}]
+    [{...}
+      [{bring$^{ρ}$}]
+      [{$\intlift{\text{his wetsuit}}$}]
+    ]
+  ]
+  ]
+\end{forest}
+\end{figure*}
+
+Applying join to the resulting meaning will have the effect that the presupposition of the outer set takes precedent over either any at-issue content or presuppositions contributed by any inner sets.
 
 \printbibliography
 
