@@ -49,7 +49,7 @@
 
 \setcounter{secnumdepth}{3}
 
-\title{Resolving the proviso problem via scope\thanks{24.979: Topics in
+\title{Presupposition and delayed evaluation\thanks{24.979: Topics in
     semantics\\\noindent\textit{Getting high: Scope, projection, and evaluation order}}}
 
 \author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott \& Martin Hackl}
@@ -93,7 +93,7 @@
 \textbf{Schedule}
 \tcblower
 
-\textbf{Homework:} read chapter 4 of Gutzmann's 2019 book \textit{The grammar of expressivity}. You can find a pdf on the materials section of the class page.
+\textbf{Homework:} Next week, after finishing our discussion of presupposition and scope, I'll be talking about the scope of expressive adjectives such as \textit{damn}. Please read chapter 4 of Daniel Gutzmann's 2019 book \textit{The grammar of expressivity}, and send me at least one question by next Wednesday. You can find a \texttt{pdf} on the materials section of the class page.
 
 \begin{description}
 
@@ -101,27 +101,165 @@
 
     \item[May 7] Expressives cont.; student presentation.
 
-    \item[Rescheduled class] Student presentations.
+    \item[May 14(?)] Student presentations.
 
 \end{description}
+
+We'd like to tentatively schedule the make-up class for Thursday May 14, in the usual time slot. Please let us know if this won't work for you, and we'll do our best to come up with a date that works for everyone.
 
 \end{tcolorbox}
 
 \section{Satisfaction and its discontents}
 
-One of the most successful theories of presupposition projection, is the \enquote{satisfaction theory}.\sidenote{\cite{heim1983}}
+\subsection{Background on the satisfaction theory}
 
-The satisfaction theory suffers from a well-known deficiency known as the \textit{proviso problem}.\sidenote{The proviso problem was first brought to light by \cite{geurts1996}.}
+One of the most successful theories of presupposition projection, is the \enquote{satisfaction theory}.\sidenote{\cite{heim1983,beaver_presupposition_2001}, a.o.}
+
+The satisfaction theory is couched in the Stalnakerian perspective (\citeyear{stalnaker1976,stalnaker2002}), in which the \ac{cg} is modeled as a set of possible worlds -- the set of possible worlds compatible with the shared knowledge of the discourse participants.
+
+Informally, the \ac{cg} is the grand conjunction of all propositions mutually believed to be true by the discourse participants.
+
+Likewise, sentences are taken to denote \textit{propositions} -- which can be characterized as a set of possible worlds.
 
 \ex
-If $p$ then \(q_{\pi}\)\hfill\(⇝ \ml{if }p\ml{ then }π\)
+$\eval{Ecco swims} = \set{w | \ml{Ecco swims in }w}$\label{ex:cg}
+\xe
+
+On this theory, when a sentence such as (\ref{ex:cg}) is asserted in a \ac{cg} $c$ (and the assertion is accepted by the discourse participants), we can easily model the effect of the assertion on the \ac{cg} via simple set intersection.
+
+In the parlance of the satisfaction theory, we say that the sentence \enquote{updates} the \ac{cg}.
+
+\ex
+$c ∩ \set{w | \ml{Ecco swims in }w}$
+\xe
+
+One of the primary innovations of the satisfaction theory, and dynamic semantics more generally,\sidenote{See especially \cite{heim1982}.}, is to treat the \textit{semantic} contribution of a sentence as an instruction to update a context set:
+
+\ex
+$\eval{Ecco swims} = λ c . c ∩ \set{w | \ml{Ecco swims in }w}$
+\xe
+
+In this theory, semantic presupposition receives a natural treatment -- a sentence $p_{π}$ (where $π$ is its presupposition) -- requires that $π$ be true throughout the context set $c$, in order for an update of $c$ can be defined.
+
+We can write this is directly as a definedness condition:
+
+\ex
+$\eval{the dolphin swims} = λ c\begin{aligned}[t]
+  &: c ⊆ \set{w'|\ml{there is a dolphin in }w'}\\
+  &. c ∩ \set{w | \ml{a dolphin swims in }w}
+  \end{aligned}$\label{ex:presupps}
+\xe
+
+The update in (\ref{ex:presupps}) will simply be undefined if it doesn't follow from the mutual beliefs of the discourse participants that \textit{there is a dolphin}.
+
+This captures our qualitative intuitions about the conditions under which a sentence with a presupposition is felicitous.
+
+One of the most beautiful results of the satisfaction theory is that it provides us with the results to capture the Heim-Karttunen projection patterns.
+
+\ex
+{}[A dolphin swam] and [the dolphin was fast].\hfill\textit{presuppositionless}
 \xe
 
 \ex~
-$p$ and \(q_{\pi}\)\hfill\(⇝ \ml{if }p\ml{ then }π\)
+{}[the dolphin was fast] and [a dolphin swam].\\\phantom{,}\hfill\textit{presupposes: there is a dolphin}
 \xe
 
-There's doesn't match up with what we tend to accommodate. Imagine an utterance of the following:
+\ex~
+\textbf{Projection in conjunctive sentences}\\If A\(_π\), and B\(_ρ\), then a sentence of the form \enquote{A and B} presupposes \(π\), and unless A entails \(ρ\), also presupposes \(ρ\)
+\xe
+
+We find an identical pattern in conditional sentences:
+
+\ex
+If [a dolphin swims], then [the dolphin is fast].\hfill\textit{presuppositionless}
+\xe
+
+\ex~
+If [the dolphin is fast], then [a dolphin swims].\\
+\phantom{,}\hfill\textit{presupposes: there is a dolphin}
+\xe
+
+
+\ex~ \textbf{Projection in conditional sentences}\\
+If A\(_π\), and B\(_ρ\), then a sentence of the form \enquote{if A then B} presupposes \(π\), and unless A entails \(ρ\), also presupposes \(ρ\)
+\xe
+
+Famously, the way that these patterns are accounted for is to treat natural language \textit{and}, and \textit{if..then...} etc. as operations that manipulate \textit{updates}.
+
+Natural language \textit{and}, for example, can be defined as a connective that takes two updates $ϕ$ and $ψ$ threads them together via function composition -- first, the first conjunct updates the context set, then, the second conjunct updates the result.
+
+\ex Dynamic conjunction (def.)\\
+$ϕ ; ψ ≔ ψ ∘ ϕ$
+\xe
+
+Let's see, informally, how this captures the Heim-Karttunen projection facts.
+
+\ex
+$\begin{aligned}[t]
+  &\eval{a dolphin swam};\eval{the dolphin was fast}\\
+  &= λ c . \begin{aligned}[t]
+    &[λ c':c' ⊆ \set{w'|\ml{there's a dolphin in }w'} . c' ∩ \set{w'|\ml{a dolphin was fast in }w'}]\\
+    &(c ∩ \set{w|\ml{a dolphin swam in }w})
+    \end{aligned}
+  \end{aligned}$
+\xe
+
+Since first updating $c$ with \textit{a dolphin swam}, a subsequent update of the second conjunct is always guaranteed to be defined, just in case the first update is successful. This accurately captured the observed projection pattern.
+
+Since the definition of dynamic conjunction is \textit{asymmetric}, if the first conjunct has a definedness condition, this definedness condition will be inherited by the conjunctive update.
+
+The same kind of story holds for the conditional, although stating the meaning of the dynamic counterpart of material implication is somewhat more complicated.
+
+\textit{if p then q} is defined essentially via first order equivalence as \textit{it's not the case that p and not q}.
+
+\ex
+Dynamic conditional (def.)\\
+$\ml{if} ϕ ψ ≔ λ c . c - (ϕ c - (ϕ ; ψ) c)$
+\xe
+
+First, we update $c$ with $ϕ$, and then subtract the result of doing the sequential update $ϕ ; ψ$ on $c$. Then we subtract that final result from $c$.
+
+The component to pay attention to is the fact that the meaning of the operator is stated in terms of discourse sequencing.
+
+This captures the basic Heim-Karttunen projection facts -- since the consequent is interpreted in the context of first updating with the antecedent, it is guaranteed to be always defined:
+
+\ex
+$\begin{aligned}[t]
+  &\ml{if} \eval{a dolphin swam} \eval{the dolphin was fast}\\
+  &= λ c . c - \left(\begin{aligned}[c]
+      &(c ∩ \set{w|\ml{a dolphin swam in} w})\\
+      &- ((c ∩ \set{w|\ml{a dolphin swam in }w}) ∩ \set{w'|\ml{a dolphin was fast in }w'})
+      \end{aligned}\right)\end{aligned}$
+\xe
+
+\subsection{The proviso problem}
+
+The satisfaction theory, while providing an extremely neat explanation for the Heim-Karttunen projection facts, suffers from a well-known deficiency known as the \textit{proviso problem}.\sidenote{The proviso problem was first brought to light by \cite{geurts1996}.}
+
+Consider what we predict as the presupposition of the following sentence:
+
+\ex
+If a shark swims, then the dolphin was fast.
+\xe
+
+\ex
+$\begin{aligned}[t]
+  &\ml{if} \eval{a shark swims} \eval{the dolphin was fast}\\
+  &= λ c . c - \left(\begin{aligned}[c]
+      &(c ∩ \set{w|\ml{a shark swam in} w})\\
+      &- \left(\begin{aligned}[c]
+          &(λ c':c' ⊆ \set{w'|\ml{there's a dolphin in }w'} . c' ∩ \set{w'|\ml{a dolphin was fast in }w'})\\
+          &(c ∩ \set{w|\ml{a shark swam in }w})\end{aligned}\right)
+      \end{aligned}\right)\end{aligned}$
+\xe
+
+This update will be defined for a context $c$, just in case $c$ entails that \textit{no shark swam or there is a dolphin}.
+
+That's because, if the global context $c$ has this property, updating it with \textit{a shark swam} is enough to guarantee that the second disjunct must be true -- namely, that there is a dolphin, in which case the presupposition of the consequent is guaranteed to be satisfied.
+
+Note that \textit{no shark swam or there is a dolphin} is equivalent to \textit{if a shark swam, then there is a dolphin}, and indeed, the usual way that the proviso problem is stated is as follows: the satisfaction theory predicts weak, \textit{conditional} presuppositions in certain cases.
+
+Here's a classic example:
 
 \ex
 \label{ccp}If Theo hates sonnets, then so does his wife.\hfill\citep{geurts1996}
@@ -129,19 +267,17 @@ There's doesn't match up with what we tend to accommodate. Imagine an utterance 
 
 In an out-of-the-blue context, we would tend to accommodate (\ref{corr}), not the weaker (\ref{bad}) predicted by, e.g., the satisfaction theory:
 
-\ex\label{corr}Theo has a wife\xe
+\ex\label{corr}\textit{Theo has a wife}\hfill attested presupposition
+\xe
 
-\ex~\label{bad}If Theory hates sonnets then Theo has a wife\xe
+\ex~\label{bad}\textit{If Theory hates sonnets then Theo has a wife}\hfill predicated presupposition
+\xe
 
 The implicit assumption here is that, if the presupposition of a sentence \(p_{\pi}\) isn't entailed by a given context \(c\), we first update \(c\) with \(\pi\).
 
-In other words, we first winnow out worlds from the context where Theo hates sonnets but doesn't have a wife.
+In other words, we first winnow out worlds from the context where Theo hates sonnets but doesn't have a wife.\sidenote{Although we'll only talk about the satisfaction theory here for the sake of exposition, this isn't the only theory that facts the proviso problem. The multidimensional theory has the same problem (\citealt{karttunenPeters1979}), as does the trivalent approach (\citealt{george2007,george2008,fox2013}).
+}
 
-Although we'll only talk about the satisfaction theory here for the sake of exposition, this isn't the only theory that facts the proviso problem. The multidimensional theory has the same problem (\citealt{karttunenPeters1979}), as does the trivalent approach (\citealt{george2007,george2008,fox2013}).
-
-\begin{tcolorbox}
-  The \textit{proviso problem} is a problem about \textit{accommodation}
-  \tcblower
   The satisfaction theory predicts that if the weaker, conditional statement is part of the common ground, then accommodation will be unnecessary. This seems correct.
 
   \ex
@@ -149,48 +285,24 @@ Although we'll only talk about the satisfaction theory here for the sake of expo
   \cmark We haven't yet figured out whether or not Smith is still alive.
   \xe
 
-  \vspace{1ex}
-
   It's only when we have to accommodate that the proviso problem becomes apparent.
 
   \ex
-  We've figured out, that is the butler called in sick on Monday, then it was the butler who killed Smith.\\
+  We've figured out, that if the butler called in sick on Monday, then it was the butler who killed Smith.\\
   \xmark We haven't yet figured out whether or not Smith is still alive.
   \xe
 
-  \vspace{1ex}
-
-  So the question is, how do we keep the good predictions of the satisfaction theory, without making bad predictions wrt what is accommodated.
-
-  \vspace{1ex}
-
-  (examples from \citealt{mandelkern2016})
-
-\end{tcolorbox}
+  So the question is, how do we keep the good predictions of the satisfaction theory, without making bad predictions wrt what is accommodated (examples from \citealt{mandelkern2016}).
 
 The proviso problem is a problem for other connectives too:
 
 \ex
-If [Theo hates sonnets and his wife hates sonnets], we shouldn't get Theo a book of sonnets.\\
-\(⇝\) \textit{Theo has a wife}
-\xe
-
-\ex~
 Either Theo doesn't hate sonnets, or he and his wife both hate sonnets.\\
-\(⇝\) \textit{Theo has a wife}
+attested presupposition: \textit{Theo has a wife}\\
+predicted presupposition: \textit{if Theo hates sonnets then Theo has a wife}\\
 \xe
 
-To complicate matters further, sometimes the conditional presupposition seems to make \textit{good} predictions for accommodation:
-
-\ex
-If Theo is a scuba-diver, he'll bring his wetsuit on vacation.
-\xe
-
-\ex~
-If France is a monarchy, then the king of France is in hiding.
-\xe
-
-A possibly related problem is that the dynamic theory predicts weak projection for triggers embedded under attitude verbs, i.e., (\ref{alyx}) is predicted to presuppose that \textit{Alex believes that Robyn used to smoke}
+A possibly related problem is that the dynamic theory predicts weak projection for triggers embedded under attitude verbs, i.e., (\ref{alyx}) is predicted to presuppose that \textit{Alex believes that Robyn used to smoke}\sidenote{We won't discuss this data today, although \citeauthor{grove2019} does extend his theory to account for these cases.}
 
 \ex\label{alyx}Alex believes that Robyn stopped smoking.
 \xe
@@ -207,10 +319,10 @@ Nevertheless, what is accommodated when (\ref{alyx}) is uttered in an out of the
 Alex believes that Robyn stopped smoking, \# but I have no idea if she used to smoke.
 \xe
 
-\subsection{A pragmatic response to the proviso problem}
+\subsection{Dismissing a pragmatic response}
 
 
-A disparity between prediction presuppositions and what is accommodated is not necessarily an \textit{insurmountable} problem. Here is the basic idea behind a pragmatic explanation:
+A disparity between prediction presuppositions and what is accommodated is not necessarily an \textit{insurmountable} problem for the satisfaction theory. Here is the basic idea behind a pragmatic explanation:
 
 \ex
 \textit{Strengthening}:\\
@@ -243,7 +355,7 @@ John was limping earlier; I don't know why. Maybe he has a stress fracture. If h
 
 Some more problems for a pragmatic account:
 
-\subsubsection{Objection from assertion}
+\textbf{Objection from assertion}
 
 When we assert \enquote{if \(p\) the \(q\)}, why don't we always strengthen to \(q\) if \(q\) is more plausible?
 
@@ -251,7 +363,7 @@ We need to say something here, e.g., if you knew \(q\), you should have asserted
 
 Whatever our account is, it \textit{shouldn't} apply to presupposed content.
 
-\subsubsection{Objection from anaphora}
+\textbf{Objection from anaphora}
 
 Guerts (1996); attributed to van der Sandt:
 
@@ -266,7 +378,7 @@ Proviso cases pattern with (\ref{one}) not (\ref{one2}):
 If Theo hates sonnets, his wife does too. She definitely likes elegies though.
 \xe
 
-\subsubsection{Objection from factives}
+\textbf{Objection from factives}
 
 \ex
 Walter knows that if Theo hates sonnets, he has a wife.\\
@@ -275,7 +387,7 @@ Walter knows that if Theo hates sonnets, he has a wife.\\
 
 Since this presupposition is identical to that of \enquote{If Theo hates sonnets, then his wife does too}, why is the latter strengthened and this one not?
 
-\subsubsection{Objection from cancellation}
+\textbf{Objection from cancellation}
 
 If strengthening is pragmatic, it should be cancellable.
 
@@ -289,15 +401,19 @@ If the problem was difficult, then it wasn't Morton who solved it. But as a matt
 \a\ljudge{\#}If there are bloodstains in the room, then Susie's murderer's did a sloppy job.
 \xe
 
+\subsection{Towards a scopal theory}
+
 \citeauthor{grove2019}'s strategy in this paper is as follows:
 
 \begin{itemize}
 
     \item Start out with a compositional fragment with the resources for dealing with intensionality and alternatives, building on \citet{Charlowc,charlow2019}.
 
-    \item Extend this grammar with the resources to deal with presupposition, using trivalence.
+  \item Extend this grammar with the resources to deal with presupposition, and sequential update. Show how the proviso problem arises.
 
-    \todo[inline]{Complete this list}
+  \item Extend the fragment with mechanisms that allow the evaluation of a presupposition to be \textit{delayed} (scope-taking).
+
+   \item The proviso problem is resolved by allowing a presupposition trigger to scope out of an environment which would otherwise lead to filtration.
 
 \end{itemize}
 
@@ -327,6 +443,8 @@ We can think of (\ref{ex:func1}) as a function that takes a world $w$, and:
 
 \end{itemize}
 
+In other words, the conditions on membership in (\ref{ex:set1}) are \textit{bivalent}.
+
 For reasons that will become clear, \citeauthor{grove2019} adopts a theory which introduces a slight twist on the Stalnakerian formula -- rather than sets of possible worlds, sentences will be taken to denote sets of \textit{pairs} of worlds and truth values.
 
 \ex
@@ -344,6 +462,12 @@ $$\eval{a dolphin swam} = \Set{\begin{aligned}[c]
     &⟨w_{∅},⊥⟩\end{aligned}}$$
 
 We can think of sentences with indefinites as inducing \textit{indeterminacy} -- the sentence \enquote{a dolphin} swam has an indeterminate truth value at $w$, depending on which dolphin in $w$ we have in mind.
+
+We can of course retrieve the classical proposition as follows:
+
+\ex
+$\set{⟨w,(⟨w,⊤⟩ ∈ \eval{a dolphin swam})⟩}$
+\xe
 
 Just as before, we can think of a set of pairs as syntactic sugar for a curried characteristic function, as in (\ref{ex:curried}).
 
@@ -374,12 +498,16 @@ Predicates, on the other hand, are assumed to denote sets of world-predicate pai
 $\eval{swam} ≔ \set{⟨w,(λ x . \ml{swam}_{w} x)⟩}$\hfill$\type{s → (e → t) → t}$
 \xe
 
-We can compose indefinites and predicates by doing an intensionalized version of \acf{pfa}.\sidenote{In function talk, intensional \acs{pfa}, which we'll \textit{ap}. This is defined as follows:
+We can compose indefinites and predicates by doing an intensionalized version of \acf{pfa}.\sidenote[][-10\baselineskip]{In function talk, intensional \acs{pfa}, which we'll \textit{ap}. This is defined as follows:
+
 
   \ex
   $\begin{aligned}[t]
     &m \pfa n\\
-    &≔ λ wp . ∃x,y[m w x ∧ n w y ∧ p = x \ml{A} y]
+    &≔ λ wp . ∃x,y\left[\begin{aligned}[c]
+        &m w x\\
+        &∧ n w y ∧ p = x \ml{A} y
+      \end{aligned}\right]
     \end{aligned}$
   \xe
 
@@ -468,15 +596,13 @@ Pure, defined in (\ref{def:pure}), is a method for lifting a value into a trivia
 \phantom{,}\hfill$\type{\odot a → \odot (a → b) → \odot b}$\label{def:ap}
 \xe
 
-\todo[inline]{Something about how Julian assumes weak Kleene}
-
 \section{Upgrading the fragment to accommodate presupposition}
 
 \subsection{Adding trivalence}
 
 In order to analyze presuppositions, we'll shift to a trivalent setting. Alongside the familiar truth values $\type{⊤}$ and $⊥$, we'll introduce a new truth value -- $\#$.
 
-To model this formally, we'll define a new sum type $\type{t_{\#}}$, the inhabitants of which are the three trivalent truth values. We can think of $\#$ as representing a state of uncertainty regarding the truth of a sentence.
+To model this formally, we'll define a new sum type $\type{t_{\#}}$, the inhabitants of which are the three trivalent truth values. We can think of $\#$ as representing a state of uncertainty.
 
 $$
 \begin{aligned}[t]
@@ -500,6 +626,12 @@ To briefly illustrate, the following predicate will return $\#$ if its argument 
 
 \ex
 $λ x . δ (\ml{dolphin}_{w} x)$
+\xe
+
+In set talk, this means that membership conditions on a set can be trivalent -- there are three possibilities: (a) $x$ is in $X$ (return $⊤$), (b) $x$ is not in $X$ (return $⊥$), or (c) it's undefined whether or not $x$ is in $X$ (return $\#$).
+
+\ex
+$\set{x|δ (\ml{dolphin}_{w} x)}$
 \xe
 
 In order to simplify the proposal for presupposition projection, \citeauthor{grove2019} assumes a weak Kleene semantics for the metalanguage logical connectives:\sidenote{Importantly, Weak Kleene is \textit{not} taken to characterize the meaning of natural language \textit{and}, \textit{if..then..}, etc.}
@@ -563,7 +695,7 @@ The type constructor is much the same as our old type constructor, only, instead
 $\type{\aplp a ≔ s → a → t_{\#}}$\label{def:appl}
 \xe
 
-Here, set talk breaks down, but we can talk as if (\ref{def:appl}) characterizes a set of world-value pairs for which membership can be \textbf{true}, \textbf{false}, or \textbf{undefined}.
+Here, set talk breaks down somewhat, but we can still talk \enquote{as if} (\ref{def:appl}) characterizes a set of world-value pairs for which membership can be \textbf{true}, \textbf{false}, or \textbf{undefined}. We'll continue to use sets as syntactic sugar for curried functions.
 
 We can now also redefine pure and ap such that they can handle inhabitants of this newly enriched type space:
 
@@ -606,7 +738,7 @@ In our new, trivalent setting, definites such as \enquote{the dolphin} will take
 $\eval{the dolphin} ≔ λwx . δ (\ml{dolphin}_{w} x)$\hfill$\type{\aplp\,e}$
 \xe
 
-We can still use set notation, but the parallel is obscured somewhat -- the result of right-hand side of the set comprehension can be either true, false, or \textit{undefined}:
+We can still use set notation, but as we've mentioned the parallel is obscured somewhat -- the result of right-hand side of the set comprehension can be either true, false, or \textit{undefined}:
 
 \ex
 $\eval{the dolphin} ≔ \set{⟨w,x⟩|δ (\ml{dolphin}_{w} x)}$\hfill\textit{set talk}
@@ -649,7 +781,7 @@ We've derived the basic presupposition projection properties of definites. The n
 
 \subsection{Basic presupposition projection}
 
-In order to account for presupposition, we need a \enquote{short-circuited} version of logical conjunction, defined in (\ref{def:conj2}).
+In order to account for the Heim-Karttunen projection pattern, we're going to need a \enquote{short-circuited} version of logical conjunction, defined in (\ref{def:conj2}).
 
 \begin{figure}
   \centering
@@ -663,7 +795,7 @@ $\begin{array}{c|ccc}
  \end{array}$
 \end{figure}
 
-This short-circuited connective is much like ordinary logical conjunction -- the difference being that if the first conjunct is \textbf{false}, $\&$ returns \textbf{false}, regardless of the value of the second conjunct.\sidenote{This is the so-called \enquote{middle Kleene} semantics for conjunction. \citet{george2014} shows that the middle Kleene entries for the truth-functional connectives can be derived from their bivalent entries via a general algorithm; the semantics in (\ref{def:conj2}) need not be stipulated.}
+This short-circuited connective is much like ordinary logical conjunction -- the difference being that if the first conjunct is \textbf{false}, $\&$ returns \textbf{false}, regardless of the value of the second conjunct.\sidenote[][-5\baselineskip]{This is the so-called \enquote{middle Kleene} semantics for conjunction. \citet{george2014} shows that the middle Kleene entries for the truth-functional connectives can be derived from their bivalent entries via a general algorithm; the semantics in (\ref{def:conj2}) need not be stipulated.}
 
 If were to imagine that $\&$ characterizes the inferences associated with English \textit{and}, this would predict that the following sentence should be judged \textit{false}, rather than undefined (although, to emphasise, we're not taking $\&$ not characterize the meaning of \textit{and}).
 
@@ -730,7 +862,7 @@ Given a proposition with presuppositions $ϕ_{π}$, $\ml{not} ϕ$ is a new prop
 
   \item For any world $w$, $⟨w,⊤⟩ ∈ \ml{not} ϕ$ just in case $ϕ ⟨w,⊤⟩ = ⊥$.
 
-    \item If $ϕ ⟨w,⊤⟩ = \#$, then $(\ml{not} ϕ) ⟨w,⊤⟩ = \#$ and $(\ml{not} ϕ) ⟨w,⊥⟩ = \#$
+    \item If $ϕ ⟨w,⊤⟩ = \#$, then $(\ml{not} ϕ) ⟨w,⊤⟩ = \#$ and $(\ml{not} ϕ) ⟨w,⊥⟩ = \#$
 
 \end{itemize}
 
@@ -760,8 +892,6 @@ The extension for \enquote{A dolphin didn't swim} is the following set of pairs:
 $$\Set{
     ⟨w_{∅},⊤⟩}$$
 
-Since there are no presuppositions, the resulting function maps every other world truth-value pair to $⊥$.
-
 If we have a definite description in the scope of sentential negation, however, the semantic presupposition of the complement is inherited by the negative sentence:
 
 \begin{figure}
@@ -777,25 +907,27 @@ If we have a definite description in the scope of sentential negation, however, 
 
 This is because, if there are no dolphins in $w$, membership of $⟨w,⊤⟩$ in the complement will be undefined, and metalanguage $¬$ preserves undefinedness (weak Kleene).
 
-We can use this entry for sentential negation to give an entry for the conditional operator:
+We can use this entry for sentential negation to give an entry for the conditional operator. Just as in the classical satisfaction theory, we do so via first order equivalence.
 
 \ex Conditional operator (def.)\\
 $\ml{if} ϕ ψ ≔ \ml{not} (ϕ + \ml{not} ψ)$
 \xe
 
-$\ml{if} ϕ ψ$ will turn out true, roughly, if updating $ψ$ with the negation of $ϕ$ turns out false.
+$\ml{if} ϕ ψ$ will turn out true, roughly, if updating $ϕ$ with the negation of $ψ$ turns out false.
 
 Only worlds in which the truth of $ϕ$ guarantees the truth of $ψ$ will remain.
 
-Let's see what this entry for the conditional operator predicts for our original sentence used to illustrate the proviso problem:
+Let's see what this entry for the conditional operator predicts for one of our original sentence used to illustrate the proviso problem:
 
 \ex
 If Theo has a brother, he'll bring his wetsuit.
 \xe
 
+The computation of the final meaning is shown in figure (\ref{fig:comp}).
+
 \begin{figure*}
   \centering
-  \caption{The proviso problem emerges}
+  \caption{The proviso problem emerges}\label{fig:comp}
   \begin{forest}
     [{$\set{⟨w,⊤⟩|⟨w,⊤⟩ ∉ \set{⟨w',⊤⟩|\ml{has-brother}_{w'} \ml{Theo} \conjd ⟨w',⊤⟩ ∉ \set{⟨w'',\ml{Theo bring}_{w''} x|δ (\ml{wetsuit}_{w''} x)⟩}}}$}
     [{$\ml{not} (\set{⟨w,\ml{has-brother}_{w} \ml{Theo}⟩} + \ml{not} \set{⟨w,\ml{Theo bring}_{w} x⟩|δ (\ml{wetsuit}_{w} x)})$}
@@ -811,7 +943,10 @@ If Theo has a brother, he'll bring his wetsuit.
 We can more clearly see what the presupposition on the resulting meaning is if we translate the resulting set back into function talk:
 
 \ex
-$λ wt . ¬ (\ml{has-brother}_{w} \ml{Theo} \& ¬ (∃x[δ (\ml{wetsuit}_{w} x) ∧ \ml{Theo bring}_{w} x]) ∧ t = ⊤)$
+$λ wt . ¬ \left(\begin{aligned}[c]
+    &\ml{has-brother}_{w} \ml{Theo}\\
+    &\conjd ¬ (∃x[δ (\ml{wetsuit}_{w} x) ∧ \ml{Theo bring}_{w} x]) ∧ t = ⊤
+  \end{aligned}\right)$
 \xe
 
 Since $¬$ preserves undefinedness, the presupposition of the second conjunct of \& is that Theo has a wetsuit.
@@ -834,8 +969,6 @@ In general, the reasons are the following:
 
 As we'll see \citeauthor{grove2019} will seek a way out of this bind by tinkering with the second property of the system -- he'll argue that the evaluation of a presupposition can be delayed, via the same mechanisms responsible for delayed evaluation in a more familiar domain -- namely, scope.
 
-\todo[inline]{Semantics for the conditional}
-
 \section{Shifting perspective: a grammar with scope-taking}
 
 In order make sense of the idea of presuppositional scope, we need to extend our fragment with a new operation: \textit{join}:
@@ -848,7 +981,7 @@ $μ m ≔ \set{⟨w,x⟩|∃n[⟨w,n⟩ ∈ m ∧ ⟨w,x⟩ ∈ n]}$\hfill$\typ
 
  Both the main set and the paired sets may, in principle, have definedness conditions on membership.
 
-$μ$ takees $m$, and gives back a set containing all members of the paired sets in $m$ which preserve the world with which they are paired.
+$μ$ takes $m$, and gives back a set containing all members of the paired sets in $m$ which preserve the world with which they are paired.
 
 Now, let's see how we convert a definite description into a scope taker.
 
@@ -915,6 +1048,26 @@ Now, back to our proviso problem case. We can generate the unconditional presupp
 
 Applying join to the resulting meaning will have the effect that the presupposition of the outer set takes precedent over either any at-issue content or presuppositions contributed by any inner sets.
 
+Many questions remain:
+
+\begin{itemize}
+
+  \item \citeauthor{mandelkern2016}'s data suggests that, if the presupposition of the consequent isn't entailed in its local context, scoping out is \textit{obligatory}. Why should this be?
+
+  \item In general, wide-scope seems to be the \enquote{default}, but as we've discussed in class, scope-shifting operations are often marked in the domain of quantificational scope.
+
+  \item It can't be quite as simple as that however, since if the presupposition of the consequent \textit{is} entailed in its local context, narrow scope is the default.
+
+\end{itemize}
+
+Does the following sentence even \textit{have} a reading that presupposes that Theo has a wetsuit? Given hearer charitability, how do we tell?
+
+\ex
+If Theo is a scuba diver, then he'll bring his wetsuit.
+\xe
+
 \printbibliography
 
 \end{document}
+
+% LocalWords:  definedness
