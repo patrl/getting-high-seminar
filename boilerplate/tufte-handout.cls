@@ -167,7 +167,11 @@
 \NewDocumentCommand\strawsonEntails{}{\ensuremath{⊧_S}}
 \NewDocumentCommand\nstrawsonEntails{}{\ensuremath{̸⊧_S}}
 \NewDocumentCommand\fade{m}{\textcolor{gray}{#1}}
+\NewDocumentCommand\hl{m}{\textcolor{red}{#1}}
+\NewDocumentCommand\assertive{m}{\ensuremath{#1}^{\ml{A}}}
+\NewDocumentCommand\expressive{m}{\ensuremath{#1}^{\ml{E}}}
 \NewDocumentCommand\bind{}{\ensuremath{≫\!\!=}}
+\NewDocumentCommand{\sad}{}{\ensuremath{☹}}
 
 \RequirePackage{microtype}
 
