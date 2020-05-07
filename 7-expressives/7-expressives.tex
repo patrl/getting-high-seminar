@@ -90,6 +90,132 @@
 
 \maketitle% this prints the handout title, author, and date
 
+\begin{tcolorbox}
+  \textbf{Schedule}
+  \tcblower
+  Today...
+
+  \begin{itemize}
+
+    \item ...I'll finish the discussion of expressives and scope in the first half of the class...
+
+    \item ...in the second half of the class, Sherry will discuss intonation and scope, with a focus on the interaction between universals and negation!
+
+    \item Next week (\textbf{Thursday May 14; 2-5pm}), we'll have there will be two further discussions:
+
+      \begin{itemize}
+
+          \item Enrico will discuss Larson's generalization, and arguments for/against the scope islandhood of DP.
+
+          \item Tanya will discuss the scope of disjunction, paying special attention to disjoined embedded declaratives and interrogatives.
+
+      \end{itemize}
+
+   \end{itemize}
+\end{tcolorbox}
+
+\section{Recap}
+
+The phenomena:
+
+\ex
+The \hl{frakking} cat is being affectionate for once.\hfill$\sad ιx[\ml{cat} x]$
+\xe
+
+Expressive content exhibits \textit{projection}...
+
+\textsc{projection}: much like presuppositions, expressive content projects out of embedded constituents.
+
+\ex
+Nobody who has met that \hl{frakking} cat enjoys its company.\hfill$\sad \ml{that-cat}$
+\xe
+
+...and \textit{non-interaction}.
+
+\textsc{Non-interaction:} an expressive adjective in the scope of an expressive adjective has no affect on its semantic contribution.
+
+\ex
+The \hl{frakking} editor of this journal won't respond to my emails.\\
+\phantom{,}\hfill$\sad \ml{the-editor-this-journal}$
+\xe
+
+\ex~
+The editor of this \hl{frakking} journal won't respond to my emails.\\
+\phantom{,}\hfill$\sad \ml{this-journal}$
+\xe
+
+\ex~
+{}[The \hl{frakking} editor of [this \hl{frakking} journal]]\\
+won't respond to my emails.\hfill$\sad \ml{the-editor-this-journal}$\\
+\phantom{,}\hfill$\sad \ml{this-journal}$\\
+\xe
+
+The analysis: \textit{multi-dimensionality}:
+
+\ex Expressive type-constructor (def.)\\
+$\type{W a ≔ a · t}$
+\xe
+
+\pex~ Retrieval functions $\ml{A}$ and $\ml{E}$ (defs.)\\
+\a $\assertive{(x \cdot p)} ≔ x$\hfill$\type{a · t → a}$
+\a $\expressive{(x \cdot p)} ≔ p$\hfill$\type{a · t → t}$
+\xe
+
+\ex~ Expressive \textit{return} (def.)\\
+$x^{η} ≔ x · ⊤$\hfill$η: \type{a → a · t}$
+\xe
+
+\ex~ Apply (def.)\\
+$(x · p) ⊛ (y · q) ≔ (\ml{A} x y) · (p ∧ q)$\hfill$⊛ : \begin{aligned}[t]
+  &\type{a · t → (a → b) · t → b · t}\\
+  &\type{(a → b) · t → a · t → b · t}
+  \end{aligned}$
+\xe
+
+The baseline case to be accounted for (local readings):
+
+\ex
+\hl{Frakking} Lou is being affectionate for once.\hfill $\sad \ml{lou}$
+\xe
+
+A non-scopal entry for \acp{ea}:
+
+\ex
+$\ml{frakking} (x · p) ≔ x · (p ∧ \sad x)$\hfill$\type{e · t → e · t}$
+\xe
+
+It takes an individual with associated expressive content, returns that individual, and bumps an expressive attitude towards the individual into the expressive dimension -- this is illustrated in figure \ref{simp}.
+
+\begin{figure}
+  \centering
+  \caption{\enquote{Frakking Lou is being affectionate (for once).}}\label{simp}
+  \begin{forest}
+    [{$\ml{affectionate lou} · \sad \ml{lou}$\\$⊛$}
+    [{$\ml{lou} · \sad \ml{lou}$}
+      [{$\ml{frakking}$}]
+      [{$\ml{lou} · ⊤$\\Lou$^{η}$}]
+    ]
+      [{$(λ x . \ml{affectionate} x) · ⊤$\\affectionate$^{η}$}]
+    ]
+  \end{forest}
+\end{figure}
+
+Accounting for non-interaction -- this is illustrated in fig \ref{fig:interac}:
+
+\begin{figure}
+  \centering
+  \caption{\enquote{Frakking [frakking Lou's friend] is being affectionate for once.}}\label{fig:interac}
+  \begin{forest}
+    [{$\ml{affectionate} ιx[x \ml{friend} \ml{lou}] · \sad \ml{lou} ∧ \sad ιx[x \ml{friend} \ml{lou}]$\\$⊛$}
+    [{$ιx[x \ml{friend lou}] · \sad \ml{lou} ∧ \sad (ιx[x \ml{friend lou}])$}
+      [{frakking}]
+      [{$ιx[x \ml{friend lou}] · \sad \ml{lou}$} [{frakking Lou's friend},roof]]
+    ]
+      [{$(λ x . \ml{affectionate} x) · ⊤$\\affectionate$^{η}$}]
+    ]
+  \end{forest}
+\end{figure}
+
 \section{Non-local readings}
 
 In the examples we've analyzed so far, the expressive adjective composes directly with the individual towards which the expressive attitude is directed. Surface compositionality can therefore be straightforwardly achieved.
@@ -108,7 +234,7 @@ Importantly, (\ref{cat1}) is compatible with (i) the speaker having a positive a
 
 Similarly, the following examples can convey that the speaker has a negative attitude towards \textit{the fact that the cat peed on the couch}
 
-\ex~
+\ex
 The \hl{frakking} cat (which I love) is peeing on my favorite couch.\hfill$\sad p$
 \xe
 
@@ -172,7 +298,7 @@ $\semtower{f []}{x} ≔ λ k . f (k x)$
 
 As well as scopal meanings, scopal types can be abbreviated using tower notation as follows:
 
-\ex~ Tower types (def.)\\
+\ex Tower types (def.)\\
 $\typetower{\type{r}}{\type{a}} ≔ \type{(a → r) → r}$
 \xe
 
@@ -204,7 +330,7 @@ $\eval{everyone} ≔ \semtower{∀ x[]}{x}$\hfill$\type{\typetower{t}{e}}$
 In the following, in order to model expressive scope, we'll assume that the return type is a \textit{fancy} type, namely $\type{e · t}$.
 
 
-\subsection{Lifting multidimensional values into scope-takers}
+\subsection{Expressive adjectives as scope-takers}
 
 We can now recast our old meaning for \textit{frakking} as an identity function with an expressive side-effect:
 
@@ -228,39 +354,40 @@ $\ml{frakking}_{S}$ encodes two meaning components:
 
 \end{itemize}
 
-This generalizes our non-scopal treatment of \acp{ea}, as illustrated below. Note that the definition of expressive \textit{lower} doesn't use the identity functional, but rather $ρ$. Looking at the type of expressive lower should tell you why.
+This generalizes our non-scopal treatment of \acp{ea}. Note that the definition of expressive \textit{lower} doesn't use the identity functional, but rather $ρ$. Looking at the type of expressive lower should tell you why.
 
 \ex Expressive lower (def.)
 $m^{↓} ≔ m ρ$\hfill$↓:\type{\semtower{a · t}{a} → a · t}$
 \xe
 
-Here's an example of an expressive adjective composing with a proper name via \ac{sfa}. The result is immediately lowered.
+Here's an example of an expressive adjective composing with a proper name via \ac{sfa}. The result is immediately lowered -- figure \ref{starbuck}.
 
 \begin{figure}
 \centering
-\caption{\enquote{fracking Starbuck}}
+\caption{\enquote{frakking Starbuck}}\label{starbuck}
 \begin{forest}
   [{$\ml{starbuck} · \sad \ml{starbuck}$}
-    [{$\semtower{\ml{frakking} []}{\ml{starbuck}}$}
+  [{$\ml{frakking} (\ml{starbuck} · ⊤)$},edge label={node[midway,left,font=\scriptsize]{equiv.}}
+    [{$\semtower{\ml{frakking} []}{\ml{starbuck}}$\\$\ml{S}$},edge label={node[midway,left,font=\scriptsize]{$↓$}}
       [{$\semtower{\ml{frakking} []}{id}$\\frakking$_{S}$}]
-      [{$\semtower{[]}{\ml{starbuck}}$\\Starbuck$^{↑}$}]
+      [{$\semtower{[]}{\ml{starbuck}}$} [{Starbuck},edge label={node[midway,left,font=\scriptsize]{$↑$}}]]
     ]
-  ]
+  ]]
 \end{forest}
 \end{figure}
 
-DP-level readings are accounted for by assuming that expressive lower is \textit{delayed}, as shown in figure \ref{fig:dp-level}.
+DP-level readings are accounted for by assuming that expressive lower is \textit{delayed} until the meaning of the DP has been computed, as shown in figure \ref{fig:dp-level}.
 
 \begin{figure}
   \centering
   \caption{\enquote{The fracking cat}}\label{fig:dp-level}
   \begin{forest}
     [{$ιx[\ml{cat} x] · \sad (ιx[\ml{cat} x])$}
-    [{$\semtower{\ml{frakking} []}{ιx[\ml{cat} x]}$}
-      [{$\semtower{[]}{λ P . ιx[P x]}$\\the$^{↑}$}]
-      [{$\semtower{\ml{frakking} []}{λ x . \ml{dog} x}$}
-        [{$\semtower{\ml{frakking} []}{id}$\\frakking$_{S}$}]
-        [{$\semtower{[]}{λ x . \ml{cat} x}$\\cat$^{↑}$}]
+    [{$\semtower{\ml{frakking} []}{ιx[\ml{cat} x]}$\\$\ml{S}$},edge label={node[midway,left,font=\scriptsize]{$↓$}}
+      [{$\semtower{[]}{λ P . ιx[P x]}$} [{the},edge label={node[midway,left,font=\scriptsize]{$↑$}}]]
+      [{$\semtower{\ml{frakking} []}{λ x . \ml{cat} x}$\\$\ml{S}$}
+        [{$\semtower{\ml{frakking} []}{id}$}]
+        [{$\semtower{[]}{λ x . \ml{cat} x}$} [{cat},edge label={node[midway,left,font=\scriptsize]{$↑$}}]]
       ]
     ]
     ]
@@ -276,33 +403,64 @@ One way of accounting for clausal readings without positing a polysemous entry f
   [{$(\ml{peed-outside} ιx[\ml{cat} x])^{∩} · \sad (\ml{peed-outside} ιx[\ml{cat} x])^{∩}$}
   [{$\semtower{\ml{frakking} []}{(\ml{peed-outside} ιx[\ml{cat} x])^{∩}}$}
     [{$∩^{↑}$}]
-    [{$\semtower{\ml{frakking} []}{\ml{peed-outside} ιx[\ml{cat} x]}$}
+    [{$\semtower{\ml{frakking} []}{\ml{peed-outside} ιx[\ml{cat} x]}$\\$\ml{S}$}
       [{$\semtower{\ml{frakking} []}{ιx[\ml{cat} x]}$} [{the frakking cat},roof]]
-      [{$\semtower{[]}{λ x . \ml{peed-outside} x}$} [{peed outside$^{↑}$},roof]]
+      [{$\semtower{[]}{λ x . \ml{peed-outside} x}$} [{peed outside},edge label={node[midway,left,font=\scriptsize]{$↑$}}]]
     ]
  ]]
 \end{forest}
 \end{figure}
 
-\subsection{Expressive adjectives and scope islands}
+\section{Non-local readings: pragmatics or the grammar?}
 
-\begin{description}
+Here, like \citeauthor{gutzmann2015}, we've suggested a way of accounting for non-local readings in the grammar.
 
-    \item[Conjecture] so-called \enquote{non-local readings} of \acp{ea} are a scopal phenomenon.
+There is another (to my knowledge the only one) approach to non-local readings of \acp{ea} -- \citeauthor{frazierDillonClifton2015}'s (\citeyear{frazierDillonClifton2015}) pragmatic approach. Their analysis is based on what they dub \enquote{the speech act hypothesis} (p.\,294).
 
-    \item[Prediction] Non-local readings of \acp{ea} should be sensitive to scope islands.
+\enquote{[The speech act hypothesis] claims that an expressive like \textit{damn} constitutes a speech act seperate from the speech act of the at-issue content conveyed by the result of the sentence (Potts, 2005, 2007), and permits the expressive to be interpreted with respect to portions of the utterance (including the entire utterance) other than its syntactic sister.}\\
+\phantom{,}\hfill(\citealt[p.\,299]{frazierDillonClifton2015})
 
-\end{description}
+To adopt \citeauthor{gutzmann2015}'s paraphrase, the idea is that \acp{ea} behave as if uttered independently and search for their target from an unintegrated position in a purely pragmatic fashion.
 
-\citet{gutzmann2019chap4} provides extensive argumentation that non-local readings of \acp{ea} are subject to syntactic restrictions -- they are sensitive to syntactic islands such as relative clauses, but crucially also cannot extend out of finite clauses, just like other scope-takers.
+They predict, therefore, that a \textit{sentence-internal} \ac{ea} gives rise to the same readings as an \ac{ea} uttered before the sentence:
+
+\pex
+\a The \hl{damn} dog ate the cake.
+\a The dog ate the \hl{damn} cake.
+\a \hl{Damn!} The dog ate the cake.
+\xe\label{all-three}
+
+This seems right for the clausal reading -- all three sentences in (\ref{all-three}) can convey that the speaker is upset at the \textit{state of affairs} conveyed by the sentence. The reading we've glossed as follows:
+
+\ex
+$(ιx[\ml{dog} x] \ml{ate} ιy[\ml{cake} y])^{∩} · \sad (ιx[\ml{dog} x] \ml{ate} ιy[\ml{cake} y])^{∩}$
+\xe
+
+However, a purely pragmatic approach makes some arguably less plausible predictions:
+
+\begin{itemize}
+\item The subject internal \ac{ea} can target the individual denoted by the object.
+\item The object internal \ac{ea} can target the individual denoted by the subject.
+\item An independent \ac{ea} can target the individuals denoted by the subject or the object.
+\end{itemize}
+
+\citet{frazierDillonClifton2015} attempt to get around this by claiming that there can be a pragmatic effect of placing an \ac{ea} in a particular syntactic position: \enquote{the reader will wonder why the speaker placed the expressive where she did} (\citealt[p.,296]{frazierDillonClifton2015}).\sidenote{You can wonder how convincing this is as a response.}
+
+In general, \citet{frazierDillonClifton2015} make the rather strong prediction that readings associated with \acp{ea} are subject to \textit{no} structural conditions, beyond pragmatic effects arising from their placement in a particular position.
+
+As \citet{gutzmann2019chap4} points out however, non-local readings of \acp{ea} do in fact seem to be subject to syntactic restrictions.
+
+If we place the \ac{ea} in the object of an embedded clause, it may only target the individual denoted by the object, or the state of affairs conveyed by the embedded clause.
 
 \ex
 Peter said [that the dog ate the frakking cake].\\
-\cmark $\sad (\ml{the dog at the cake})$\\
 \cmark $\sad (\ml{the cake})$\\
+\cmark $\sad (\ml{the dog at the cake})$\\
 \xmark $\sad (\ml{Peter said that the dog ate the cake})$\\
 \xmark $\sad \ml{Peter}$
 \xe
+
+We observe a similar effect with a relative clause.
 
 \ex~
 The dog that ate the frakking cake is hungry.\\
@@ -312,37 +470,81 @@ The dog that ate the frakking cake is hungry.\\
 \xmark $\sad (\ml{The dog that ate the cake})$\\
 \xe
 
-The sensitivity of \acp{ea} to scope islands falls out as a \textit{prediction} of the semantics we assigned them.
+See \citet{gutzmann2015} for some preliminary experimental evidence supporting this claim.
 
-Consider the semantics of an unevaluated relative clause with an expressive side-effect:
-
-\ex
-$\eval{[that ate the frakking cake]} = \semtower{\ml{fracking} []}{λ y . y \ml{ate the cake}}$\hfill$\type{\semtower{e · t}{e → t}}$
-\xe
-
-The scope of the expressive cannot be evaluated since the bottom of the tower isn't (and can't be shifted to) type $\type{e}$.
-
-The scope of the expressive must therefore be evaluated \textit{inside} of the relative clause.
-
-One thing that's important to note -- expressive side-effects \textit{once evaluated} are predicted to survive through scope islands.
-
-To see why, consider the semantics of an \textit{evaluated} relative clause with expressive side effects:
+The sensitivity of \acp{ea} to scope islands falls out as a \textit{prediction} of the semantics we assigned them. Let's recall the account of scope-islands we introduced in class 2.
 
 \ex
-$\eval{[that ate the frakking cake]} = (λ y . y \ml{ate} ιx[\ml{cake} x]) · \sad (ιx[\ml{cake} x])$
+\textit{Scope islands} (def.)\\
+A \textit{scope island} is a constituent that is subject to \textit{obligatory
+  evaluation}.\\
+\phantom{,}\hfill\citep[p. 90]{Charlowc}
 \xe
 
-The evaluated relative clause can be \textit{re-lifted} into an expressive scope-taker via expressive bind, and composition can continue.
+By \textit{obligatory evaluation}, we mean that every continuation argument
+\textit{must} be saturated before semantic computation can proceed. In other
+words, a scope island is a constituent where, if we have something of type
+$\typetower{r}{a}$, we must lower it before we can proceed.
 
-\ex Expressive bind (def.)\\
-$(x · p)^{⋆} ≔ λ k . (k x)^{\ml{A}} · ((k x)^{\ml{E}} ∧ p)$\hfill$⋆:\type{a · t → (a → b · t) → b · t}$
+Let's be more precise:
+
+\pex~
+\a A constituent X is \textit{evaluated} if it has an evaluated type $\type{a}$.
+\a A type $\type{a}$ is \textit{evaluated} if $\type{a} \neq \typetower{r}{a}$.
 \xe
 
-\ex~
-$\eval{that ate the frakking cat}^{⋆} = \semtower{(id · \sad (ιx[\ml{cake} x])) ⊛ []}{λ y . y \ml{ate} ιx[\ml{cake} x]}$\hfill$\type{\semtower{\type{b · t}}{\type{e → t}}}$
-\xe
+To see why, consider what happens if we embed an \ac{ea} in a scope island -- assuming that the scope island is subject to an obligatory lower. Lowering at the edge of the scope island will inevitably evaluate the scope of the \ac{ea} at highest at the embedded clause level. This is shown in figure \ref{si}.
 
-\subsection{Quantification, binding, and expressives}
+\begin{figure}
+  \centering
+  \caption{\acp{ea} in scope islands}\label{si}
+  \begin{forest}
+    [{\ldots}
+      [{Peter}]
+      [{\ldots}
+        [{said}]
+        [{$(ιy[\ml{dog} y] \ml{ate} ιx[\ml{cake} x])^{∩} · \sad (ιy[\ml{dog} y] \ml{ate} ιx[\ml{cake} x])^{∩}$}
+        [{$\ml{S}$},edge label={node[midway,left,font=\scriptsize]{$↓$}}
+          [{$\semtower{[]}{ιy[\ml{dog} y]}$} [{the dog},edge label={node[midway,left,font=\scriptsize]{$↑$}}]]
+          [{$\ml{S}$}
+            [{$\semtower{[]}{λxy . y \ml{ate} x}$} [{ate},edge label={node[midway,left,font=\scriptsize]{$↑$}}]]
+            [{$\semtower{\ml{frakking} []}{ιx[\ml{cake} x]}$} [{the frakking cake},roof]]
+          ]
+        ]
+        ]
+      ]
+    ]
+  \end{forest}
+\end{figure}
+
+
+% \ex
+% $\eval{[that ate the frakking cake]} = \semtower{\ml{fracking} []}{λ y . y \ml{ate the cake}}$\hfill$\type{\semtower{e · t}{e → t}}$
+% \xe
+
+% The scope of the expressive cannot be evaluated since the bottom of the tower isn't (and can't be shifted to) type $\type{e}$.
+
+% The scope of the expressive must therefore be evaluated \textit{inside} of the relative clause.
+
+% One thing that's important to note -- expressive side-effects \textit{once evaluated} are predicted to survive through scope islands.
+
+% To see why, consider the semantics of an \textit{evaluated} relative clause with expressive side effects:
+
+% \ex
+% $\eval{[that ate the frakking cake]} = (λ y . y \ml{ate} ιx[\ml{cake} x]) · \sad (ιx[\ml{cake} x])$
+% \xe
+
+% The evaluated relative clause can be \textit{re-lifted} into an expressive scope-taker via expressive bind, and composition can continue.
+
+% \ex Expressive bind (def.)\\
+% $(x · p)^{⋆} ≔ λ k . (k x)^{\ml{A}} · ((k x)^{\ml{E}} ∧ p)$\hfill$⋆:\type{a · t → (a → b · t) → b · t}$
+% \xe
+
+% \ex~
+% $\eval{that ate the frakking cat}^{⋆} = \semtower{(id · \sad (ιx[\ml{cake} x])) ⊛ []}{λ y . y \ml{ate} ιx[\ml{cake} x]}$\hfill$\type{\semtower{\type{b · t}}{\type{e → t}}}$
+% \xe
+
+\section{Interaction with quantifiers}
 
 When uttered by a speaker who likes cats, the following example can express a negative attitude towards whichever cat happens to be being affectionate -- the resolution of the expressive attitude is therefore \textit{indeterminate}.
 
@@ -352,18 +554,243 @@ A first crack at approximating the reading we're interested in is given below:
 A frakking cat is being affectionate for once.\hfill\xmark $∃x[\sad x]$
 \xe
 
-This isn't right -- it would fail to guarantee that the target of the expressive attitude is the same as the cat being affectionate.
+This isn't right -- it would fail to guarantee that the target of the expressive attitude is the same as the cat being affectionate.\sidenote{This is highly reminiscent of the so-called \textit{binding} problem associated with presupposition projections.}
 
 Rather, it seems like we want the existential quantifier to take scope over \textit{both} the descriptive and the expressive content. Something like: $∃x[(\ml{cat} x ∧ \ml{affectionate} x) · \sad x]$. It's not clear how to accomplish this compositionally, however.
 
-By way of contrast:
+Furthermore, the availability of this reading seems to be affected by the presence of negation.
 
 \ex
-Every fucking cat is being affectionate for once.\hfill$∀x[\sad x]$
+I didn't see any frakking cat thankfully.\hfill\xmark $∃x[\sad x]$
 \xe
 
 In order to capture the interaction between expressives and indefinites, we'll need to fold in alternatives.
 
+\subsection{Alternatives}
+
+In order to capture the idea that indefinites induce \textit{indeterminacy}, it is common to treat indefinites as denoting alternative sets.
+
+\ex
+$\eval{a dog} ≔ \set{x|\ml{dog} x}$\hfill$\type{\set{e}}$
+\xe
+
+\citet{charlow2019} models composition of alternative sets via a parallel mechanism to the one we've been using for expressiveness. Indefinites such as \textit{a dog} are lifted into scope-takers with fancy return types via the operator bind ($⋆$):
+
+\ex Set bind (def.)\\
+$m^{⋆} ≔ λ x . \bigcup\limits_{x∈ m} k x$\hfill$\type{\set{a} → (a → \set{r}) → \set{r}}$
+\xe
+
+Applying set bind to our denotation for \textit{a dog} results in a scope-taker that contributes an individual locally, and returns an alternative set:
+
+
+We can abbreviate this meaning using tower notation:
+
+\ex
+$\eval{a dog}^{⋆} ≔ λ k . \bigcup\limits_{\ml{dog} x} k x$\hfill$\type{(e → \set{r}) → \set{r}}$
+\xe
+
+We can now see how indeterminacy-introducing expressions can be incorporated into our grammar via the same mechanism that we incorporated expressive effects -- indefinites are lifted into scope takers via bind, and composition proceeds via lift and \ac{sfa}.
+
+
+\ex
+$\semtower{\bigcup\limits_{\ml{dog} x} []}{x}$\hfill$\typetower{\set{r}}{e}$
+\xe
+
+We also need a way of lowering the resulting meanings -- we do this via set-lower, which is defined in a way that's completely parallel to expressive lower.
+
+\ex Set lift (def.):
+$a^{η} ≔ \set{a}$\hfill$\type{\set{a}}$
+\xe
+
+\ex~ Set lower (def.):
+$m^{↓} ≔ m η$\hfill$\typetower{\set{a}}{a} → \type{\set{a}}$
+\xe
+
+Compositon in a simple sentence \textit{John saw a dog} is illustrated in figure \ref{fig:alt}:
+
+\begin{figure}
+\centering
+\caption{Composing alternatives}\label{fig:alt}
+\begin{forest}
+  [{$\set{\ml{j saw} x|\ml{dog} x}$}
+  [{$\bigcup\limits_{\ml{dog} x} \set{\ml{j saw }x}$}
+  [{$\semtower{\bigcup\limits_{\ml{dog} x} []}{\ml{j saw }x}$\\$\ml{S}$}
+    [{$\semtower{[]}{\ml{j}}$} [{John}]]
+    [{$\ml{S}$}
+      [{$\semtower{[]}{λxy . y \ml{saw} x}$} [{saw}]]
+      [{$\semtower{\bigcup\limits_{\ml{dog} x} []}{x}$} [{a dog}]]
+    ]
+  ]]]]
+\end{forest}
+\end{figure}
+
+We now have two different kinds of \enquote{fancy} types:
+
+\begin{itemize}
+
+    \item $\type{\set{a}}$ is used to model $a$s with indeterminacy.
+
+    \item $\type{a · t}$ is used to model $a$s with expressive content.
+
+\end{itemize}
+
+In order to account for the interaction between expressive content and indefinites, we need a fancy type that accommodates \textit{both} indeterminacy \textit{and} expressive content. This is defined below:
+
+\ex Set-expressive type constructor (def.)\\
+$\type{\set{a · t}}$
+\xe
+
+The lift function for this fancy type is defined in the obvious way:
+
+\ex Set-expressive lift (def.)\\
+$a^{η} ≔ \set{a · ⊤}$\hfill$\type{a → \set{a · t}}$
+\xe
+
+Likewise, we can lift any inhabitant of $\set{\type{a}}$ into an inhabitant of $\set{\type{a · t}}$:
+
+\ex Set to set-expressive lift (def.):\\
+$m^{⇑} ≔ \set{x · ⊤ | m x}$\hfill$\type{\set{a} → \set{a · t}}$
+\xe
+
+If we apply this type-shifter to our indefinite meaning, we get a set of alternatives associated with trivial expressive content:
+
+\ex
+$\eval[⇑]{a dog} = \set{(x · ⊤) | \ml{dog} x}$\hfill$\type{\set{e · t}}$
+\xe
+
+Finally, we want to redefine our \ac{ea} as something that takes scope over a \textit{fancy} individual:
+
+\ex \ac{ea} basic def.\\
+$\ml{frakking} m ≔ \set{(x · (p ∧ \sad x)) | (x · p) ∈ m}$
+\xe
+
+\ex~ \ac{ea} scopal def.\\
+$\ml{frakking}_{S} ≔ \semtower{\ml{frakking} []}{id}$
+\xe
+
+This is enough to get the right kind of semantic object for the hypothetical LF \textit{frakking a dog}, although this seems to be ungrammatical, presumably for syntactic reasons.
+
+\ex
+$\ml{frakking} \eval[⇑]{a dog} = \set{(x · \sad x)|\ml{dog} x}$
+\xe
+
+This means we still need to say a little more to get non-local readings with indefinite DPs.
+
+\subsection{Putting the pieces together}
+
+To account for cases where a \ac{ea} targets an indeterminate entity, we need to say a little more about how indefinite determiners compose with their restrictors.
+
+Here's an entry for the indefinite determiner that takes a function from an individual to an indeterminate truth value, and gives back a set of alternatives:
+
+\ex Indefinite determiner (def.)\\
+$\ml{a} ≔ λ k . \set{x | ⊤ ∈ k x}$\hfill$\type{(e → \set{t}) → \set{e}}$
+\xe
+
+Via lambda-theoretic equivalence, we can write this using tower notation:
+
+\ex Indefinite determiner (tower ver.)\\
+$\semtower{\ml{a} (λ x . [])}{x}$\hfill$\tower{\type{\set{e}}}{\type{\set{t}}}{\type{e}}$
+\xe
+
+Indefinite determiners compose with their restrictors via \ac{sfa} -- they are lowered into indeterminate individuals via set lower:
+
+\ex
+\begin{forest}
+  [{$\set{x|\ml{dog} x}$}
+  [{$\set{x | ⊤ ∈ \set{\ml{dog} x}}$},edge label={node[midway,left,font=\scriptsize]{equiv.}}
+  [{$\ml{a} (λ x . \set{\ml{dog} x})$},edge label={node[midway,left,font=\scriptsize]{equiv.}}
+  [{$\semtower{\ml{a} (λx . [])}{\ml{dog} x}$\\$\ml{S}$},edge label={node[midway,left,font=\scriptsize]{$↓$}}
+    [{$\semtower{\ml{a} (λ x . [])}{x}$}]
+    [{$\semtower{[]}{λ x . \ml{dog} x}$} [{dog},edge label={node[midway,left,font=\scriptsize]{$↑$}}]]
+  ]]]]
+\end{forest}
+\xe
+
+We can now compose an \ac{ea} with a nominal restrictor, and get back something that locally contributes a predicate, and takes scope over a fancy individual. In order to get the reading we're interested in, we're going to \textit{internally lift} the result.
+
+\ex
+\begin{forest}
+  [{$\semtower{\ml{frakking} []}{\semtower{[]}{λ x . \ml{dog} x}}$}
+  [{$\semtower{\ml{frakking} []}{λ x . \ml{dog} x}}
+    [{$\ml{frakking}_{S}$}]
+    [{$\semtower{[]}{λ x . \ml{dog} x}$} [{dog},edge label={node[midway,left,font=\scriptsize]{$↑$}}]]
+  ]]
+\end{forest}
+\xe
+
+The resulting restrictor meaning is now composes with the \textit{externally lifted} determiner via \ac{sfa}. We now do \textit{internal lower} to get an indeterminate individual on the bottom tier, followed by lower to apply frakking to the fancy individual.
+
+\ex
+\begin{forest}
+  [{$\set{(x · \sad x) | \ml{dog} x}$}
+  [{$\ml{frakking} \set{(x · ⊤)|\ml{dog} x}$},edge label={node[midway,left,font=\scriptsize]{equiv.}}
+  [{$\semtower{\ml{frakking} []}{\set{x|\ml{dog} x}}$},edge label={node[midway,left,font=\scriptsize]{$↓$}}
+  [{$\semtower{\ml{frakking} []}{\semtower{\ml{a} (λ x . [])}{\ml{dog} x}}$\\$\ml{S}$},edge label={node[midway,left,font=\scriptsize]{$⇊$}}
+    [{$\semtower{[]}{\semtower{\ml{a} (λ x . [])}{x}}$} [{a},edge label={node[midway,left,font=\scriptsize]{$↑$}}]]
+    [{$\semtower{\ml{frakking} []}{\semtower{[]}{λ x . \ml{dog} x}}$} [{frakking dog},roof]]
+  ]]]]
+\end{forest}
+\xe
+
+This composes with the remainder of the sentence via familiar means, and we end up with the following kinds of sentential meanings:
+
+\ex
+$\eval{John saw a frakking dog} ≔ \set{(\ml{j saw }x · \sad x)|\ml{dog} x}$
+\xe
+
+We can get back the assertive contribution of the sentence via the following closure operator:
+
+\ex Indeterminate, expressive closure (def.)\\
+$m^{↯} ≔ ∃(p · q) ∈ m[(p ∧ q) = ⊤]$\hfill$\type{\set{t · t} → t}$
+\xe
+
+
+What about negation? Notice that if an indefinite scopes under negation, the sentence lacks a DP-level reading for the indefinite:
+
+\ex
+John didn't see any frakking dog.
+\xe
+
+In order to account for this, we write an entry for negation which closes off the indeterminacy of any indefinites in its scope:
+
+\ex
+$\ml{not} m ≔ \set{¬∃p ∈ m[p = ⊤]}$\hfill$\type{\set{t} → \set{t}}$
+\xe
+
+Note that negation is defined as applying to a plain alternative set, and returning a plain alternative set -- it doesn't have any idea what to do with expressive content in its scope, and concretely it isn't defined for something of type $\type{\set{t · t}}$. The following therefore won't compose:
+
+\ex
+\begin{forest}
+ [{\xmark}
+   [{$λ m . \set{¬∃p ∈ m[p = ⊤]}$\\not}]
+   [{$\set{(\ml{j saw }x · \sad x)|\ml{dog} x}$} [{John see a frakking dog},roof]]
+]
+\end{forest}
+\xe
+
+The only way for composition to proceed is to scope out the indefinite, along with the associated expressive content.
+
+Note that the account outlined here leads to a neater story for clausal-level readings as expressives targeting indeterminate \textit{events}. We can assume that verbs have the following denotation:
+
+\ex
+$\eval{swim} = \set{v|\ml{swimming} v}$\hfill$\type{\set{e}}$
+\xe
+
+A clause level reading can be analyzed as follows:
+
+\ex The dog is frakking swimming.
+\xe
+
+\ex~
+$\set{(\ml{AGENT} e = ιy[\ml{dog} y]) · \sad e | \ml{swimming} e}$\hfill$\type{\set{t · t}}$
+\xe
+
+However, we may need to make recourse to negative events or situations to account for clausal level readings with negation:
+
+\ex
+The dog isn't frakking swimming.\\
+\phantom{,}\hfill $⇝$ \textit{the speaker is upset that the dog isn't swimming}
+\xe
 
 \printbibliography
 
