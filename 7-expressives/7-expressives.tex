@@ -1,0 +1,372 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+\usepackage[font=footnotesize]{caption}
+\usepackage{soul}
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\NewDocumentCommand\apl{}{\ensuremath{\odot}}
+\NewDocumentCommand\aplp{}{\ensuremath{\circledast}}
+\NewDocumentCommand\pure{m}{\ensuremath{{#1}^{ρ}}}
+\NewDocumentCommand\intlift{m}{\ensuremath{{#1}^{⇈_{\aplp}}}}
+\NewDocumentCommand\ap{}{\ensuremath{\mathbin{\circledast}}}
+\NewDocumentCommand\pfa{}{\ensuremath{\mathbin{\stackrel{\apl}{\ml{A}}}}}
+\NewDocumentCommand\pfap{}{\ensuremath{\mathbin{\stackrel{\aplp}{\ml{A}}}}}
+\NewDocumentCommand\conjd{}{\ensuremath{\mathbin{\&}}}
+
+\usepackage{multicol}
+
+\setcounter{secnumdepth}{3}
+
+\title{Varieties of projective content:\\expressives continued\thanks{24.979: Topics in
+    semantics\\\noindent\textit{Getting high: Scope, projection, and evaluation order}}}
+
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott \& Martin Hackl}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+\usepackage{float}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\section{Non-local readings}
+
+In the examples we've analyzed so far, the expressive adjective composes directly with the individual towards which the expressive attitude is directed. Surface compositionality can therefore be straightforwardly achieved.
+
+\citet{gutzmann2019chap4} argues extensively that \acp{ea} give rise to what he calls \textit{non-local readings}. I'll take his empirical claims to be essentially correct -- the questions we'll be asking here will be \textit{why} and \textit{how}.
+
+We've actually already seen many examples of non-local readings.
+
+\ex
+The [\hl{frakking} cat] is being affectionate for once.\hfill$\sad (ιx[\ml{cat} x])$\label{cat1}
+\xe
+
+(\ref{cat1}) can convey that the speaker has a negative attitude towards whatever \textit{the cat} refers to, despite the fact that \textit{frakking} takes as its sister just the {\sc np} cat.
+
+Importantly, (\ref{cat1}) is compatible with (i) the speaker having a positive attitude towards the situation, and (ii) the speaker having a positive attitude towards cats in general.
+
+Similarly, the following examples can convey that the speaker has a negative attitude towards \textit{the fact that the cat peed on the couch}
+
+\ex~
+The \hl{frakking} cat (which I love) is peeing on my favorite couch.\hfill$\sad p$
+\xe
+
+\ex~
+The cat is peeing on my favorite \hl{frakking} couch.$\sad p$
+\xe
+
+\section{Gutzmann's {\sc agree}-based account}
+
+In order to account for non-local readings, \citet{gutzmann2019chap4} claims that \acp{ea} come with an uninterpretable expressive feature, and the heads of constituents which be the target of the expressive attitude come with an unvalued, interpretable expressive feature.
+
+\begin{figure}
+  \centering
+  \caption{Gutzmann's {\sc agree}-based account}\label{fig:agree}
+  \begin{forest}
+    [{DP}
+      [{D} [{the\\{[iEx:\_\_]}}]]
+      [{NP}
+        [{AP} [{A\\frakking\\{[uEx:$\sad$]}}]]
+        [{NP} [{dog},roof]]
+      ]
+    ]
+  \end{forest}
+  %
+  \hspace{5em}
+  %
+    \begin{forest}
+    [{DP}
+      [{D} [{the\\{[iEx:$\sad$]}}]]
+      [{NP}
+        [{AP} [{A\\frakking\\{\st{[uEx:$\sad$]}}}]]
+        [{NP} [{dog},roof]]
+      ]
+    ]
+  \end{forest}
+\end{figure}
+
+The feature on \textit{frakking} values the feature on \textit{the} via upwards \textsc{agree}, and the uninterpretable feature is deleted. This is illustrated in figure \ref{fig:agree}.
+
+Some (obvious) objections:
+
+\begin{itemize}
+
+    \item Find me a language with some overt realization of expressive agreement!
+
+    \item The syntactic restrictions on non-local readings seem to pattern with restrictions on scope (as we'll see later) -- the agree based account is missing a generalization.
+
+    \item Nothing insightful to say about the interaction between expressive adjectives and quantificational determiners.
+
+\end{itemize}
+
+Instead, I'll pursue a scope-based account of non-local readings, using continuations.\sidenote{This material is based on \cite{elliott-fuck}.}
+
+\section{Scope via continuations -- a recap}
+
+Scopal meanings (i.e., expressions that take a scope argument $k$) can be abbreviated using tower notation, as we've seen in previous classes, and which we'll be making use of in what follows:
+
+\ex Tower notation (def.)\\
+$\semtower{f []}{x} ≔ λ k . f (k x)$
+\xe
+
+As well as scopal meanings, scopal types can be abbreviated using tower notation as follows:
+
+\ex~ Tower types (def.)\\
+$\typetower{\type{r}}{\type{a}} ≔ \type{(a → r) → r}$
+\xe
+
+N.b. the type-shifters we've been using to compose scopal meanings don't presuppose \textit{anything} about the return type $\type{r}$.
+
+\ex
+\textit{lift} (def.)\\
+$a^{↑} ≔ \semtower{[]}{a}$\hfill$(↑):\type{a → \typetower{r}{a}}$
+\xe
+
+
+\ex~
+\acf{sfa} (def.)\\
+$\semtower{f []}{x} \ml{S} \semtower{g []}{y} ≔
+\semtower{f (g [])}{x \ml{A} y}$\hfill$\ml{S}:\begin{aligned}[t]
+  &\type{\typetower{r}{a → b} → \typetower{r}{a} →
+    \typetower{r}{b}}\\
+  &\type{\typetower{r}{a} → \typetower{r}{a → b} →
+    \typetower{r}{b}}
+  \end{aligned}$
+\xe
+
+When discussing quantificational scope, we assumed that the return type was $\type{t}$, e.g.:
+
+\ex
+$\eval{everyone} ≔ \semtower{∀ x[]}{x}$\hfill$\type{\typetower{t}{e}}$
+\xe
+
+In the following, in order to model expressive scope, we'll assume that the return type is a \textit{fancy} type, namely $\type{e · t}$.
+
+
+\subsection{Lifting multidimensional values into scope-takers}
+
+We can now recast our old meaning for \textit{frakking} as an identity function with an expressive side-effect:
+
+\ex
+$\ml{frakking}_{S} ≔ \semtower{\ml{frakking} []}{id}$\hfill$\type{\semtower{e · t}{a → a}}$
+\xe
+
+It might be useful to consider the de-sugared (flat) definition:
+
+\ex
+$\ml{frakking}_{S} ≔ λ k . \ml{frakking} (k id)$
+\xe
+
+$\ml{frakking}_{S}$ encodes two meaning components:
+
+\begin{itemize}
+
+  \item It contributes an identity function locally, and
+
+  \item waits for a fancy individual in order to evaluate its scope.
+
+\end{itemize}
+
+This generalizes our non-scopal treatment of \acp{ea}, as illustrated below. Note that the definition of expressive \textit{lower} doesn't use the identity functional, but rather $ρ$. Looking at the type of expressive lower should tell you why.
+
+\ex Expressive lower (def.)
+$m^{↓} ≔ m ρ$\hfill$↓:\type{\semtower{a · t}{a} → a · t}$
+\xe
+
+Here's an example of an expressive adjective composing with a proper name via \ac{sfa}. The result is immediately lowered.
+
+\begin{figure}
+\centering
+\caption{\enquote{fracking Starbuck}}
+\begin{forest}
+  [{$\ml{starbuck} · \sad \ml{starbuck}$}
+    [{$\semtower{\ml{frakking} []}{\ml{starbuck}}$}
+      [{$\semtower{\ml{frakking} []}{id}$\\frakking$_{S}$}]
+      [{$\semtower{[]}{\ml{starbuck}}$\\Starbuck$^{↑}$}]
+    ]
+  ]
+\end{forest}
+\end{figure}
+
+DP-level readings are accounted for by assuming that expressive lower is \textit{delayed}, as shown in figure \ref{fig:dp-level}.
+
+\begin{figure}
+  \centering
+  \caption{\enquote{The fracking cat}}\label{fig:dp-level}
+  \begin{forest}
+    [{$ιx[\ml{cat} x] · \sad (ιx[\ml{cat} x])$}
+    [{$\semtower{\ml{frakking} []}{ιx[\ml{cat} x]}$}
+      [{$\semtower{[]}{λ P . ιx[P x]}$\\the$^{↑}$}]
+      [{$\semtower{\ml{frakking} []}{λ x . \ml{dog} x}$}
+        [{$\semtower{\ml{frakking} []}{id}$\\frakking$_{S}$}]
+        [{$\semtower{[]}{λ x . \ml{cat} x}$\\cat$^{↑}$}]
+      ]
+    ]
+    ]
+  \end{forest}
+\end{figure}
+
+One way of accounting for clausal readings without positing a polysemous entry for the expressive adjective is to invoke a proposition-to-individual shift. This is sketched out in figure \ref{fig:clausal}.\semtower{Perhaps a more natural approach is to adopt an ontology with \textit{events}, and treat the event as the target of the expressive attitude. This will ultimately be a possible route, but first we need to say something about how expressive adjectives interact with existential quantification.}
+
+\begin{figure}
+\centering
+\caption{\enquote{The frakking cat peed outside.}}\label{fig:clausal}
+\begin{forest}
+  [{$(\ml{peed-outside} ιx[\ml{cat} x])^{∩} · \sad (\ml{peed-outside} ιx[\ml{cat} x])^{∩}$}
+  [{$\semtower{\ml{frakking} []}{(\ml{peed-outside} ιx[\ml{cat} x])^{∩}}$}
+    [{$∩^{↑}$}]
+    [{$\semtower{\ml{frakking} []}{\ml{peed-outside} ιx[\ml{cat} x]}$}
+      [{$\semtower{\ml{frakking} []}{ιx[\ml{cat} x]}$} [{the frakking cat},roof]]
+      [{$\semtower{[]}{λ x . \ml{peed-outside} x}$} [{peed outside$^{↑}$},roof]]
+    ]
+ ]]
+\end{forest}
+\end{figure}
+
+\subsection{Expressive adjectives and scope islands}
+
+\begin{description}
+
+    \item[Conjecture] so-called \enquote{non-local readings} of \acp{ea} are a scopal phenomenon.
+
+    \item[Prediction] Non-local readings of \acp{ea} should be sensitive to scope islands.
+
+\end{description}
+
+\citet{gutzmann2019chap4} provides extensive argumentation that non-local readings of \acp{ea} are subject to syntactic restrictions -- they are sensitive to syntactic islands such as relative clauses, but crucially also cannot extend out of finite clauses, just like other scope-takers.
+
+\ex
+Peter said [that the dog ate the frakking cake].\\
+\cmark $\sad (\ml{the dog at the cake})$\\
+\cmark $\sad (\ml{the cake})$\\
+\xmark $\sad (\ml{Peter said that the dog ate the cake})$\\
+\xmark $\sad \ml{Peter}$
+\xe
+
+\ex~
+The dog that ate the frakking cake is hungry.\\
+\cmark $\sad (\ml{the dog ate the cake})$\\
+\cmark $\sad (\ml{the cake})$\\
+\xmark $\sad (\ml{The dog that ate the cake is hungry})$\\
+\xmark $\sad (\ml{The dog that ate the cake})$\\
+\xe
+
+The sensitivity of \acp{ea} to scope islands falls out as a \textit{prediction} of the semantics we assigned them.
+
+Consider the semantics of an unevaluated relative clause with an expressive side-effect:
+
+\ex
+$\eval{[that ate the frakking cake]} = \semtower{\ml{fracking} []}{λ y . y \ml{ate the cake}}$\hfill$\type{\semtower{e · t}{e → t}}$
+\xe
+
+The scope of the expressive cannot be evaluated since the bottom of the tower isn't (and can't be shifted to) type $\type{e}$.
+
+The scope of the expressive must therefore be evaluated \textit{inside} of the relative clause.
+
+One thing that's important to note -- expressive side-effects \textit{once evaluated} are predicted to survive through scope islands.
+
+To see why, consider the semantics of an \textit{evaluated} relative clause with expressive side effects:
+
+\ex
+$\eval{[that ate the frakking cake]} = (λ y . y \ml{ate} ιx[\ml{cake} x]) · \sad (ιx[\ml{cake} x])$
+\xe
+
+The evaluated relative clause can be \textit{re-lifted} into an expressive scope-taker via expressive bind, and composition can continue.
+
+\ex Expressive bind (def.)\\
+$(x · p)^{⋆} ≔ λ k . (k x)^{\ml{A}} · ((k x)^{\ml{E}} ∧ p)$\hfill$⋆:\type{a · t → (a → b · t) → b · t}$
+\xe
+
+\ex~
+$\eval{that ate the frakking cat}^{⋆} = \semtower{(id · \sad (ιx[\ml{cake} x])) ⊛ []}{λ y . y \ml{ate} ιx[\ml{cake} x]}$\hfill$\type{\semtower{\type{b · t}}{\type{e → t}}}$
+\xe
+
+\subsection{Quantification, binding, and expressives}
+
+When uttered by a speaker who likes cats, the following example can express a negative attitude towards whichever cat happens to be being affectionate -- the resolution of the expressive attitude is therefore \textit{indeterminate}.
+
+A first crack at approximating the reading we're interested in is given below:
+
+\ex
+A frakking cat is being affectionate for once.\hfill\xmark $∃x[\sad x]$
+\xe
+
+This isn't right -- it would fail to guarantee that the target of the expressive attitude is the same as the cat being affectionate.
+
+Rather, it seems like we want the existential quantifier to take scope over \textit{both} the descriptive and the expressive content. Something like: $∃x[(\ml{cat} x ∧ \ml{affectionate} x) · \sad x]$. It's not clear how to accomplish this compositionally, however.
+
+By way of contrast:
+
+\ex
+Every fucking cat is being affectionate for once.\hfill$∀x[\sad x]$
+\xe
+
+In order to capture the interaction between expressives and indefinites, we'll need to fold in alternatives.
+
+
+\printbibliography
+
+\end{document}
+
+% LocalWords:  definedness frakking

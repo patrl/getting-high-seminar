@@ -1,0 +1,884 @@
+\documentclass[nols,twoside,nofonts,nobib,nohyper]{tufte-handout}
+
+\usepackage{fixltx2e}
+\usepackage{tikz-cd}
+\usepackage{tcolorbox}
+\usepackage{appendix}
+\usepackage{listings}
+\lstset{language=TeX,
+       frame=single,
+       basicstyle=\ttfamily,
+       captionpos=b,
+       tabsize=4,
+  }
+
+\input{acronyms}
+\renewcommand*{\acsfont}[1]{\textsc{#1}}
+
+\usepackage[font=footnotesize]{caption}
+\usepackage{soul}
+
+\makeatletter
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\renewcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0pt}%
+  \setlength{\JustifyingParindent}{0pt}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{\baselineskip}%
+}
+\makeatother
+
+\NewDocumentCommand\apl{}{\ensuremath{\odot}}
+\NewDocumentCommand\aplp{}{\ensuremath{\circledast}}
+\NewDocumentCommand\pure{m}{\ensuremath{{#1}^{ρ}}}
+\NewDocumentCommand\intlift{m}{\ensuremath{{#1}^{⇈_{\aplp}}}}
+\NewDocumentCommand\ap{}{\ensuremath{\mathbin{\circledast}}}
+\NewDocumentCommand\pfa{}{\ensuremath{\mathbin{\stackrel{\apl}{\ml{A}}}}}
+\NewDocumentCommand\pfap{}{\ensuremath{\mathbin{\stackrel{\aplp}{\ml{A}}}}}
+\NewDocumentCommand\conjd{}{\ensuremath{\mathbin{\&}}}
+
+\usepackage{multicol}
+
+\setcounter{secnumdepth}{3}
+
+\title{Varieties of projective content:\\presuppositional and expressive scope\thanks{24.979: Topics in
+    semantics\\\noindent\textit{Getting high: Scope, projection, and evaluation order}}}
+
+\author[Patrick D. Elliott and Martin Hackl]{Patrick~D. Elliott \& Martin Hackl}
+
+\addbibresource[location=remote]{/home/patrl/repos/bibliography/elliott_mybib.bib}
+
+\lingset{
+  belowexskip=0pt,
+  aboveglftskip=0pt,
+  belowglpreambleskip=0pt,
+  belowpreambleskip=0pt,
+  interpartskip=0pt,
+  extraglskip=0pt,
+  Everyex={\parskip=0pt}
+}
+
+\usepackage{float}
+
+
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+%   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+% % Standardize command font styles and environments
+% \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+% \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+% \newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+% \newcommand{\docenv}[1]{\textsf{#1}}% environment name
+% \newcommand{\docpkg}[1]{\texttt{#1}}% package name
+% \newcommand{\doccls}[1]{\texttt{#1}}% document class name
+% \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+% \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\begin{tcolorbox}
+\textbf{Schedule}
+\tcblower
+
+\begin{description}
+
+    \item[Today] Presupposition projection cont. \& the scope of expressive adjectives.
+
+    \item[May 7] Me on expressives and alternatives \& Sherry on the interaction between universals and negation.
+
+    \item[May 14] Enrico on \cite{Sauerlanda} and \cite{Charlow} on scoping out of DP \& Tanya on Szabolcsi on disjoined questions.
+
+\end{description}
+\end{tcolorbox}
+
+\section{Roadmap for today's class}
+
+\begin{itemize}
+
+    \item We'll begin with a summary of last week -- a recap of the assumptions underlying \citeauthor{grove2019}'s approach the satisfaction theory.
+
+    \item We'll move on to show how \citeauthor{grove2019}'s initial fragment is \textit{upgraded} into fragment that allows for presuppositional scope, by allowing for the evaluation of a presuppositional side-effect to be delayed via an internal lift function.
+
+    \item We'll ultimately aim to understand how incorporating a simple mechanism for presuppositional scope resolves the proviso problem -- evaluation of a presuppositional side-effect can be delayed until after evaluation of a filtration environment.
+
+  \item After that we'll move on to a different topic -- \textit{expressive adjectives}.
+
+    \item We'll see another case study of a variety of projective content where generalized mechanisms for scope-taking seem independently necessary.
+
+    \item Concretely, I'll suggest -- building on \cite{elliott-fuck} -- that so-called \enquote{non-local} readings of expressive adjectives are a scopal phenomenon. Evaluation of expressive side-effects can be delayed, similarly to what \citeauthor{grove2019} suggests for presupposition.
+
+    \item In next week's class, I'll aim to show how treating expressive adjectives as scope-takers accounts for otherwise mysterious interactions between expressives and quantification, then we'll have our first student presentation.
+
+\end{itemize}
+
+\section{Presupposition projection cont.}
+
+\subsection{Proviso problem recap}
+
+\textsc{Goal}: to account for the \textit{proviso problem}:
+
+\pex
+If Sam seems to be happy, then his sister is pregnant.\\
+\a \textit{presupposition (predicted):}\\ \textit{If Sam seems to be happy, then he has a sister.}\,\xmark
+\a \textit{presupposition (attested): Sam has a sister}\,\cmark
+\xe
+
+The \textit{satisfaction theory} of presupposition projection (\citealt{heim1983}, \citealt{beaver_presupposition_2001}, a.o.) predicts a conditional presupposition where an unconditional presupposition is accommodated.
+
+Exactly this feature of the satisfaction theory is necessary to account for the fact that presuppositions can be filtered, depending on the inferential properties of the local context.
+
+\ex
+If Sam has a sister and seems happy,\\
+then his sister is pregnant.\hfill\textit{presuppositionless}\label{filter}
+\xe
+
+(\ref{filter}) is predicted to presuppose \textit{if Sam has a sister and seems happy then Sam has a sister}, which is tautologous.
+
+\textsc{A (possible) pragmatic response}: it seems reasonable to say that conditional presuppositions are in fact \textit{always} generated, as predicted by the satisfaction theory, but they're sometimes strengthened via pragmatic mechanisms.
+
+We saw some arguments against this view from \cite{mandelkern2016}. Here are a couple of samples to remind you:
+
+\textsc{Argument 1}: conditional presuppositions can't always be strengthened.
+
+\pex
+Ka knows that if Sam seems happy, then he is playing Final Fantasy.\\
+\a \textit{conditional presupp:}\\
+\textit{If Sam seems happy, then he is playing Final Fantasy}.\,\cmark
+\a \textit{unconditional presupp.: Sam is playing Final Fantasy}\,\xmark
+\xe
+
+\textsc{Argument 2}: in a context that conflicts with the unconditional but not the conditional presupposition of a sentence, the result is oddness.
+
+\ex
+\ljudge{\#}\textit{I don't know if Sam is playing Final Fantasy, but...}\\
+If Ka got home early, he stopped playing Final Fantasy.
+\xe
+
+As we discussed last week, maybe we should take some of these arguments with a pinch of salt...
+
+\textsc{\citeauthor{grove2019}'s (\citeyear{grove2019}) response:} both conditional \textit{and} unconditional presuppositions can be derived in the semantics, once we have a satisfaction theory \textit{upgraded} with mechanisms allowing for \textit{presuppositional scope}.
+
+\subsection{Recap of Grove's background assumptions}
+
+\textsc{Component 1: trivalence} \citeauthor{grove2019} adopts a trivalent semantics -- i.e., one with three truth-values, $⊤$, $⊥$, and $\#$.
+
+In order to handle trivalence in the logical meta-language, \citeauthor{grove} assumes:
+
+\begin{itemize}
+
+    \item Ordinary logical connectives ($∧, ∨, →, ¬$) have a \textit{weak Kleene semantics}, i.e., undefined always projects.
+
+    \item The first-order existential quantifier has a \textit{middle Kleene} semantics -- $∃x$ presupposes that its scope is defined for at least one $x$.
+
+\end{itemize}
+
+Presuppositions are encoded via Beaver's $δ$-operator, which maps $⊥$ to $\#$:
+
+\ex
+Beaver's $δ$-operator (def.)\\
+$p^{δ} = \begin{cases}
+  ⊤ &p = ⊤\\
+  \# &p = ⊥
+  \end{cases}$\hfill$δ:\type{t → t_{\#}}$
+\xe
+
+\textsc{Component 2: alternatives} in \citeauthor{grove2019}'s fragment $a$'s are enriched into sets of $a$-world pairs, membership in which may be \textit{undefined}. Formally, this is modeled by the applicative functor $⊛$:
+
+\ex
+$\type{\aplp a ≔ s → a → t_{\#}}$\label{def:appl}
+\xe
+
+Pure ($ρ$) maps an $a$ to a trivially enriched value, and ap ($\pfap$) does function application in the enriched type-space.
+
+\pex
+\a $\pure{a} ≔ λ wx . δ (x = a)$\hfill$\type{a → \aplp a}$
+\a $m \pfap n ≔ λ wp . ∃x,y[m w x ∧ n w y ∧ δ (p = x \ml{A} y)]$\\
+\phantom{,}\hfill$\type{\aplp (a → b) → \aplp a → \aplp b}$\\
+\phantom{,}\hfill$\type{\aplp a → \aplp (a → b) → \aplp b}$
+\xe
+
+\begin{figure}
+  \centering
+  \caption{Alternative-semantic composition via $\pfa$}
+  \begin{forest}
+    [{$\set{⟨w,(\ml{swam}_{w} x)⟩|\ml{dolphin}_{w} x}$\\$\pfap$}
+      [{$\set{⟨w,x⟩|\ml{dolphin}_{w} x}$} [{a dolphin},roof]]
+      [{$\set{⟨w,(λ x . \ml{swam}_{w} x)⟩}$\\swam}]
+    ]
+  \end{forest}
+\end{figure}
+
+Definites return undefined for individuals that don't satisfy the restrictor:
+
+\ex
+$\eval{the dolphin} ≔ λwx . δ (\ml{dolphin}_{w} x)$\hfill$\type{\aplp\,e}$
+\xe
+
+\begin{figure}
+\centering
+\caption{Composition with a definite description}
+\begin{forest}
+  [{$\set{⟨w,\ml{swam}_{w} x⟩|δ (\ml{dolphin}_{w} x)}$\\$\pfap$}
+    [{$\set{⟨w,x⟩|δ (\ml{dolphin}_{w} x)}$} [{the dolphin},roof]]
+    [{$\set{⟨w,(λ x . \ml{swam}_{w} x)⟩}$\\swam}]
+  ]
+\end{forest}
+\end{figure}
+
+The semantic presupposition of a sentence is the set of worlds which are mapped to $⊤$ or $⊥$.
+
+\ex The semantic presupposition of $\phi$\\
+$\set{w|∃t[(\eval*{\phi} ⟨w,t⟩ = ⊤) ∨ (\eval*{\phi} ⟨w,t⟩ = ⊥)]}$
+\xe
+
+\textsc{Component 3: middle Kleene conjunction} vanilla logical conjunction has a weak Kleene semantics; to get presupposition filtration, Grove also needs a logical conjunction with middle Kleene semantics: $\&$.
+
+\begin{figure}
+  \centering
+  \caption{Short-circuited conjunction}\label{def:conj2}
+$\begin{array}{c|ccc}
+\& & ⊤ & ⊥ & \# \\
+\hline
+⊤ & ⊤ & ⊥ & \# \\
+⊥ & ⊥ & ⊥ & ⊥ \\
+\# & \# & \# & \#
+ \end{array}$
+\end{figure}
+
+Natural language conjunction/discourse sequencing is defined in terms of $\&$. This gets us presupposition filtration in conjunctive sentences.
+
+\ex Discourse sequencing (def.)\\
+$ϕ + ψ ≔ \set{⟨w,t⟩|ϕ ⟨w,⊤⟩ \conjd ψ ⟨w,t⟩}$\hfill$\type{(+): \aplp t → \aplp t → \aplp t}$
+\xe
+
+\begin{figure}
+\centering
+\caption{Presupposition filtration in a conjunctive sentence}
+\begin{forest}
+[{$\set{⟨w,(\ml{fast}_{w} y)⟩|∃x[\ml{dolphin}_{w} x ∧ \ml{swam}_{w} x] \conjd δ (\ml{dolphin}_{w} y)}$}
+  [{$λ p . \set{⟨w,t⟩|∃x[\ml{dolphin}_{w} x ∧ \ml{swam}_{w} x] \conjd p ⟨w,t⟩}$}
+    [{$\set{⟨w,\ml{swam}_{w} x⟩|\ml{dolphin}_{w} x}$} [{a dolphin swam},roof]]
+    [{$+$}]
+]
+  [{$\set{⟨w,\ml{fast}_{w} x⟩|δ (\ml{dolphin}_{w} x)}$} [{the dolphin was fast},roof]]
+]
+\end{forest}
+\end{figure}
+
+\textsc{Component 4: dynamic negation} Grove assumes a standard dynamic entry for conjunction, which closes off the scope of indefinites.
+
+\ex Sentential negation (def.)\\
+$\ml{not} ϕ ≔ \set{⟨w,⊤⟩|¬ (ϕ ⟨w,⊤⟩)}$
+\xe
+
+\begin{figure}
+\centering
+\caption{Sentential negation closes off indeterminacy}
+\begin{forest}
+  [{$\set{⟨w,⊤⟩| ¬ (⟨w,⊤⟩ ∈ \set{w,\ml{swam}_{w} x | \ml{dolphin}_{w} x})}$}
+    [{$λ p . \set{⟨w,⊤⟩|¬ (p ⟨w,⊤⟩)}$\\not}]
+    [{$\set{⟨w,\ml{swam}_{w} x⟩|\ml{dolphin}_{w} x}$} [{a dolphin swam},roof]]
+  ]
+\end{forest}
+\end{figure}
+
+The conditional operator is defined under first-order equivalence with sentential negation.
+
+\ex Conditional operator (def.)\\
+$\ml{if} ϕ ψ ≔ \ml{not} (ϕ + \ml{not} ψ)$
+\xe
+
+This entry predicts presupposition filtration, but results in the proviso problem. This is illustrated in figure (\ref{fig:comp}), for \textit{If Theo has a brother, then he'll bring his wetsuit}.
+
+\begin{figure*}
+  \centering
+  \caption{The proviso problem emerges}\label{fig:comp}
+  \begin{forest}
+    [{$\set{⟨w,⊤⟩|⟨w,⊤⟩ ∉ \set{⟨w',⊤⟩|\ml{has-brother}_{w'} \ml{Theo} \conjd ⟨w',⊤⟩ ∉ \set{⟨w'',\ml{Theo bring}_{w''} x|δ (\ml{wetsuit}_{w''} x)⟩}}}$}
+    [{$\ml{not} (\set{⟨w,\ml{has-brother}_{w} \ml{Theo}⟩} + \ml{not} \set{⟨w,\ml{Theo bring}_{w} x⟩|δ (\ml{wetsuit}_{w} x)})$}
+    [{$λp . \ml{not} (\set{⟨w,\ml{has-brother}_{w} \ml{Theo}⟩} + \ml{not} p)$}
+      [{if}]
+      [{$\set{⟨w,\ml{has-brother}_{w} \ml{Theo}⟩}$} [{Theo has a brother},roof]]
+    ]
+      [{$\set{⟨w,\ml{Theo bring}_{w} x⟩|δ (\ml{wetsuit}_{w} x)}$} [{he'll bring his wetsuit},roof]]
+    ]]
+  \end{forest}
+\end{figure*}
+
+We can more clearly see what the presupposition on the resulting meaning is if we translate the resulting set back into function talk:
+
+\ex
+$λ wt . ¬ \left(\begin{aligned}[c]
+    &\ml{has-brother}_{w} \ml{Theo}\\
+    &\conjd ¬ (∃x[δ (\ml{wetsuit}_{w} x) ∧ \ml{Theo bring}_{w} x]) ∧ t = ⊤
+  \end{aligned}\right)$
+\xe
+
+\begin{itemize}
+
+  \item Since $¬$ preserves undefinedness, the presupposition of the second conjunct of \& is that Theo has a wetsuit.
+
+  \item The first conjunct asserts that Theo has a brother. By dint on the semantics of \&, the presupposition of the second conjunct will only be evaluated in those worlds in which \textit{Theo has a brother} is true.
+
+  \item The definedness condition of the whole sentence is therefore: \textit{Theo has a wetsuit if he has a brother}.
+
+
+\end{itemize}
+
+\subsection{Shifting perspective: a grammar with scope-taking}
+
+In order make sense of the idea of presuppositional scope, we need to extend our fragment with a new operation: \textit{join}:
+
+\ex Join (def.)\\
+$μ m ≔ \set{⟨w,x⟩|∃n[⟨w,n⟩ ∈ m ∧ ⟨w,x⟩ ∈ n]}$\hfill$\type{μ:\aplp (\aplp a) → \aplp a}$
+\xe
+
+\begin{itemize}
+
+  \item Here, $m$ is a set of world-set pairs -- join tells us how to take a set of world-set pairs, and \enquote{flatten it} into a set of world-value pairs.
+
+  \item Both the main set and the paired sets may, in principle, have definedness conditions on membership.
+
+  \item $μ$ takes $m$, and gives back a set containing all members of the paired sets in $m$ which preserve the world with which they are paired.
+
+\end{itemize}
+
+Now, let's see how we convert a definite description into a scope taker.
+
+$\eval{the dolphin} ≔ \set{⟨w,x⟩|δ (\ml{dolphin}_{w} x)}$\hfill$\type{\aplp e}$
+
+In order to lift this into a scope-taker, we apply $ρ$ to the contained individual value. We can define an operation, which we'll call \textit{internal lift} which does just this.\sidenote{Internal lift in fact is implicit in our existing operations; this is because an applicative functor implies a way \texttt{fmap} for mapping functions into enriched values. Internal lift is just $\mathtt{fmap} ρ$.}
+
+\ex Internal lift (def.)\\
+$\intlift{m} ≔ \set{⟨w,\pure{x}⟩|⟨w,x⟩ ∈ m}$\hfill$⇈_{\aplp} : \type{\aplp a → \aplp (\aplp a)}$
+\xe
+
+Applying internal lift to \textit{the dolphin} gives back a higher-order member of the enriched type-space, where the definedness condition on membership is on the outer layer of the set:
+
+\ex
+$\eval[⇈_{\aplp}]{the dolphin} = \set{⟨w,\set{⟨w',x⟩}⟩|δ (\ml{dolphin}_{w} x)}$\hfill$\type{\aplp (\aplp a)}$
+\xe
+
+In order to compose this with a predicate, the predicate must be lifted via $ρ$.
+
+\ex
+$\eval{swam}^{ρ} = \set{⟨w,\set{⟨w',(λ x . \ml{swam}_{w} x)⟩}⟩}$\hfill$\type{⊛ (⊛ (e → t))}$
+\xe
+
+We also need a way of doing function application in a \textit{higher-order} enriched type-space. This is defined in the obvious way below:
+
+\ex
+$m \pfap_{2} n ≔ λ wp . ∃x,y[m w x ∧ n w y ∧ δ (p = x \pfap y)]$\\
+\phantom{,}\hfill$\type{\aplp (\aplp\,(a → b)) → \aplp\,(\aplp a) → \aplp\,(\aplp b)}$\\
+\phantom{,}\hfill$\type{\aplp\,(\aplp a) → \aplp (\aplp\,(a → b)) →  \aplp\,(\aplp b)}$
+\xe
+
+The role of join will be to evaluate the scope of the presupposition trigger. This is illustrated for a trivial example below, in which the presupposition associated with \textit{the dolphin} vacuously takes scope, and is evaluated at the root level.
+
+\begin{figure}
+  \centering
+  \caption{Vacuously scoping a uniqueness presupposition}
+  \begin{forest}
+    [{$\set{⟨w,\ml{swam}_{w} x⟩|δ (\ml{dolphin}_{w} x)}$}
+    [{$\set{⟨w,\set{⟨w',\ml{swam}_{w} x⟩}⟩|δ (\ml{dolphin}_{w} x)}$\\$\aplp_{2}$}
+      [{$\set{⟨w,\set{⟨w',x⟩}⟩|δ (\ml{dolphin}_{w} x)}$} [{$\intlift{\text{the dolphin}}$},roof]]
+      [{$\set{⟨w,\set{⟨w',(λ x . \ml{swam}_{w} x)⟩}⟩}$} [{swam$^{ρ}$}]]
+    ]]
+  \end{forest}
+\end{figure}
+
+With this mechanism in hand, however, a presupposition can scope out of an environment in which it would otherwise be filtered.
+
+Now, back to our proviso problem case. We can generate the unconditional presupposition just by applying internal lift to \textit{his wetsuit}, and evaluating via \textit{join} at the root node.
+
+\begin{figure*}
+\centering
+\caption{Resolving the proviso problem via scoping out}
+\begin{forest}
+  [{$\set{⟨w,\ml{not} (\set{⟨w',\ml{has-brother}_{w'} \ml{Theo}⟩} + \ml{not} \set{⟨w'',\ml{Theo bring}_{w''} x⟩})⟩|δ (\ml{wetsuit}_{w} x)}$}
+  [{$\set{⟨w,(λ p . \ml{not} (\set{⟨w',\ml{has-brother}_{w'} \ml{Theo}⟩} + \ml{not} p)⟩⟩}$}
+    [{$λ p . \ml{not} (\set{⟨w,\ml{has-brother}_{w} \ml{Theo}⟩} + \ml{not} p)$} [{if Theo has a brother}]]
+  ]
+  [{$\set{⟨w,\set{⟨w',\ml{Theo bring}_{w'} x⟩}⟩ | δ (\ml{wetsuit}_{w} x)}$}
+    [{Theo$^{ρ ∘ ρ}$}]
+    [{...}
+      [{bring$^{ρ}$}]
+      [{$\intlift{\text{his wetsuit}}$}]
+    ]
+  ]
+  ]
+\end{forest}
+\end{figure*}
+
+Applying join to the resulting meaning will have the effect that the presupposition of the outer set takes precedent over either any at-issue content or presuppositions contributed by any inner sets.
+
+Many questions remain:
+
+\begin{itemize}
+
+  \item \citeauthor{mandelkern2016}'s data suggests that, if the presupposition of the consequent isn't entailed in its local context, scoping out is \textit{obligatory}. Why should this be?
+
+  \item In general, wide-scope seems to be the \enquote{default}, but as we've discussed in class, scope-shifting operations are often marked in the domain of quantificational scope.
+
+  \item It can't be quite as simple as that however, since if the presupposition of the consequent \textit{is} entailed in its local context, narrow scope is the default.
+
+\end{itemize}
+
+Does the following sentence even \textit{have} a reading that presupposes that Theo has a wetsuit? Given hearer charitability, how do we tell?
+
+\ex
+If Theo is a scuba diver, then he'll bring his wetsuit.
+\xe
+
+\section{Expressive adjectives}
+
+At a broad level of abstraction \acp{ea} convey a \textit{negative expressive attitude} towards some entity, be in an individual, a \textit{kind}, or something like a \textit{state of affairs}.\sidenote{See \cite{mccready2012} for an important class of exceptions.}
+
+\pex
+\a I have seen most \hl{bloody} Monty Python sketches!\marginnote{\cite[18]{potts2005}}
+\a Nowhere did it say that the \hl{damn} thing didn't come with an electric plug!\marginnote{\cite[p.\,6]{potts2005}}
+\a I have to mow the \hl{fucking} lawn.\marginnote{\cite[60]{potts2005}}
+\a My \hl{friggin'} bike tire is flat again!\marginnote{\cite[6]{potts2005}}
+\xe
+
+\ex~
+\hl{Fucking} Ollie!? He's a \hl{fucking} knitted scarf that twat. He's a \hl{fucking} balaclava.\marginnote{\textit{The Thick of it}, \textsc{bbc}}
+\xe
+
+\ex~
+You \hl{shitting} idiot.\marginnote{\textit{Touching the Void}, David Greig}
+\xe
+
+A naturalistic example in German:
+
+\ex
+\begingl
+\gla Die wollen eine \hl{verfickte}  unterbezahlte Putzfrau einstellen, nur weil sie \enquote{keine Zeit} zum Putzen haben.//
+\glb They want a fucking underpaid cleaning-lady hire, only because they \enquote{no time} to clean have.//
+\glft \enquote{They want to hire a fucking underpaid cleaning lady, just because they have \enquote{no time} to clean.}//
+\endgl
+\marginnote{\textit{Twitter}}
+\xe
+
+In the following, I'll use the fictional expressive adjective \textit{frakking} in my examples.\sidenote{Taken from \textit{Battlestar Galactica}.
+
+  \ex
+  \enquote{There is no Earth. It's a \hl{frakking} joke. There is no Earth.}\\
+  \phantom{,}\hfill Admiral Adama, \textit{Battlestar Galactica}
+  \xe
+
+} Expressives are, by their very nature, distracting! Fortunately, intuitions seem to remain robust, even with novel coinages.
+
+I'll use $☹$ to indicate the object of the speakers negative expressive attitude, as illustrated in the following:
+
+\ex
+The \hl{frakking} cat is being affectionate for once.\hfill$\sad ιx[\ml{cat} x]$
+\xe
+
+N.b. that the example above is tailored to independently rule out a reading where the target of the expressive attitude is the state of affairs conveyed by the sentence, or cats in general
+
+Rather, the target of the expressive attitude is the particular cat that the definite description refers to.
+
+It's important to remember that $\sad$ is just a \textit{placeholder} for a fully-fledged semantics for expressive attitudes -- how exactly to cash out $\sad$ is an interesting and important question, but not one we'll be concerned with here.
+
+Rather, we'll be concerned with how expressions that contribute \textit{expressive side-effects} interact with other aspects of our compositional regime.
+
+There are two signature properties of expressive content: (i) \textit{projection}, and (ii) \textit{non-interaction}.
+
+\textsc{projection}: much like presuppositions, expressive content projects out of embedded constituents.
+
+\ex
+Nobody who has met that \hl{frakking} cat enjoys its company.\hfill$\sad \ml{that-cat}$
+\xe
+
+Unlike presuppositions, expressive content is \textit{indexical} and (seemingly?) cannot be filtered.
+
+\ex
+Either I love my dog, or my \hl{frakking} dog is driving me crazy.\\
+\phantom{,}\hfill$\sad \ml{my-dog}$
+\xe
+
+\textsc{Non-interaction:} an expressive adjective in the scope of an expressive adjective has no affect on its semantic contribution.
+
+\ex
+The \hl{frakking} editor of this journal won't respond to my emails.\\
+\phantom{,}\hfill$\sad \ml{the-editor-this-journal}$
+\xe
+
+\ex~
+The editor of this \hl{frakking} journal won't respond to my emails.\\
+\phantom{,}\hfill$\sad \ml{this-journal}$
+\xe
+
+\ex~
+{}[The \hl{frakking} editor of [this \hl{frakking} journal]]\\
+won't respond to my emails.\hfill$\sad \ml{the-editor-this-journal}$\\
+\phantom{,}\hfill$\sad \ml{this-journal}$\\
+\xe
+
+\section{Multi-dimensional semantics via Writer}
+
+\subsection{Writer for expressives}
+
+Following, e.g., \cite{potts2005}, \cite{mccready2010a}, and others, we'll adopt a \textit{multi-dimensional} semantics for expressives.
+
+Concretely, we'll be adopt (roughly) \citeauthor{asudehGiorgolo2012}'s (\citeyear{asudehGiorgolo2012}) writer-monadic semantics for conventional implicature, adapted to deal with expressives.
+
+Aping \citeauthor{potts2005}, we'll use $(·)$ to separate ordinary semantic values from expressive content.\sidenote{Formally, this is just sugar for a pair constructor.
+
+  $\type{t}$ is a stand-in for your favorite propositional type.
+}
+
+\ex Expressive type-constructor (def.)\\
+$\type{W a ≔ a · t}$
+\xe
+
+We'll define two helper functions to retrieve the assertive/expressive components from a multidimensional meaning:
+
+\pex Retrieval functions $\ml{A}$ and $\ml{E}$ (defs.)\\
+\a $\assertive{(x \cdot p)} ≔ x$\hfill$\type{a · t → a}$
+\a $\expressive{(x \cdot p)} ≔ p$\hfill$\type{a · t → t}$
+\xe
+
+We'll be adopting a composition strategy which should be very familiar to you by now, from previous classes. Namely, one that makes use of type-shifters.
+
+Our first type-shifter, \textit{return}, takes a value and returns a multidimensional value with trivial expressive content -- namely, a tautology.
+
+\ex Expressive \textit{return} (def.)\\
+$x^{η} ≔ x · ⊤$\hfill$η: \type{a → a · t}$
+\xe
+
+We'll also define an \textit{ap} function -- it composes two multidimensional meanings by doing \ac{fa} in the ordinary dimension, and conjunction in the expressive dimension.
+
+\ex Apply (def.)\\
+$(x · p) ⊛ (y · q) ≔ (\ml{A} x y) · (p ∧ q)$\hfill$⊛ : \begin{aligned}[t]
+  &\type{a · t → (a → b) · t → b · t}\\
+  &\type{(a → b) · t → a · t → b · t}
+  \end{aligned}$
+\xe
+
+\subsection{Back to expressive adjectives}
+
+Consider again an example such as the following:
+
+\ex
+\hl{Frakking} Lou is being affectionate for once.\hfill $\sad \ml{lou}$
+\xe
+
+We'll take this as a baseline -- in order to account for the attested reading, we'll adopt the following lexical entry for \textit{frakking}:
+
+\ex
+$\ml{frakking} (x · p) ≔ x · (p ∧ \sad x)$\hfill$\type{e · t → e · t}$
+\xe
+
+It takes an individual with associated expressive content, returns that individual, and bumps an expressive attitude towards the individual into the expressive dimension.
+
+Composition can now proceed via expressive return and expressive apply:
+
+\begin{figure}
+  \centering
+  \caption{\enquote{Frakking Lou is being affectionate (for once).}}
+  \begin{forest}
+    [{$\ml{affectionate lou} · \sad \ml{lou}$\\$⊛$}
+    [{$\ml{lou} · \sad \ml{lou}$}
+      [{$\ml{frakking}$}]
+      [{$\ml{lou} · ⊤$\\Lou$^{η}$}]
+    ]
+      [{$(λ x . \ml{affectionate} x) · ⊤$\\affectionate$^{η}$}]
+    ]
+  \end{forest}
+\end{figure}
+
+We stated the meaning of \textit{frakking} in such a way that it anticipates that its argument may be associated with expressive content. This captures \textit{non-interaction}, as illustrated in figure \ref{fig:interac}.
+
+\begin{figure}
+  \centering
+  \caption{\enquote{Frakking [frakking Lou's friend] is being affectionate for once.}}\label{fig:interac}
+  \begin{forest}
+    [{$\ml{affectionate} ιx[x \ml{friend} \ml{lou}] · \sad \ml{lou} ∧ \sad ιx[x \ml{friend} \ml{lou}]$\\$⊛$}
+    [{$ιx[x \ml{friend lou}] · \sad \ml{lou} ∧ \sad (ιx[x \ml{friend lou}])$}
+      [{frakking}]
+      [{$ιx[x \ml{friend lou}] · \sad \ml{lou}$} [{frakking Lou's friend},roof]]
+    ]
+      [{$(λ x . \ml{affectionate} x) · ⊤$\\affectionate$^{η}$}]
+    ]
+  \end{forest}
+\end{figure}
+
+\begin{tcolorbox}
+\textbf{An aside on \textit{mixed expressives}}
+\tcblower
+We've been concentrating here on what \citet{gutzmann2015} calls \textit{functional expletive expressives} -- adjectives that \textit{only} contribute expressive content, but no descriptive content.
+
+There are other kinds of \textit{mixed expressives}, such as pejoratives, which contribute both descriptive and expressive content. We won't be concentrating on this class here, but it's straightforward to model them in the current setting as predicates which encode an expressive attitude towards a particular \textit{kind}:
+
+\ex
+$\ml{mudblood} ≔ (λ x . \ml{muggle} x) · \sad \ml{muggle}^{∩}$
+\xe
+
+\end{tcolorbox}
+
+\subsection{Non-local readings}
+
+In the examples we've analyzed so far, the expressive adjective composes directly with the individual towards which the expressive attitude is directed. Surface compositionality can therefore be straightforwardly achieved.
+
+\citet{gutzmann2019chap4} argues extensively that \acp{ea} give rise to what he calls \textit{non-local readings}. I'll take his empirical claims to be essentially correct -- the questions we'll be asking here will be \textit{why} and \textit{how}.
+
+We've actually already seen many examples of non-local readings.
+
+\ex
+The [\hl{frakking} cat] is being affectionate for once.\hfill$\sad (ιx[\ml{cat} x])$\label{cat1}
+\xe
+
+(\ref{cat1}) can convey that the speaker has a negative attitude towards whatever \textit{the cat} refers to, despite the fact that \textit{frakking} takes as its sister just the {\sc np} cat.
+
+Importantly, (\ref{cat1}) is compatible with (i) the speaker having a positive attitude towards the situation, and (ii) the speaker having a positive attitude towards cats in general.
+
+Similarly, the following examples can convey that the speaker has a negative attitude towards \textit{the fact that the cat peed on the couch}
+
+\ex~
+The \hl{frakking} cat (which I love) is peeing on my favorite couch.\hfill$\sad p$
+\xe
+
+\ex~
+The cat is peeing on my favorite \hl{frakking} couch.$\sad p$
+\xe
+
+\subsection{Gutzmann's {\sc agree}-based account}
+
+In order to account for non-local readings, \citet{gutzmann2019chap4} claims that \acp{ea} come with an uninterpretable expressive feature, and the heads of constituents which be the target of the expressive attitude come with an unvalued, interpretable expressive feature.
+
+\begin{figure}
+  \centering
+  \caption{Gutzmann's {\sc agree}-based account}\label{fig:agree}
+  \begin{forest}
+    [{DP}
+      [{D} [{the\\{[iEx:\_\_]}}]]
+      [{NP}
+        [{AP} [{A\\frakking\\{[uEx:$\sad$]}}]]
+        [{NP} [{dog},roof]]
+      ]
+    ]
+  \end{forest}
+  %
+  \hspace{5em}
+  %
+    \begin{forest}
+    [{DP}
+      [{D} [{the\\{[iEx:$\sad$]}}]]
+      [{NP}
+        [{AP} [{A\\frakking\\{\st{[uEx:$\sad$]}}}]]
+        [{NP} [{dog},roof]]
+      ]
+    ]
+  \end{forest}
+\end{figure}
+
+The feature on \textit{frakking} values the feature on \textit{the} via upwards \textsc{agree}, and the uninterpretable feature is deleted. This is illustrated in figure \ref{fig:agree}.
+
+Some (obvious) objections:
+
+\begin{itemize}
+
+    \item Find me a language with some overt realization of expressive agreement!
+
+    \item The syntactic restrictions on non-local readings seem to pattern with restrictions on scope (as we'll see later) -- the agree based account is missing a generalization.
+
+    \item Nothing insightful to say about the interaction between expressive adjectives and quantificational determiners.
+
+\end{itemize}
+
+Instead, I'll pursue a scope-based account of non-local readings, using continuations.\sidenote{This material is based on \cite{elliott-fuck}.}
+
+\subsection{Scope via continuations -- a recap}
+
+\ex Tower notation (def.)\\
+$\semtower{f []}{x} ≔ λ k . f (k x)$
+\xe
+
+\ex~ Tower types (def.)\\
+$\semtower{\type{b}}{\type{a}} ≔ \type{(a → b) → b}$
+\xe
+
+Crucially, the type-shifters we've been using to compose scopal meanings don't presuppose \textit{anything} about the return type $\type{r}$.
+
+\ex~
+\textit{lift} (def.)\\
+$a^{↑} ≔ \semtower{[]}{a}$\hfill$(↑):\type{a → \semtower{r}{a}}$
+\xe
+
+
+\ex~
+\acf{sfa} (def.)\\
+$\semtower{f []}{x} \ml{S} \semtower{g []}{y} ≔
+\semtower{f (g [])}{x \ml{A} y}$\hfill$\ml{S}:\type{\semtower{r}{a → b} → \semtower{r}{a} →
+  \semtower{r}{b}}$
+\xe
+
+When discussing quantificational scope, we assumed that the return type was $\type{t}$; in the following, in order to model expressive scope, we'll assume that the return type is a \textit{fancy} type, namely $\type{e · t}$.
+
+
+\subsection{Lifting multidimensional values into scope-takers}
+
+We can now recast our old meaning for \textit{frakking} as an identity function with an expressive side-effect:
+
+\ex
+$\ml{frakking}_{S} ≔ \semtower{\ml{frakking} []}{id}$\hfill$\type{\semtower{e · t}{a → a}}$
+\xe
+
+$\ml{frakking}_{S}$ (i) contributes an identity function locally, and (ii) waits for a fancy individual in order to evaluate its scope.
+
+This generalizes our non-scopal treatment of \acp{ea}, as illustrated below. Note that the definition of expressive \textit{lower} doesn't use the identity functional, but rather $ρ$. Looking at the type of expressive lower should tell you why.
+
+\ex Expressive lower (def.)
+$m^{↓} ≔ m ρ$\hfill$↓:\type{\semtower{a · t}{a} → a · t}$
+\xe
+
+\begin{figure}
+\centering
+\caption{\enquote{fracking Starbuck}}
+\begin{forest}
+  [{$\ml{starbuck} · \sad \ml{starbuck}$}
+    [{$\semtower{\ml{frakking} []}{\ml{starbuck}}$}
+      [{$\semtower{\ml{frakking} []}{id}$\\frakking$_{S}$}]
+      [{$\semtower{[]}{\ml{starbuck}}$\\Starbuck$^{↑}$}]
+    ]
+  ]
+\end{forest}
+\end{figure}
+
+DP-level readings are accounted for by assuming that expressive lower is \textit{delayed}, as shown in figure \ref{fig:dp-level}.
+
+\begin{figure}
+  \centering
+  \caption{\enquote{The fracking cat}}\label{fig:dp-level}
+  \begin{forest}
+    [{$ιx[\ml{cat} x] · \sad (ιx[\ml{cat} x])$}
+    [{$\semtower{\ml{frakking} []}{ιx[\ml{cat} x]}$}
+      [{$\semtower{[]}{λ P . ιx[P x]}$\\the$^{↑}$}]
+      [{$\semtower{\ml{frakking} []}{λ x . \ml{dog} x}$}
+        [{$\semtower{\ml{frakking} []}{id}$\\frakking$_{S}$}]
+        [{$\semtower{[]}{λ x . \ml{cat} x}$\\cat$^{↑}$}]
+      ]
+    ]
+    ]
+  \end{forest}
+\end{figure}
+
+One way of accounting for clausal readings without positing a polysemous entry for the expressive adjective is to invoke a proposition-to-individual shift. This is sketched out in figure \ref{fig:clausal}.\semtower{Perhaps a more natural approach is to adopt an ontology with \textit{events}, and treat the event as the target of the expressive attitude. This will ultimately be a possible route, but first we need to say something about how expressive adjectives interact with existential quantification.}
+
+\begin{figure}
+\centering
+\caption{\enquote{The frakking cat peed outside.}}\label{fig:clausal}
+\begin{forest}
+  [{$(\ml{peed-outside} ιx[\ml{cat} x])^{∩} · \sad (\ml{peed-outside} ιx[\ml{cat} x])^{∩}$}
+  [{$\semtower{\ml{frakking} []}{(\ml{peed-outside} ιx[\ml{cat} x])^{∩}}$}
+    [{$∩^{↑}$}]
+    [{$\semtower{\ml{frakking} []}{\ml{peed-outside} ιx[\ml{cat} x]}$}
+      [{$\semtower{\ml{frakking} []}{ιx[\ml{cat} x]}$} [{the frakking cat},roof]]
+      [{$\semtower{[]}{λ x . \ml{peed-outside} x}$} [{peed outside$^{↑}$},roof]]
+    ]
+ ]]
+\end{forest}
+\end{figure}
+
+\subsection{Expressive adjectives and scope islands}
+
+\begin{description}
+
+    \item[Conjecture] so-called \enquote{non-local readings} of \acp{ea} are a scopal phenomenon.
+
+    \item[Prediction] Non-local readings of \acp{ea} should be sensitive to scope islands.
+
+\end{description}
+
+\citet{gutzmann2019chap4} provides extensive argumentation that non-local readings of \acp{ea} are subject to syntactic restrictions -- they are sensitive to syntactic islands such as relative clauses, but crucially also cannot extend out of finite clauses, just like other scope-takers.
+
+\ex
+Peter said [that the dog ate the frakking cake].\\
+\cmark $\sad (\ml{the dog at the cake})$\\
+\cmark $\sad (\ml{the cake})$\\
+\xmark $\sad (\ml{Peter said that the dog ate the cake})$\\
+\xmark $\sad \ml{Peter}$
+\xe
+
+\ex~
+The dog that ate the frakking cake is hungry.\\
+\cmark $\sad (\ml{the dog ate the cake})$\\
+\cmark $\sad (\ml{the cake})$\\
+\xmark $\sad (\ml{The dog that ate the cake is hungry})$\\
+\xmark $\sad (\ml{The dog that ate the cake})$\\
+\xe
+
+The sensitivity of \acp{ea} to scope islands falls out as a \textit{prediction} of the semantics we assigned them.
+
+Consider the semantics of an unevaluated relative clause with an expressive side-effect:
+
+\ex
+$\eval{[that ate the frakking cake]} = \semtower{\ml{fracking} []}{λ y . y \ml{ate the cake}}$\hfill$\type{\semtower{e · t}{e → t}}$
+\xe
+
+The scope of the expressive cannot be evaluated since the bottom of the tower isn't (and can't be shifted to) type $\type{e}$.
+
+The scope of the expressive must therefore be evaluated \textit{inside} of the relative clause.
+
+One thing that's important to note -- expressive side-effects \textit{once evaluated} are predicted to survive through scope islands.
+
+To see why, consider the semantics of an \textit{evaluated} relative clause with expressive side effects:
+
+\ex
+$\eval{[that ate the frakking cake]} = (λ y . y \ml{ate} ιx[\ml{cake} x]) · \sad (ιx[\ml{cake} x])$
+\xe
+
+The evaluated relative clause can be \textit{re-lifted} into an expressive scope-taker via expressive bind, and composition can continue.
+
+\ex Expressive bind (def.)\\
+$(x · p)^{⋆} ≔ λ k . (k x)^{\ml{A}} · ((k x)^{\ml{E}} ∧ p)$\hfill$⋆:\type{a · t → (a → b · t) → b · t}$
+\xe
+
+\ex~
+$\eval{that ate the frakking cat}^{⋆} = \semtower{(id · \sad (ιx[\ml{cake} x])) ⊛ []}{λ y . y \ml{ate} ιx[\ml{cake} x]}$\hfill$\type{\semtower{\type{b · t}}{\type{e → t}}}$
+\xe
+
+\subsection{Quantification, binding, and expressives}
+
+When uttered by a speaker who likes cats, the following example can express a negative attitude towards whichever cat happens to be being affectionate -- the resolution of the expressive attitude is therefore \textit{indeterminate}.
+
+A first crack at approximating the reading we're interested in is given below:
+
+\ex
+A frakking cat is being affectionate for once.\hfill\xmark $∃x[\sad x]$
+\xe
+
+This isn't right -- it would fail to guarantee that the target of the expressive attitude is the same as the cat being affectionate.
+
+Rather, it seems like we want the existential quantifier to take scope over \textit{both} the descriptive and the expressive content. Something like: $∃x[(\ml{cat} x ∧ \ml{affectionate} x) · \sad x]$. It's not clear how to accomplish this compositionally, however.
+
+By way of contrast:
+
+\ex
+Every fucking cat is being affectionate for once.\hfill$∀x[\sad x]$
+\xe
+
+In order to capture the interaction between expressives and indefinites, we'll need to fold in alternatives.
+
+
+\printbibliography
+
+\end{document}
+
+% LocalWords:  definedness frakking
